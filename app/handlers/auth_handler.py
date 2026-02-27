@@ -20,12 +20,17 @@ async def login_page(
     request: Request,
     user: UserSession | None = Depends(get_current_user),
 ):
-    """Show login page. Redirect to home if already logged in."""
     if user:
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
     return templates.TemplateResponse(
-        "auth/login.html", {"request": request, "error": None}
+        "auth/login.html", {
+            "request": request,
+            "current_user": None,
+            "messages": [],
+            "error": None,
+        }
     )
+
 
 
 @router.post("/login", response_class=HTMLResponse)

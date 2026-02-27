@@ -17,7 +17,7 @@ class UserSession(BaseModel):
     """What we store in the signed session cookie — minimal, no sensitive data."""
     user_id: str
     username: str
-    role: str
+    is_dm: bool = False
 
     @property
     def is_dm(self) -> bool:

@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% block title %}Players{% endblock %}
+{% block meta_description %}Manage all registered players and their assigned characters.{% endblock %}
+
+{% block body_class %}list-page players-list-page{% endblock %}
+
+{% block content %}
+<div class="list-container">
+
+  {# ── Page Header ──────────────────────────────────────────────── #}
+  <header class="list-container__header">
+    <div>
+      <h1 class="list-container__title">Players</h1>
+      <p class="list-container__subtitle">
+        {{ players | length }} player{{ 's' if players | length != 1 }}
+        registered
+      </p>
+    </div>
+    <a href="/dm/players/new" class="btn btn--primary">+ New Player</a>
+  </header>
+
+  {# ── Player Table ─────────────────────────────────────────────── #}
+  {% if players %}
+  <div class="table-wrapper" role="region" aria-label="Players list" tabindex="0">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Assigned Character</th>
+          <th scope="col">Member Since</th>
+          <th scope="col" class="col--actions">
+            <span class="sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in players %}
+        <tr class="data-table__row">
+
+          {# Username #}
+          <td class="data-table__cell data-table__cell--primary">
+            <a
+              href="/dm/players/{{ player.id }}/edit"
+              class="data-table__link"
+              aria-label="Edit player {{ player.username }}"
+            >{{ player.username }}</a>
+          </td>
+
+          {# Assigned Character #}
+          <td class="data-table__cell">
+            {% if player.character %}
+              <a
+                href="/characters/{{ player.character.id }}"
+                class="data-table__link data-table__link--secondary"
+                aria-label="View character sheet for {{ player.character.name }}"
+              >
+                {{ player.character.name }}
+                <small class="data-table__meta">
+                  Lv.{{ player.character.level }}
+                  {{ player.character.race }}
+                  {{ player.character.char_class }}
+                </small>
+              </a>
+            {% else %}
+              <span class="badge badge--neutral">Unassigned</span>
+            {% endif %}
+          </td>
+
+          {# Member Since #}
+          <td class="data-table__cell data-table__cell--muted">
+            <time datetime="{{ player.created_at.isoformat() }}">
+              {{ player.created_at.strftime("%b %d, %Y") }}
+            </time>
+          </td>
+
+          {# Row Actions #}
+          <td class="data-table__cell col--actions">
+            <div class="row-actions">
+              <a
+                href="/dm/players/{{ player.id }}/edit"
+                class="btn btn--ghost btn--sm"
+                aria-label="Edit {{ player.username }}"
+              >✏️ Edit</a>
+
+              <form
+                method="POST"
+                action="/dm/players/{{ player.id }}/delete"
+                onsubmit="return confirm('Permanently delete player {{ player.username }}?')"
+              >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button
+                  type="submit"
+                  class="btn btn--danger btn--sm"
+                  aria-label="Delete {{ player.username }}"
+                >🗑 Delete</button>
+              </form>
+            </div>
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# ── Empty State ───────────────────────────────────────────────── #}
+  {% else %}
+  <div class="empty-state" role="status">
+    <p class="empty-state__icon" aria-hidden="true">🧙</p>
+    <p class="empty-state__title">No players yet</p>
+    <p class="empty-state__body">
+      Create the first player account to get the campaign started.
+    </p>
+    <a href="/dm/players/new" class="btn btn--primary">+ New Player</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

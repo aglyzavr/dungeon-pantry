@@ -22,14 +22,23 @@ class UserRepository:
         )
         return result.scalar_one_or_none()
 
-    async def create(self, username: str, password_hash: str, role: str) -> User:
-        user = User(username=username, password_hash=password_hash, role=role)
-        self._db.add(user)
-        await self._db.flush()   # get the generated UUID back without full commit
-        return user
-
     async def exists_any_dm(self) -> bool:
         result = await self._db.execute(
-            select(User).where(User.role == "dm").limit(1)
+            select(User).where(User.role == "dm")
         )
         return result.scalar_one_or_none() is not None
+
+    async def create(
+        self,
+        username: str,
+        hashed_password: str,
+        is_dm: bool = False,
+    ) -> User:
+        user = User(
+            username=username,
+            hashed_password=hashed_password,
+            is_dm=is_dm,
+        )
+        self._db.add(user)
+        await self._db.flush()
+        return user

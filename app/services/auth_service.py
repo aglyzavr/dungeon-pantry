@@ -1,58 +1,59 @@
-import logging
-from datetime import timedelta
+# app/services/auth_service.py
+from datetime import datetime, timedelta, timezone
 
 import bcrypt
-from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
+import jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
+from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import UserSession
 
-logger = logging.getLogger(__name__)
+
+class InvalidCredentials(Exception):
+    pass
 
 
 def hash_password(plain: str) -> str:
-    return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    return bcrypt.hashpw(plain.encode(), bcrypt.gensalt()).decode()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    return bcrypt.checkpw(plain.encode(), hashed.encode())
 
-
-def _get_serializer() -> URLSafeTimedSerializer:
-    return URLSafeTimedSerializer(
-        secret_key=get_settings().session_secret_key,
-        salt="session",
-    )
-
-
-def create_session_token(session: UserSession) -> str:
-    return _get_serializer().dumps(session.model_dump())
+def create_session_token(user: User) -> str:
+    settings = get_settings()
+    payload = {
+        "sub": str(user.id),
+        "username": user.username,
+        "is_dm": user.is_dm,
+        "exp": datetime.now(timezone.utc) + timedelta(days=7),
+    }
+    return jwt.encode(payload, settings.session_secret_key, algorithm="HS256")  # ← fix
 
 
 def decode_session_token(token: str) -> UserSession | None:
     settings = get_settings()
-    max_age = timedelta(days=settings.session_duration_days).total_seconds()
     try:
-        data = _get_serializer().loads(token, max_age=max_age)
-        return UserSession(**data)
-    except (SignatureExpired, BadSignature):
+        payload = jwt.decode(token, settings.session_secret_key, algorithms=["HS256"])  # ← fix
+        return UserSession(
+            user_id=payload["sub"],
+            username=payload["username"],
+            is_dm=payload.get("is_dm", False),
+        )
+    except jwt.PyJWTError:
         return None
 
 
 async def authenticate_user(
     db: AsyncSession, username: str, password: str
-) -> UserSession | None:
+) -> User:
     repo = UserRepository(db)
     user = await repo.get_by_username(username)
-    if user is None or not verify_password(password, user.password_hash):
-        return None
-    return UserSession(
-        user_id=str(user.id),
-        username=user.username,
-        role=user.role,
-    )
+    if user is None or not verify_password(password, user.password_hash):  # ← fix
+        raise InvalidCredentials("Invalid username or password")
+    return user
 
 
 async def seed_dm_user(db: AsyncSession) -> None:
@@ -62,19 +63,9 @@ async def seed_dm_user(db: AsyncSession) -> None:
     if await repo.exists_any_dm():
         return
 
-    dm_username = getattr(settings, "dm_seed_username", "dm")
-    dm_password = getattr(settings, "dm_seed_password", None)
-
-    if not dm_password:
-        logger.warning(
-            "⚠️  No DM_SEED_PASSWORD set in .env — skipping DM seed."
-        )
-        return
-
     await repo.create(
-        username=dm_username,
-        password_hash=hash_password(dm_password),
-        role="dm",
+        username=settings.dm_username,
+        password_hash=hash_password(settings.dm_password),  # ← fix
+        role="dm",                                           # ← fix
     )
     await db.commit()
-    logger.info("✅ DM seed user '%s' created", dm_username)

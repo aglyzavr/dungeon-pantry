@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ character.name }} — Shared Sheet{% endblock %}
+{% block meta_description %}Read-only character sheet for {{ character.name }}, a level {{ character.level }} {{ character.race }} {{ character.char_class }}.{% endblock %}
+
+{% block body_class %}sheet-page sheet-page--readonly{% endblock %}
+
+{% block content %}
+<div class="sheet sheet--readonly">
+
+  {# ── Share Banner ─────────────────────────────────────────────── #}
+  <aside class="share-banner" role="note" aria-label="Shared view notice">
+    <span class="share-banner__icon" aria-hidden="true">🔗</span>
+    <div class="share-banner__body">
+      <strong>Read-only shared sheet.</strong>
+      This link was shared by the player or Dungeon Master.
+      {% if link.expires_at %}
+        <span class="share-banner__expiry">
+          Expires <time datetime="{{ link.expires_at.isoformat() }}">
+            {{ link.expires_at.strftime("%b %d, %Y") }}
+          </time>.
+        </span>
+      {% else %}
+        <span class="share-banner__expiry">This link does not expire.</span>
+      {% endif %}
+    </div>
+  </aside>
+
+  {# ── Sheet Body (shared partial) ──────────────────────────────── #}
+  {% with can_edit = false %}
+    {% include "characters/_sheet_body.html" %}
+  {% endwith %}
+
+</div>
+{% endblock %}
