@@ -24,6 +24,8 @@ def _service(db: AsyncSession = Depends(get_db)) -> ShareLinkService:
 
 # ── Public read-only view ─────────────────────────────────────────────────
 
+# ── Public read-only view ─────────────────────────────────────────────────
+
 @router.get("/share/{token}", response_class=HTMLResponse)
 async def public_sheet(
     request: Request,
@@ -41,6 +43,7 @@ async def public_sheet(
                 "character": None,
                 "sheet": None,
                 "link": None,
+                "current_user": None,  # ← add
             },
             status_code=status.HTTP_404_NOT_FOUND,
         )
@@ -53,6 +56,7 @@ async def public_sheet(
                 "character": None,
                 "sheet": None,
                 "link": None,
+                "current_user": None,  # ← add
             },
             status_code=status.HTTP_410_GONE,
         )
@@ -64,7 +68,9 @@ async def public_sheet(
         "sheet": character.sheet_data,
         "link": link,
         "error": None,
+        "current_user": None,  # ← add
     })
+
 
 
 # ── DM: create share link ─────────────────────────────────────────────────

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import ValidationError
 
 from app.database import get_db
 from app.middleware.auth import require_dm
@@ -43,16 +44,21 @@ async def player_list(
 
 # ── New form ──────────────────────────────────────────────────────────────
 
-@router.get("/new", response_class=HTMLResponse)
+@router.get("/new", response_class=HTMLResponse)  # ← was "/players/new"
 async def player_new_form(
     request: Request,
-    current_user: UserSession = Depends(require_dm),
+    user: UserSession = Depends(require_dm),
 ):
     return templates.TemplateResponse("players/form.html", {
         "request": request,
-        "current_user": current_user,
-        "error": None,
+        "current_user": user,
+        "messages": [],
+        "player": None,
+        "form": {},
+        "errors": {},
+        "all_characters": [],
     })
+
 
 
 # ── Create ────────────────────────────────────────────────────────────────
@@ -65,20 +71,31 @@ async def player_create(
     password: str = Form(...),
     service: PlayerService = Depends(_service),
 ):
+    errors = {}
+
     try:
         data = PlayerCreate(username=username, password=password)
-        await service.create_player(data)
-        return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)
-    except (ValueError, UsernameAlreadyExists) as e:
-        return templates.TemplateResponse(
-            "players/form.html",
-            {
-                "request": request,
-                "current_user": current_user,
-                "error": str(e),
-            },
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        )
+    except ValidationError as e:
+        for err in e.errors():
+            field = err["loc"][0]
+            errors[field] = err["msg"].replace("Value error, ", "")
+
+    if not errors:
+        try:
+            await service.create_player(data)
+            return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)
+        except UsernameAlreadyExists as e:
+            errors["username"] = str(e)
+
+    return templates.TemplateResponse("players/form.html", {
+        "request": request,
+        "current_user": current_user,
+        "messages": [],
+        "player": None,
+        "form": {"username": username},
+        "errors": errors,
+        "all_characters": [],
+    }, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 # ── Assign character ──────────────────────────────────────────────────────

@@ -24,7 +24,7 @@ class PlayerService:
     async def list_players(self) -> list[User]:
         result = await self._db.execute(
             select(User)
-            .where(User.is_dm == False)  # noqa: E712
+            .where(User.role == "player")          # ← was User.is_dm == False
             .order_by(User.created_at.desc())
         )
         return list(result.scalars().all())
@@ -33,7 +33,7 @@ class PlayerService:
         result = await self._db.execute(
             select(User).where(
                 User.id == player_id,
-                User.is_dm == False,  # noqa: E712
+                User.role == "player",             # ← was User.is_dm == False
             )
         )
         user = result.scalar_one_or_none()
@@ -51,8 +51,8 @@ class PlayerService:
             )
         user = User(
             username=data.username,
-            hashed_password=hash_password(data.password),
-            is_dm=False,
+            password_hash=hash_password(data.password),  # ← was hashed_password
+            role="player",
         )
         self._db.add(user)
         await self._db.flush()

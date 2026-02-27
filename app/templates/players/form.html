@@ -3,38 +3,37 @@
 {% block title %}{{ "Edit Player" if player else "New Player" }}{% endblock %}
 {% block meta_description %}{{ "Edit an existing player account." if player else "Create a new player account." }}{% endblock %}
 
-{% block body_class %}form-page player-form-page{% endblock %}
-
 {% block content %}
-<div class="form-container">
+<div class="max-w-lg mx-auto">
 
   {# ── Page Header ──────────────────────────────────────────────── #}
-  <header class="form-container__header">
-    <h1 class="form-container__title">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold text-indigo-400">
       {{ "Edit Player" if player else "New Player" }}
     </h1>
-    <a href="/dm/players" class="btn btn--ghost">← Back to Players</a>
-  </header>
+    <a href="/players" class="text-sm text-gray-400 hover:text-white transition-colors">
+      ← Back to Players
+    </a>
+  </div>
 
   {# ── Form ─────────────────────────────────────────────────────── #}
   <form
     method="POST"
-    action="{{ '/dm/players/' ~ player.id ~ '/edit' if player else '/dm/players/new' }}"
+    action="{{ '/players/' ~ player.id ~ '/edit' if player else '/players' }}"
     novalidate
     aria-label="{{ 'Edit player form' if player else 'New player form' }}"
+    class="flex flex-col gap-5"
   >
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
     {# ── Username ──────────────────────────────────────────────── #}
-    <div class="form-group {{ 'form-group--error' if errors.username }}">
-      <label class="form-label" for="username">
-        Username <span class="form-label__required" aria-hidden="true">*</span>
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold text-gray-400" for="username">
+        Username <span class="text-red-400" aria-hidden="true">*</span>
       </label>
       <input
         type="text"
         id="username"
         name="username"
-        class="input"
         value="{{ form.username or (player.username if player else '') }}"
         required
         minlength="3"
@@ -43,80 +42,85 @@
         aria-required="true"
         aria-describedby="{{ 'username-error' if errors.username else 'username-hint' }}"
         {% if player %}readonly{% endif %}
+        class="bg-gray-900 border {{ 'border-red-700' if errors.username else 'border-gray-700' }}
+               text-gray-100 text-sm rounded-lg px-3 py-2 w-full
+               focus:outline-none focus:border-indigo-500 transition-colors
+               {% if player %}opacity-60 cursor-not-allowed{% endif %}"
       />
       {% if player %}
-        <p id="username-hint" class="form-hint">
+        <p id="username-hint" class="text-xs text-gray-500">
           Usernames cannot be changed after creation.
         </p>
       {% endif %}
       {% if errors.username %}
-        <p id="username-error" class="form-error" role="alert">
+        <p id="username-error" class="text-xs text-red-400" role="alert">
           {{ errors.username }}
         </p>
       {% endif %}
     </div>
 
     {# ── Password ──────────────────────────────────────────────── #}
-    <div class="form-group {{ 'form-group--error' if errors.password }}">
-      <label class="form-label" for="password">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold text-gray-400" for="password">
         {% if player %}
           New Password
-          <span class="form-label__optional">(leave blank to keep current)</span>
+          <span class="text-gray-500 font-normal">(leave blank to keep current)</span>
         {% else %}
-          Password <span class="form-label__required" aria-hidden="true">*</span>
+          Password <span class="text-red-400" aria-hidden="true">*</span>
         {% endif %}
       </label>
-      <div class="input-group">
+      <div class="flex gap-2">
         <input
           type="password"
           id="password"
           name="password"
-          class="input"
           {% if not player %}required{% endif %}
           minlength="8"
           maxlength="128"
-          autocomplete="{{ 'new-password' }}"
+          autocomplete="new-password"
           aria-required="{{ 'true' if not player else 'false' }}"
           aria-describedby="{{ 'password-error' if errors.password else 'password-hint' }}"
+          class="flex-1 bg-gray-900 border {{ 'border-red-700' if errors.password else 'border-gray-700' }}
+                 text-gray-100 text-sm rounded-lg px-3 py-2
+                 focus:outline-none focus:border-indigo-500 transition-colors"
         />
         <button
           type="button"
-          class="input-group__addon btn btn--ghost btn--sm"
-          aria-label="Toggle password visibility"
           data-toggle-password="password"
+          aria-label="Toggle password visibility"
+          class="px-3 py-2 rounded-lg border border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors text-sm"
         >👁</button>
       </div>
-      <p id="password-hint" class="form-hint">
-        Minimum 8 characters.
-      </p>
+      <p id="password-hint" class="text-xs text-gray-500">Minimum 8 characters.</p>
       {% if errors.password %}
-        <p id="password-error" class="form-error" role="alert">
-          {{ errors.password }}
-        </p>
+        <p id="password-error" class="text-xs text-red-400" role="alert">{{ errors.password }}</p>
       {% endif %}
     </div>
 
     {# ── Confirm Password ──────────────────────────────────────── #}
-    <div class="form-group {{ 'form-group--error' if errors.confirm_password }}">
-      <label class="form-label" for="confirm_password">
-        {% if player %}Confirm New Password{% else %}
-          Confirm Password
-          <span class="form-label__required" aria-hidden="true">*</span>
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold text-gray-400" for="confirm_password">
+        {% if player %}
+          Confirm New Password
+        {% else %}
+          Confirm Password <span class="text-red-400" aria-hidden="true">*</span>
         {% endif %}
       </label>
       <input
         type="password"
         id="confirm_password"
         name="confirm_password"
-        class="input"
         {% if not player %}required{% endif %}
         maxlength="128"
         autocomplete="new-password"
         aria-required="{{ 'true' if not player else 'false' }}"
         aria-describedby="{{ 'confirm-password-error' if errors.confirm_password }}"
+        class="bg-gray-900 border {{ 'border-red-700' if errors.confirm_password else 'border-gray-700' }}
+               text-gray-100 text-sm rounded-lg px-3 py-2 w-full
+               focus:outline-none focus:border-indigo-500 transition-colors"
       />
       {% if errors.confirm_password %}
-        <p id="confirm-password-error" class="form-error" role="alert">
+        <p id="confirm-password-error" class="text-xs text-red-400" role="alert">
           {{ errors.confirm_password }}
         </p>
       {% endif %}
@@ -124,16 +128,18 @@
 
     {# ── Assign Character (edit only) ──────────────────────────── #}
     {% if player %}
-    <div class="form-group {{ 'form-group--error' if errors.character_id }}">
-      <label class="form-label" for="character_id">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold text-gray-400" for="character_id">
         Assigned Character
-        <span class="form-label__optional">(optional)</span>
+        <span class="text-gray-500 font-normal">(optional)</span>
       </label>
       <select
         id="character_id"
         name="character_id"
-        class="input"
         aria-describedby="{{ 'character-error' if errors.character_id else 'character-hint' }}"
+        class="bg-gray-900 border {{ 'border-red-700' if errors.character_id else 'border-gray-700' }}
+               text-gray-100 text-sm rounded-lg px-3 py-2 w-full
+               focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
       >
         <option value="">— Unassigned —</option>
         {% for character in all_characters %}
@@ -149,33 +155,41 @@
           </option>
         {% endfor %}
       </select>
-      <p id="character-hint" class="form-hint">
+      <p id="character-hint" class="text-xs text-gray-500">
         Only unassigned characters are available to select.
       </p>
       {% if errors.character_id %}
-        <p id="character-error" class="form-error" role="alert">
-          {{ errors.character_id }}
-        </p>
+        <p id="character-error" class="text-xs text-red-400" role="alert">{{ errors.character_id }}</p>
       {% endif %}
     </div>
     {% endif %}
 
     {# ── Form Actions ──────────────────────────────────────────── #}
-    <div class="form-actions">
-      <button type="submit" class="btn btn--primary">
+    <div class="flex items-center gap-3 pt-2 flex-wrap">
+      <button
+        type="submit"
+        class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+      >
         {{ "Save Changes" if player else "Create Player" }}
       </button>
-      <a href="/dm/players" class="btn btn--ghost">Cancel</a>
+      <a
+        href="/players"
+        class="text-sm px-4 py-2 rounded-lg border border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
+      >
+        Cancel
+      </a>
 
       {% if player %}
       <form
         method="POST"
-        action="/dm/players/{{ player.id }}/delete"
-        class="form-actions__danger"
+        action="/players/{{ player.id }}/delete"
+        class="ml-auto"
         onsubmit="return confirm('Permanently delete player {{ player.username }}? This cannot be undone.')"
       >
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <button type="submit" class="btn btn--danger">
+        <button
+          type="submit"
+          class="text-sm px-4 py-2 rounded-lg border border-red-900 text-red-400 hover:bg-red-900 hover:text-red-200 transition-colors"
+        >
           🗑 Delete Player
         </button>
       </form>
