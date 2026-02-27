@@ -1,0 +1,7 @@
+<div class="text-center py-16 text-gray-500">
+    <div class="text-5xl mb-4">{{ icon | default("📭") }}</div>
+    <p class="text-lg font-medium text-gray-400">{{ message }}</p>
+    {% if subtext %}
+    <p class="text-sm mt-1">{{ subtext }}</p>
+    {% endif %}
+</div>

@@ -1,8 +1,8 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     settings = get_settings()
     logger.info("🚀 Starting DnD Campaign Manager [env=%s]", settings.app_env)
-
     try:
         async with engine.connect() as conn:
             await conn.execute(__import__("sqlalchemy").text("SELECT 1"))
@@ -26,7 +25,6 @@ async def lifespan(app: FastAPI):
         logger.critical("❌ Cannot connect to database: %s", e)
         raise
 
-    # Seed the DM user if none exists
     async with async_session_factory() as db:
         await seed_dm_user(db)
 
@@ -48,20 +46,25 @@ def create_app() -> FastAPI:
     )
 
     app.mount("/static", StaticFiles(directory="app/static", check_dir=False), name="static")
-
     _register_routes(app)
     return app
 
 
 def _register_routes(app: FastAPI) -> None:
-    from fastapi import Request
     from app.handlers.auth_handler import router as auth_router
+    from app.handlers.campaign_handler import router as campaign_router
 
     app.include_router(auth_router)
+    app.include_router(campaign_router)
 
     @app.get("/health", tags=["System"])
     async def health_check():
         return JSONResponse({"status": "ok", "service": "dnd-campaign-manager"})
+
+    @app.get("/")
+    async def root():
+        # Root always redirects to campaign list — the real home page
+        return RedirectResponse(url="/campaigns")
 
 
 app = create_app()
