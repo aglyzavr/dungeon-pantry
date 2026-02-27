@@ -26,38 +26,63 @@
   >
 
     {# ── Username ──────────────────────────────────────────────── #}
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-semibold text-gray-400" for="username">
-        Username <span class="text-red-400" aria-hidden="true">*</span>
-      </label>
-      <input
-        type="text"
-        id="username"
-        name="username"
-        value="{{ form.username or (player.username if player else '') }}"
-        required
-        minlength="3"
-        maxlength="32"
-        autocomplete="username"
-        aria-required="true"
-        aria-describedby="{{ 'username-error' if errors.username else 'username-hint' }}"
-        {% if player %}readonly{% endif %}
-        class="bg-gray-900 border {{ 'border-red-700' if errors.username else 'border-gray-700' }}
-               text-gray-100 text-sm rounded-lg px-3 py-2 w-full
-               focus:outline-none focus:border-indigo-500 transition-colors
-               {% if player %}opacity-60 cursor-not-allowed{% endif %}"
-      />
-      {% if player %}
-        <p id="username-hint" class="text-xs text-gray-500">
-          Usernames cannot be changed after creation.
-        </p>
-      {% endif %}
-      {% if errors.username %}
-        <p id="username-error" class="text-xs text-red-400" role="alert">
-          {{ errors.username }}
-        </p>
-      {% endif %}
+<div class="flex flex-col gap-1">
+  <label class="text-sm font-semibold text-gray-400" for="username">
+    Username
+    {% if not player %}<span class="text-red-400" aria-hidden="true">*</span>{% endif %}
+  </label>
+
+  {% if player %}
+  {# Edit mode — disabled with tooltip #}
+  <div class="relative group">
+    <input
+      type="text"
+      id="username"
+      name="username"
+      value="{{ player.username }}"
+      disabled
+      class="bg-gray-900 border border-gray-700 text-gray-500
+             text-sm rounded-lg px-3 py-2 w-full
+             opacity-60 cursor-not-allowed"
+    />
+    <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-10">
+      <div class="bg-gray-700 text-gray-200 text-xs rounded-lg px-3 py-2
+                  whitespace-nowrap shadow-lg">
+        🔒 Username changes will be available in a future update
+        <div class="absolute top-full left-4 border-4 border-transparent
+                    border-t-gray-700"></div>
+      </div>
     </div>
+  </div>
+  <p class="text-xs text-gray-600">Usernames cannot be changed at this time.</p>
+
+  {% else %}
+  {# Create mode — fully editable #}
+  <input
+    type="text"
+    id="username"
+    name="username"
+    value="{{ form.username or '' }}"
+    required
+    minlength="3"
+    maxlength="32"
+    autocomplete="username"
+    aria-required="true"
+    aria-describedby="{{ 'username-error' if errors.username else 'username-hint' }}"
+    class="bg-gray-900 border {{ 'border-red-700' if errors.username else 'border-gray-700' }}
+           text-gray-100 text-sm rounded-lg px-3 py-2 w-full
+           focus:outline-none focus:border-indigo-500 transition-colors"
+  />
+  <p id="username-hint" class="text-xs text-gray-500">Between 3 and 32 characters.</p>
+  {% if errors.username %}
+    <p id="username-error" class="text-xs text-red-400" role="alert">
+      {{ errors.username }}
+    </p>
+  {% endif %}
+  {% endif %}
+
+</div>
+
 
     {# ── Password ──────────────────────────────────────────────── #}
     <div class="flex flex-col gap-1">
@@ -126,44 +151,6 @@
       {% endif %}
     </div>
 
-    {# ── Assign Character (edit only) ──────────────────────────── #}
-    {% if player %}
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-semibold text-gray-400" for="character_id">
-        Assigned Character
-        <span class="text-gray-500 font-normal">(optional)</span>
-      </label>
-      <select
-        id="character_id"
-        name="character_id"
-        aria-describedby="{{ 'character-error' if errors.character_id else 'character-hint' }}"
-        class="bg-gray-900 border {{ 'border-red-700' if errors.character_id else 'border-gray-700' }}
-               text-gray-100 text-sm rounded-lg px-3 py-2 w-full
-               focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
-      >
-        <option value="">— Unassigned —</option>
-        {% for character in all_characters %}
-          <option
-            value="{{ character.id }}"
-            {% if character.owner_id == player.id %}selected{% endif %}
-            {% if character.owner_id and character.owner_id != player.id %}disabled{% endif %}
-          >
-            {{ character.name }}
-            {% if character.owner_id and character.owner_id != player.id %}
-              (assigned to another player)
-            {% endif %}
-          </option>
-        {% endfor %}
-      </select>
-      <p id="character-hint" class="text-xs text-gray-500">
-        Only unassigned characters are available to select.
-      </p>
-      {% if errors.character_id %}
-        <p id="character-error" class="text-xs text-red-400" role="alert">{{ errors.character_id }}</p>
-      {% endif %}
-    </div>
-    {% endif %}
-
     {# ── Form Actions ──────────────────────────────────────────── #}
     <div class="flex items-center gap-3 pt-2 flex-wrap">
       <button
@@ -172,28 +159,6 @@
       >
         {{ "Save Changes" if player else "Create Player" }}
       </button>
-      <a
-        href="/players"
-        class="text-sm px-4 py-2 rounded-lg border border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
-      >
-        Cancel
-      </a>
-
-      {% if player %}
-      <form
-        method="POST"
-        action="/players/{{ player.id }}/delete"
-        class="ml-auto"
-        onsubmit="return confirm('Permanently delete player {{ player.username }}? This cannot be undone.')"
-      >
-        <button
-          type="submit"
-          class="text-sm px-4 py-2 rounded-lg border border-red-900 text-red-400 hover:bg-red-900 hover:text-red-200 transition-colors"
-        >
-          🗑 Delete Player
-        </button>
-      </form>
-      {% endif %}
     </div>
 
   </form>

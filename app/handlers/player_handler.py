@@ -127,3 +127,77 @@ async def player_delete(
     except PlayerNotFound:
         pass
     return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)
+
+# ── Edit form ─────────────────────────────────────────────────────────────
+
+@router.get("/{player_id}/edit", response_class=HTMLResponse)
+async def player_edit_form(
+    player_id: UUID,
+    request: Request,
+    current_user: UserSession = Depends(require_dm),
+    service: PlayerService = Depends(_service),
+):
+    try:
+        player = await service.get_player(player_id)
+    except PlayerNotFound:
+        return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)
+
+    all_characters = await service.get_all_characters()
+    return templates.TemplateResponse("players/form.html", {
+        "request": request,
+        "current_user": current_user,
+        "player": player,
+        "form": {},
+        "errors": {},
+        "messages": [],
+        "all_characters": all_characters,
+    })
+
+
+# ── Update ────────────────────────────────────────────────────────────────
+
+@router.post("/{player_id}/edit", response_class=HTMLResponse)
+async def player_update(
+    player_id: UUID,
+    request: Request,
+    current_user: UserSession = Depends(require_dm),
+    password: str = Form(""),
+    confirm_password: str = Form(""),
+    character_id: str = Form(""),
+    service: PlayerService = Depends(_service),
+):
+    errors = {}
+
+    try:
+        player = await service.get_player(player_id)
+    except PlayerNotFound:
+        return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Validate password only if provided
+    if password:
+        if len(password) < 8:
+            errors["password"] = "Password must be at least 8 characters."
+        elif password != confirm_password:
+            errors["confirm_password"] = "Passwords do not match."
+
+    if errors:
+        all_characters = await service.get_all_characters()
+        return templates.TemplateResponse("players/form.html", {
+            "request": request,
+            "current_user": current_user,
+            "player": player,
+            "form": {},
+            "errors": errors,
+            "messages": [],
+            "all_characters": all_characters,
+        }, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    # Update password if provided
+    if password:
+        await service.update_password(player_id, password)
+
+    # Update character assignment
+    parsed_character_id = UUID(character_id) if character_id else None
+    await service.assign_character(player_id, parsed_character_id)
+
+    return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)

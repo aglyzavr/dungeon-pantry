@@ -24,7 +24,7 @@ class PlayerService:
     async def list_players(self) -> list[User]:
         result = await self._db.execute(
             select(User)
-            .where(User.role == "player")          # ← was User.is_dm == False
+            .where(User.role == "player")
             .order_by(User.created_at.desc())
         )
         return list(result.scalars().all())
@@ -33,7 +33,7 @@ class PlayerService:
         result = await self._db.execute(
             select(User).where(
                 User.id == player_id,
-                User.role == "player",             # ← was User.is_dm == False
+                User.role == "player",
             )
         )
         user = result.scalar_one_or_none()
@@ -51,12 +51,17 @@ class PlayerService:
             )
         user = User(
             username=data.username,
-            password_hash=hash_password(data.password),  # ← was hashed_password
+            password_hash=hash_password(data.password),
             role="player",
         )
         self._db.add(user)
         await self._db.flush()
         return user
+
+    async def update_password(self, player_id: UUID, new_password: str) -> None:
+        user = await self.get_player(player_id)
+        user.password_hash = hash_password(new_password)
+        await self._db.flush()
 
     async def delete_player(self, player_id: UUID) -> None:
         user = await self.get_player(player_id)
@@ -64,15 +69,24 @@ class PlayerService:
         await self._db.flush()
 
     async def assign_character(
-        self, player_id: UUID, character_id: UUID
+        self, player_id: UUID, character_id: UUID | None
     ) -> None:
+        # Unassign any character currently owned by this player
         result = await self._db.execute(
-            select(Character).where(Character.id == character_id)
+            select(Character).where(Character.owner_id == player_id)
         )
-        character = result.scalar_one_or_none()
-        if character is None:
-            return
-        character.owner_id = player_id
+        for character in result.scalars().all():
+            character.owner_id = None
+
+        # Assign the new character if provided
+        if character_id is not None:
+            result = await self._db.execute(
+                select(Character).where(Character.id == character_id)
+            )
+            character = result.scalar_one_or_none()
+            if character:
+                character.owner_id = player_id
+
         await self._db.flush()
 
     async def get_all_characters(self) -> list[Character]:
