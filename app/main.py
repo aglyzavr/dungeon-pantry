@@ -53,9 +53,11 @@ def create_app() -> FastAPI:
 def _register_routes(app: FastAPI) -> None:
     from app.handlers.auth_handler import router as auth_router
     from app.handlers.campaign_handler import router as campaign_router
+    from app.handlers.character_handler import router as character_router
 
     app.include_router(auth_router)
     app.include_router(campaign_router)
+    app.include_router(character_router)
 
     @app.get("/health", tags=["System"])
     async def health_check():

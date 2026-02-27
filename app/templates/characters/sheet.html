@@ -1,0 +1,592 @@
+{% extends "layout.html" %}
+{% block title %}{{ sheet.character_identity.character_name }} — DnD Manager{% endblock %}
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto pb-24 lg:pb-8">
+
+  <!-- ── HEADER ──────────────────────────────────────────────────────── -->
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 mb-4 lg:mb-6">
+    <div class="flex items-start justify-between gap-4 mb-4">
+      <div>
+        <h1 class="text-2xl lg:text-3xl font-bold text-white leading-tight">
+          {{ sheet.character_identity.character_name }}
+        </h1>
+        <p class="text-sm text-gray-400 mt-1">
+          {{ sheet.character_identity.species }} ·
+          {{ sheet.character_identity['class'].name }}
+          {%- if sheet.character_identity['class'].subclass %}
+            <span class="text-gray-500">({{ sheet.character_identity['class'].subclass }})</span>
+          {%- endif %} ·
+          <span class="text-indigo-400">Level {{ sheet.character_level.level }}</span>
+          {%- if sheet.character_identity.background %} · {{ sheet.character_identity.background }}{%- endif %}
+        </p>
+      </div>
+      {% if current_user.is_dm %}
+      <form method="post" action="/characters/{{ character.id }}/delete"
+            onsubmit="return confirm('Permanently delete this character?')">
+        <button class="px-3 py-1.5 text-xs bg-red-900/40 hover:bg-red-800
+                       text-red-300 rounded-lg transition-colors shrink-0">
+          Delete
+        </button>
+      </form>
+      {% endif %}
+    </div>
+
+    <!-- Combat stats strip -->
+    <div class="grid grid-cols-4 sm:grid-cols-5 gap-2 lg:gap-3">
+      {% for label, value in [
+        ("AC",            sheet.armor_class),
+        ("Initiative",    sheet.initiative),
+        ("Speed",         sheet.speed),
+        ("Prof. Bonus",   "+" ~ sheet.proficiency_bonus),
+        ("Passive Perc.", sheet.passive_perception)
+      ] %}
+      <div class="bg-gray-800 rounded-xl p-2 lg:p-3 text-center
+                  {{ 'hidden sm:block' if loop.index == 5 else '' }}">
+        <div class="text-xs text-gray-500 truncate">{{ label }}</div>
+        <div class="text-xl lg:text-2xl font-bold text-white mt-0.5">{{ value }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ── VITALS ──────────────────────────────────────────────────────── -->
+  <div class="mb-4 lg:mb-6">
+    {% include "characters/_vitals.html" %}
+  </div>
+
+  <!-- ── TAB SYSTEM ─────────────────────────────────────────────────── -->
+  <div x-data="{ tab: 'stats', spellFilter: 'all' }">
+
+    <!-- Desktop tab bar -->
+    <div class="hidden lg:flex gap-1 bg-gray-900 border border-gray-800
+                rounded-xl p-1 mb-4">
+      {% for t, label, icon in [
+        ('stats',     'Stats',     '🎲'),
+        ('actions',   'Actions',   '⚔️'),
+        ('spells',    'Spells',    '✨'),
+        ('inventory', 'Inventory', '🎒'),
+        ('bio',       'Bio',       '📖')
+      ] %}
+      <button @click="tab = '{{ t }}'"
+              :class="tab === '{{ t }}'
+                ? 'bg-indigo-600 text-white shadow'
+                : 'text-gray-400 hover:text-white hover:bg-gray-800'"
+              class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4
+                     rounded-lg text-sm font-medium transition-all">
+        <span>{{ icon }}</span><span>{{ label }}</span>
+      </button>
+      {% endfor %}
+    </div>
+
+    <!-- ── TAB: STATS ─────────────────────────────────────────────── -->
+    <div x-show="tab === 'stats'" x-cloak>
+      <div class="grid lg:grid-cols-[280px_1fr] gap-4">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="space-y-4">
+
+          <!-- Ability Scores 2×3 -->
+          <div class="bg-gray-900 border border-gray-800 rounded-xl p-4">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase
+                       tracking-wider mb-3">Ability Scores</h3>
+            <div class="grid grid-cols-3 gap-2">
+              {% for label, short, ability in [
+                ("Strength",     "STR", sheet.strength),
+                ("Dexterity",    "DEX", sheet.dexterity),
+                ("Constitution", "CON", sheet.constitution),
+                ("Intelligence", "INT", sheet.intelligence),
+                ("Wisdom",       "WIS", sheet.wisdom),
+                ("Charisma",     "CHA", sheet.charisma)
+              ] %}
+              <div class="bg-gray-800 rounded-xl p-2 text-center border border-gray-700">
+                <div class="text-xs font-semibold text-gray-500">{{ short }}</div>
+                <div class="text-2xl font-bold text-white leading-none my-1">
+                  {{ "+" if ability.modifier >= 0 else "" }}{{ ability.modifier }}
+                </div>
+                <div class="text-xs bg-gray-900 rounded-md py-0.5 font-mono
+                            text-gray-300 border border-gray-700">
+                  {{ ability.score }}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Senses -->
+          <div class="bg-gray-900 border border-gray-800 rounded-xl p-4">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase
+                       tracking-wider mb-3">Senses</h3>
+            <div class="space-y-2">
+              {% for label, val in [
+                ("Passive Perception",    sheet.passive_perception),
+                ("Passive Investigation", sheet.get("passive_investigation", 10)),
+                ("Passive Insight",       sheet.get("passive_insight", 10))
+              ] %}
+              <div class="flex items-center gap-3 bg-gray-800 rounded-lg px-3 py-2">
+                <span class="text-base font-bold text-white w-8 text-center">
+                  {{ val }}
+                </span>
+                <span class="text-xs text-gray-400 uppercase tracking-wide">
+                  {{ label }}
+                </span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Proficiencies & Training -->
+          {% set prof = sheet.equipment_training_proficiencies %}
+          <div class="bg-gray-900 border border-gray-800 rounded-xl p-4">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase
+                       tracking-wider mb-3">Proficiencies & Training</h3>
+            <div class="space-y-3 text-sm">
+              {% for label, items in [
+                ("Armor",   prof.armor_training),
+                ("Weapons", prof.weapons),
+                ("Tools",   prof.tools)
+              ] %}
+              {% if items %}
+              <div>
+                <div class="text-xs text-gray-600 uppercase tracking-wide mb-1">
+                  {{ label }}
+                </div>
+                <p class="text-gray-300">{{ items | join(", ") }}</p>
+              </div>
+              {% endif %}
+              {% endfor %}
+              {% if sheet.languages %}
+              <div>
+                <div class="text-xs text-gray-600 uppercase tracking-wide mb-1">
+                  Languages
+                </div>
+                <p class="text-gray-300">{{ sheet.languages }}</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT PANEL: Per-ability cards with saving throw + skills -->
+        <div class="space-y-3">
+          {% set ability_blocks = [
+            ("STRENGTH",     "STR", sheet.strength, [
+              ("Athletics", sheet.strength.ability_scores.athletics)
+            ]),
+            ("DEXTERITY",    "DEX", sheet.dexterity, [
+              ("Acrobatics",       sheet.dexterity.ability_scores.acrobatics),
+              ("Sleight of Hand",  sheet.dexterity.ability_scores.sleight_of_hand),
+              ("Stealth",          sheet.dexterity.ability_scores.stealth)
+            ]),
+            ("CONSTITUTION", "CON", sheet.constitution, []),
+            ("INTELLIGENCE", "INT", sheet.intelligence, [
+              ("Arcana",        sheet.intelligence.ability_scores.arcana),
+              ("History",       sheet.intelligence.ability_scores.history),
+              ("Investigation", sheet.intelligence.ability_scores.investigation),
+              ("Nature",        sheet.intelligence.ability_scores.nature),
+              ("Religion",      sheet.intelligence.ability_scores.religion)
+            ]),
+            ("WISDOM", "WIS", sheet.wisdom, [
+              ("Animal Handling", sheet.wisdom.ability_scores.animal_handling),
+              ("Insight",         sheet.wisdom.ability_scores.insight),
+              ("Medicine",        sheet.wisdom.ability_scores.medicine),
+              ("Perception",      sheet.wisdom.ability_scores.perception),
+              ("Survival",        sheet.wisdom.ability_scores.survival)
+            ]),
+            ("CHARISMA", "CHA", sheet.charisma, [
+              ("Deception",    sheet.charisma.ability_scores.deception),
+              ("Intimidation", sheet.charisma.ability_scores.intimidation),
+              ("Performance",  sheet.charisma.ability_scores.performance),
+              ("Persuasion",   sheet.charisma.ability_scores.persuasion)
+            ])
+          ] %}
+
+          {% for full_name, short, ability, skills in ability_blocks %}
+          {% set save_prof = ability.get("saving_throw_proficient", false) %}
+          <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+
+            <!-- Ability header -->
+            <div class="flex items-center gap-4 px-4 py-3
+                        bg-gray-800/60 border-b border-gray-800">
+              <div class="flex items-center gap-3">
+                <div class="text-center min-w-[2.5rem]">
+                  <div class="text-2xl font-bold text-white leading-none">
+                    {{ "+" if ability.modifier >= 0 else "" }}{{ ability.modifier }}
+                  </div>
+                </div>
+                <div class="bg-gray-900 border border-gray-700 rounded-lg
+                            px-2.5 py-1 text-center min-w-[2.5rem]">
+                  <div class="text-xs text-gray-500 leading-none mb-0.5">score</div>
+                  <div class="text-sm font-bold text-white leading-none">
+                    {{ ability.score }}
+                  </div>
+                </div>
+              </div>
+              <div class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
+                {{ full_name }}
+              </div>
+            </div>
+
+            <!-- Saving throw -->
+            <div class="flex items-center justify-between px-4 py-2
+                        border-b border-gray-800/60 bg-gray-800/20">
+              <div class="flex items-center gap-2">
+                <span class="{{ 'text-indigo-400' if save_prof else 'text-gray-600' }}
+                               text-sm leading-none">
+                  {{ "●" if save_prof else "○" }}
+                </span>
+                <span class="text-xs text-gray-500">Saving Throw</span>
+              </div>
+              <span class="text-sm font-semibold
+                {{ 'text-green-400' if ability.saving_throw > 0
+                   else 'text-red-400' if ability.saving_throw < 0
+                   else 'text-gray-400' }}">
+                {{ "+" if ability.saving_throw >= 0 else "" }}{{ ability.saving_throw }}
+              </span>
+            </div>
+
+            <!-- Skills -->
+            {% if skills %}
+            <div class="divide-y divide-gray-800/40">
+              {% for skill_name, s in skills %}
+              {% set bonus   = s.bonus      if s is mapping else (s | default(0)) %}
+              {% set is_prof = s.proficient if s is mapping else false %}
+              {% set is_exp  = s.expertise  if s is mapping else false %}
+              <div class="flex items-center justify-between px-4 py-2.5
+                          hover:bg-gray-800/30 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="{{ 'text-yellow-400' if is_exp
+                                  else 'text-indigo-400' if is_prof
+                                  else 'text-gray-600' }} text-sm leading-none">
+                    {{ "★" if is_exp else "●" if is_prof else "○" }}
+                  </span>
+                  <span class="text-sm {{ 'text-white font-medium' if is_prof or is_exp
+                                           else 'text-gray-400' }}">
+                    {{ skill_name }}
+                  </span>
+                </div>
+                <span class="text-sm font-semibold
+                  {{ 'text-green-400' if bonus | int > 0
+                     else 'text-red-400'  if bonus | int < 0
+                     else 'text-gray-400' }}">
+                  {{ "+" if bonus | int >= 0 else "" }}{{ bonus }}
+                </span>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="px-4 py-2.5 text-xs text-gray-600 italic">
+              No associated skills
+            </div>
+            {% endif %}
+
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── TAB: ACTIONS ──────────────────────────────────────────────── -->
+    <div x-show="tab === 'actions'" x-cloak class="space-y-4">
+
+      {% if sheet.weapons_damage_cantrips %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
+          <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Attacks & Cantrips
+          </h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="text-xs text-gray-600 uppercase bg-gray-800/30">
+              <tr>
+                <th class="text-left px-4 py-2">Name</th>
+                <th class="text-left px-4 py-2">Atk / DC</th>
+                <th class="text-left px-4 py-2">Damage & Type</th>
+                <th class="text-left px-4 py-2 hidden sm:table-cell">Notes</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800">
+              {% for w in sheet.weapons_damage_cantrips %}
+              {% if w.name %}
+              <tr class="hover:bg-gray-800/40 transition-colors">
+                <td class="px-4 py-3 font-medium text-white">{{ w.name }}</td>
+                <td class="px-4 py-3 text-indigo-400 font-mono">{{ w.atk_bonus_or_dc }}</td>
+                <td class="px-4 py-3 text-gray-300">{{ w.damage_and_type }}</td>
+                <td class="px-4 py-3 text-gray-500 hidden sm:table-cell">{{ w.notes }}</td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if sheet.class_features %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Class Features
+        </h3>
+        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
+          {{ sheet.class_features }}
+        </p>
+      </div>
+      {% endif %}
+
+      {% if sheet.species_traits %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Species Traits
+        </h3>
+        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
+          {{ sheet.species_traits }}
+        </p>
+      </div>
+      {% endif %}
+
+      {% if sheet.feats %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Feats
+        </h3>
+        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
+          {{ sheet.feats }}
+        </p>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- ── TAB: SPELLS ────────────────────────────────────────────────── -->
+    <div x-show="tab === 'spells'" x-cloak class="space-y-4">
+
+      {% set sc = sheet.spellcasting_ability %}
+      {% if sc.ability %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-4">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Spellcasting
+        </h3>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          {% for label, val in [
+            ("Ability",       sc.ability),
+            ("Spell Save DC", sc.spell_save_dc),
+            ("Attack Bonus",  "+" ~ sc.spell_attack_bonus)
+          ] %}
+          <div class="bg-gray-800 rounded-xl py-3 px-2">
+            <div class="text-xs text-gray-500 mb-1">{{ label }}</div>
+            <div class="text-xl font-bold text-white">{{ val }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if sheet.cantrips_and_prepared_spells | length > 0 %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+
+        <!-- Spell level sub-tab filter -->
+        <div class="flex gap-1 overflow-x-auto p-2 border-b border-gray-800
+                    scrollbar-none">
+          <button @click="spellFilter = 'all'"
+                  :class="spellFilter === 'all'
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-gray-400 hover:text-white bg-gray-800'"
+                  class="px-3 py-1.5 rounded-lg text-xs font-medium
+                         transition-colors whitespace-nowrap">
+            All
+          </button>
+          {% set levels_seen = namespace(vals=[]) %}
+          {% for spell in sheet.cantrips_and_prepared_spells %}
+            {% set lvl = spell.level | string %}
+            {% if lvl not in levels_seen.vals %}
+              {% set levels_seen.vals = levels_seen.vals + [lvl] %}
+              <button @click="spellFilter = '{{ lvl }}'"
+                      :class="spellFilter === '{{ lvl }}'
+                        ? 'bg-indigo-600 text-white'
+                        : 'text-gray-400 hover:text-white bg-gray-800'"
+                      class="px-3 py-1.5 rounded-lg text-xs font-medium
+                             transition-colors whitespace-nowrap">
+                {{ "Cantrips" if lvl == "0" or lvl == "cantrip"
+                   else "Level " ~ lvl }}
+              </button>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <!-- Spell rows -->
+        <div class="divide-y divide-gray-800">
+          {% for spell in sheet.cantrips_and_prepared_spells %}
+          {% set lvl = spell.level | string %}
+          <div x-show="spellFilter === 'all' || spellFilter === '{{ lvl }}'"
+               class="px-4 py-3 hover:bg-gray-800/40 transition-colors">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-medium text-white text-sm">{{ spell.name }}</span>
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-900/50
+                               text-indigo-300">
+                    {{ "Cantrip" if lvl == "0" or lvl == "cantrip"
+                       else "Lv." ~ lvl }}
+                  </span>
+                  {% if spell.crrm %}
+                    {% if spell.crrm.concentration %}
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-900/40
+                                 text-yellow-300">C</span>
+                    {% endif %}
+                    {% if spell.crrm.ritual %}
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-purple-900/40
+                                 text-purple-300">R</span>
+                    {% endif %}
+                  {% endif %}
+                </div>
+                <div class="flex gap-4 mt-1 text-xs text-gray-500">
+                  {% if spell.casting_time %}<span>⏱ {{ spell.casting_time }}</span>{% endif %}
+                  {% if spell.range %}<span>📏 {{ spell.range }}</span>{% endif %}
+                </div>
+                {% if spell.notes %}
+                <p class="text-xs text-gray-500 mt-1 leading-relaxed">{{ spell.notes }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+      {% else %}
+      <div class="text-center py-16 text-gray-600">
+        <div class="text-4xl mb-3">✨</div>
+        <p class="text-gray-500">No spells prepared</p>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- ── TAB: INVENTORY ─────────────────────────────────────────────── -->
+    <div x-show="tab === 'inventory'" x-cloak class="space-y-4">
+
+      {% if sheet.equipment.equipment_list %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Equipment
+        </h3>
+        <ul class="grid sm:grid-cols-2 gap-1.5">
+          {% for item in sheet.equipment.equipment_list %}
+          {% if item %}
+          <li class="flex items-start gap-2 text-sm">
+            <span class="text-gray-600 mt-0.5">•</span>
+            <span class="text-gray-300">{{ item }}</span>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% set magic = sheet.equipment.magic_item_attunement | selectattr("name") | list %}
+      {% if magic %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Magic Items & Attunement
+        </h3>
+        <div class="space-y-2">
+          {% for item in magic %}
+          {% if item.name %}
+          <div class="flex items-center justify-between py-2 px-3 bg-gray-800
+                      rounded-lg text-sm">
+            <span class="text-gray-300">{{ item.name }}</span>
+            <span class="{{ 'text-yellow-400' if item.is_attuned else 'text-gray-600' }}
+                        text-xs">
+              {{ "⚡ Attuned" if item.is_attuned else "Not attuned" }}
+            </span>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% set c = sheet.coins %}
+      {% if c.cp or c.sp or c.ep or c.gp or c.pp %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+          Currency
+        </h3>
+        <div class="grid grid-cols-5 gap-2 text-center">
+          {% for label, val, color, bg in [
+            ("CP", c.cp, "text-orange-300", "bg-orange-900/30"),
+            ("SP", c.sp, "text-gray-300",   "bg-gray-800"),
+            ("EP", c.ep, "text-blue-300",   "bg-blue-900/30"),
+            ("GP", c.gp, "text-yellow-400", "bg-yellow-900/30"),
+            ("PP", c.pp, "text-purple-300", "bg-purple-900/30")
+          ] %}
+          <div class="{{ bg }} rounded-xl py-3 border border-gray-700">
+            <div class="text-lg font-bold {{ color }}">{{ val }}</div>
+            <div class="text-xs text-gray-500 mt-0.5">{{ label }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- ── TAB: BIO ────────────────────────────────────────────────────── -->
+    <div x-show="tab === 'bio'" x-cloak class="space-y-4">
+
+      {% set bp = sheet.backstory_and_personality %}
+      {% for label, val, wide in [
+        ("Appearance",  sheet.appearance,  false),
+        ("Personality", bp.personality,    false),
+        ("Alignment",   bp.alignment,      false),
+        ("Backstory",   bp.backstory,      true)
+      ] %}
+      {% if val %}
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5
+                  {{ 'sm:col-span-2' if wide else '' }}">
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          {{ label }}
+        </h3>
+        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
+          {{ val }}
+        </p>
+      </div>
+      {% endif %}
+      {% endfor %}
+
+    </div>
+
+  </div><!-- end x-data -->
+
+</div>
+
+<!-- ── MOBILE BOTTOM NAV ──────────────────────────────────────────────── -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 lg:hidden
+            bg-gray-900/95 backdrop-blur border-t border-gray-800">
+  <div class="flex">
+    {% for t, label, icon in [
+      ('stats',     'Stats',    '🎲'),
+      ('actions',   'Actions',  '⚔️'),
+      ('spells',    'Spells',   '✨'),
+      ('inventory', 'Bag',      '🎒'),
+      ('bio',       'Bio',      '📖')
+    ] %}
+    <button onclick="
+        document.querySelector('[x-data]').__x.$data.tab = '{{ t }}';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      "
+      class="flex-1 flex flex-col items-center justify-center
+             py-3 gap-0.5 text-gray-500 hover:text-white
+             transition-colors active:scale-95">
+      <span class="text-lg leading-none">{{ icon }}</span>
+      <span class="text-xs">{{ label }}</span>
+    </button>
+    {% endfor %}
+  </div>
+</nav>
+
+{% endblock %}

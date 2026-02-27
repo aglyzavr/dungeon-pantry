@@ -162,3 +162,57 @@ async def campaign_delete(
     except CampaignNotFound:
         pass
     return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+# ── Character assignment ──────────────────────────────────────────────────────
+
+@router.get("/{campaign_id}/add-characters", response_class=HTMLResponse)
+async def add_characters_form(
+    request: Request,
+    campaign_id: UUID,
+    current_user: UserSession = Depends(require_dm),
+    service: CampaignService = Depends(_service),
+):
+    try:
+        campaign = await service.get_campaign(campaign_id)
+        available = await service.get_unassigned_characters(campaign_id)
+    except CampaignNotFound:
+        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse("campaigns/add_characters.html", {
+        "request": request,
+        "current_user": current_user,
+        "campaign": campaign,
+        "available": available,
+    })
+
+
+@router.post("/{campaign_id}/characters", response_class=HTMLResponse)
+async def assign_character(
+    campaign_id: UUID,
+    character_id: UUID = Form(...),
+    current_user: UserSession = Depends(require_dm),
+    service: CampaignService = Depends(_service),
+):
+    try:
+        await service.assign_character(campaign_id, character_id)
+    except CampaignNotFound:
+        pass
+    return RedirectResponse(
+        url=f"/campaigns/{campaign_id}", status_code=status.HTTP_303_SEE_OTHER
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/remove", response_class=HTMLResponse)
+async def remove_character(
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_dm),
+    service: CampaignService = Depends(_service),
+):
+    try:
+        await service.remove_character(campaign_id, character_id)
+    except CampaignNotFound:
+        pass
+    return RedirectResponse(
+        url=f"/campaigns/{campaign_id}", status_code=status.HTTP_303_SEE_OTHER
+    )
