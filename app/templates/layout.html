@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-950">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}DnD Campaign Manager{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<body class="h-full text-gray-100">
+
+    {% if current_user %}
+    <nav class="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold text-indigo-400 tracking-wide">⚔️ DnD Manager</a>
+        <div class="flex items-center gap-6 text-sm">
+            {% if current_user.is_dm %}
+            <a href="/characters" class="text-gray-300 hover:text-white">Characters</a>
+            <a href="/admin/users" class="text-gray-300 hover:text-white">Players</a>
+            {% endif %}
+            <span class="text-gray-500">{{ current_user.username }}
+                <span class="ml-1 text-xs px-2 py-0.5 rounded-full
+                    {% if current_user.is_dm %}bg-indigo-700 text-indigo-200
+                    {% else %}bg-gray-700 text-gray-300{% endif %}">
+                    {{ current_user.role }}
+                </span>
+            </span>
+            <form method="post" action="/logout">
+                <button type="submit"
+                    class="text-gray-400 hover:text-red-400 transition-colors">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="{% if current_user %}p-6{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>
