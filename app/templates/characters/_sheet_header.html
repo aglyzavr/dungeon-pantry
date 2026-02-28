@@ -6,15 +6,11 @@
         {# ── Avatar Section ─────────────────────────────────────────── #}
         <div class="sheet-header-avatar">
             {% if can_edit %}
-            <button
-                hx-get="/characters/{{ character.id }}/portrait/upload"
-                hx-target="body"
-                hx-swap="beforeend"
-                class="sheet-header-avatar-icon sheet-header-avatar-button"
-                title="Click to upload portrait"
-            >
+            <button hx-get="/characters/{{ character.id }}/portrait/upload" hx-target="body" hx-swap="beforeend"
+                class="sheet-header-avatar-icon sheet-header-avatar-button" title="Click to upload portrait">
                 {% if character.portrait_path %}
-                <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+                <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}"
+                    class="portrait-image" />
                 {% else %}
                 🧙
                 {% endif %}
@@ -22,7 +18,8 @@
             {% else %}
             <div class="sheet-header-avatar-icon">
                 {% if character.portrait_path %}
-                <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+                <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}"
+                    class="portrait-image" />
                 {% else %}
                 🧙
                 {% endif %}
@@ -30,12 +27,9 @@
             {% endif %}
 
             {% if can_edit %}
-            <button
-                hx-post="/characters/{{ character.id }}/vitals/inspiration"
-                hx-target="#sheet-header"
+            <button hx-post="/characters/{{ character.id }}/vitals/inspiration" hx-target="#sheet-header"
                 hx-swap="outerHTML"
-                class="btn-inspiration {% if sheet.heroic_inspiration %}btn-inspiration--active{% else %}btn-inspiration--inactive{% endif %}"
-            >
+                class="btn-inspiration {% if sheet.heroic_inspiration %}btn-inspiration--active{% else %}btn-inspiration--inactive{% endif %}">
                 {{ "⭐" if sheet.heroic_inspiration else "☆" }}
             </button>
             {% else %}
@@ -51,12 +45,16 @@
                 {{ sheet.character_identity.character_name }}
             </h1>
             <div class="sheet-header-details">
-                <span class="sheet-header-species">{{ sheet.character_identity.species.name }}{% if sheet.character_identity.species.subtype %} ({{ sheet.character_identity.species.subtype }}){% endif %}</span>
-                <span class="sheet-header-separator">·</span>
-                <span class="sheet-header-level">
-                    Level {{ sheet.character_level.level }}
-                </span>
+                <span class="sheet-header-species">{{ sheet.character_identity.species.name }}{% if
+                    sheet.character_identity.species.subtype %} ({{ sheet.character_identity.species.subtype }}){% endif
+                    %}</span>
+
+
             </div>
+            <span class="sheet-header-level">
+                Level {{ sheet.character_level.level }}
+            </span>
+            <span class="sheet-header-separator">·</span>
             <span class="sheet-header-class">
                 {{ sheet.character_identity['class'].name }}
             </span>
@@ -81,15 +79,11 @@
                 <div class="death-saves-dots">
                     {% for i in range(1, 4) %}
                     {% if can_edit %}
-                    <button
-                        hx-post="/characters/{{ character.id }}/vitals/death-save"
+                    <button hx-post="/characters/{{ character.id }}/vitals/death-save"
                         hx-vals='{"save_type": "{{ save_type }}", "action": "{{ "remove" if i <= count else "add" }}"}'
-                        hx-target="#sheet-header"
-                        hx-swap="outerHTML"
-                        class="death-save-dot
+                        hx-target="#sheet-header" hx-swap="outerHTML" class="death-save-dot
                             {% if i <= count %}death-save-dot--{{ save_type }}
-                            {% else %}death-save-dot--empty{% endif %}"
-                    >
+                            {% else %}death-save-dot--empty{% endif %}">
                     </button>
                     {% else %}
                     <div class="death-save-dot
