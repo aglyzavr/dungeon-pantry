@@ -36,7 +36,7 @@
               {{ sheet.character_identity.character_name }}
             </p>
             <p class="character-details">
-              {{ sheet.character_identity.species }} ·
+              {{ sheet.character_identity.species.name }}{% if sheet.character_identity.species.subtype %} ({{ sheet.character_identity.species.subtype }}){% endif %} ·
               {{ sheet.character_identity['class'].name }}
               Lv.{{ sheet.character_level.level }}
             </p>

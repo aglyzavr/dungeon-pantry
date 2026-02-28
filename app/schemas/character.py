@@ -30,8 +30,9 @@ def validate_mandatory_fields(data: dict) -> list[str]:
     char_class = identity.get("class", {})
     if not isinstance(char_class, dict) or not str(char_class.get("name", "")).strip():
         errors.append("character_identity.class.name is required")
-    if not str(identity.get("species", "")).strip():
-        errors.append("character_identity.species is required")
+    species = identity.get("species", {})
+    if not isinstance(species, dict) or not str(species.get("name", "")).strip():
+        errors.append("character_identity.species.name is required")
     vitality = data.get("vitality", {})
     hp = vitality.get("hit_points", {}) if isinstance(vitality, dict) else {}
     try:
