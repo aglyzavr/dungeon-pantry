@@ -8,5 +8,5 @@ __pycache__/
 .venv/
 test_data/
 .DS_Store
-.docker.exampleapp
+.docker.example
 /app/static/portraits/
