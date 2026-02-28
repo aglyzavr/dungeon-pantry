@@ -277,7 +277,7 @@ async def update_spell_slot(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_vitals.html", {
+    return templates.TemplateResponse("characters/_sheet_body.html", {
         "request": request,
         "current_user": current_user,
         "character": character,

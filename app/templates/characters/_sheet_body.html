@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/static/css/sheet-body.css" />
 
-<div class="sheet-body-container">
+<div id="sheet-body" class="sheet-body-container">
 
     {# ── Header/Vitals Grid ─────────────────────────────────────── #}
     <div class="sheet-header-vitals-grid">
@@ -276,6 +276,65 @@
 
         {# ── TAB: SPELLS ────────────────────────────────────────── #}
         <div x-show="tab === 'spells'" x-cloak class="spells-tab-content">
+
+            {# ── Spell Slots Block ─────────────────────────────────────────── #}
+            {% set slots = sheet.spell_slots | default({}) %}
+            {% set has_slots = namespace(found=false) %}
+            {% for lvl in range(1, 10) %}
+              {% set key = "level_" ~ lvl %}
+              {% if (slots.get(key, {}).total | default(0)) > 0 %}
+                {% set has_slots.found = true %}
+              {% endif %}
+            {% endfor %}
+
+            {% if has_slots.found %}
+            <div class="spell-slots-container">
+              <div class="spell-slots-header">
+                <span class="spell-slots-title">Spell Slots</span>
+              </div>
+              <div class="spell-slots-content">
+                {% for lvl in range(1, 10) %}
+                {% set key = "level_" ~ lvl %}
+                {% set slot = slots.get(key, {}) %}
+                {% if (slot.total | default(0)) > 0 %}
+                <div class="spell-slot-row">
+                  <span class="spell-slot-level-label">Level {{ lvl }}</span>
+                  <div class="spell-slot-dots">
+                    {% for i in range(1, slot.total + 1) %}
+                    <div class="spell-slot-dot
+                      {% if i > slot.expended %}spell-slot-dot--available
+                      {% else %}spell-slot-dot--expended{% endif %}">
+                    </div>
+                    {% endfor %}
+                  </div>
+                  {% if can_edit %}
+                  <div class="spell-slot-controls">
+                    <button
+                      hx-post="/characters/{{ character.id }}/vitals/spell-slot"
+                      hx-vals='{"level": {{ lvl }}, "delta": 1}'
+                      hx-target="#sheet-body"
+                      hx-swap="outerHTML"
+                      class="spell-slot-btn spell-slot-btn--use"
+                    >
+                      Use
+                    </button>
+                    <button
+                      hx-post="/characters/{{ character.id }}/vitals/spell-slot"
+                      hx-vals='{"level": {{ lvl }}, "delta": -1}'
+                      hx-target="#sheet-body"
+                      hx-swap="outerHTML"
+                      class="spell-slot-btn spell-slot-btn--restore"
+                    >
+                      Restore
+                    </button>
+                  </div>
+                  {% endif %}
+                </div>
+                {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
 
             {% set sc = sheet.spellcasting_ability %}
             {% if sc.ability %}
