@@ -110,12 +110,14 @@
   <!-- Unassigned Characters Section (DM only) -->
   {% if current_user.is_dm %}
   <div class="unassigned-section">
-    <h2 class="section-title">
-      Available Characters
-      <span class="section-count">
-        ({{ unassigned_characters | length }})
-      </span>
-    </h2>
+    <div class="section-header">
+      <h2 class="section-title">
+        Available Characters
+        <span class="section-count">
+          ({{ unassigned_characters | length }})
+        </span>
+      </h2>
+    </div>
 
     {% if unassigned_characters %}
     <div class="characters-grid">
@@ -168,10 +170,12 @@
     </div>
 
     {% else %}
-    {% with icon="✨", message="All characters assigned",
-    subtext="You're all set for this campaign!" %}
-    {% include "shared/_empty_state.html" %}
-    {% endwith %}
+    <div class="characters-grid">
+      {% with icon="✨", message="All characters assigned",
+      subtext="You're all set for this campaign!" %}
+      {% include "shared/_empty_state.html" %}
+      {% endwith %}
+    </div>
     {% endif %}
   </div>
   {% endif %}
