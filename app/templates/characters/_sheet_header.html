@@ -1,58 +1,49 @@
-<div id="sheet-header" class="bg-gray-900 border border-gray-800 rounded-2xl p-4
-                               flex gap-4 items-start h-full">
+<link rel="stylesheet" href="/static/css/sheet-header.css" />
 
-    <div class="shrink-0 flex flex-col items-center gap-2">
-        <div class="w-16 h-16 rounded-xl bg-gray-800
-                  border border-gray-700 flex items-center justify-center text-2xl">
+<div id="sheet-header">
+
+    {# ── Avatar Section ─────────────────────────────────────────── #}
+    <div class="sheet-header-avatar">
+        <div class="sheet-header-avatar-icon">
             🧙
         </div>
 
         {% if can_edit %}
-        <button hx-post="/characters/{{ character.id }}/vitals/inspiration" hx-target="#sheet-header"
-            hx-swap="outerHTML" class="w-16 flex items-center justify-center gap-1 px-1 py-1
-                     rounded-lg border text-xs font-medium transition-colors
-                     {% if sheet.heroic_inspiration %}
-                       border-yellow-500 bg-yellow-500/10 text-yellow-300
-                     {% else %}
-                       border-gray-700 text-gray-500 hover:border-yellow-600
-                       hover:text-yellow-400
-                     {% endif %}">
+        <button
+            hx-post="/characters/{{ character.id }}/vitals/inspiration"
+            hx-target="#sheet-header"
+            hx-swap="outerHTML"
+            class="btn-inspiration {% if sheet.heroic_inspiration %}btn-inspiration--active{% else %}btn-inspiration--inactive{% endif %}"
+        >
             {{ "⭐" if sheet.heroic_inspiration else "☆" }}
         </button>
         {% else %}
         {% if sheet.heroic_inspiration %}
-        <span class="text-lg">⭐</span>
+        <span class="btn-inspiration-readonly">⭐</span>
         {% endif %}
         {% endif %}
     </div>
 
-    <div class="min-w-0">
-        <h1 class="text-xl lg:text-2xl font-bold text-white leading-tight">
+    {# ── Character Info Section ─────────────────────────────────── #}
+    <div class="sheet-header-info">
+        <h1 class="sheet-header-name">
             {{ sheet.character_identity.character_name }}
         </h1>
-        <div class="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 text-sm text-gray-400">
-            <span>{{ sheet.character_identity.species }}</span>
-            <span class="text-gray-700">·</span>
-            <span class="text-yellow-400 font-semibold">
+        <div class="sheet-header-details">
+            <span class="sheet-header-species">{{ sheet.character_identity.species }}</span>
+            <span class="sheet-header-separator">·</span>
+            <span class="sheet-header-level">
                 Level {{ sheet.character_level.level }}
             </span>
         </div>
-        <span class="text-indigo-400 font-medium">
+        <span class="sheet-header-class">
             {{ sheet.character_identity['class'].name }}
         </span>
         {% if sheet.character_identity['class'].subclass %}
-        <span class="text-gray-500 text-xs self-center">
+        <span class="sheet-header-subclass">
             ({{ sheet.character_identity['class'].subclass }})
         </span>
         {% endif %}
-        <!-- <div class="mt-3">
-        <button disabled
-                class="text-xs px-2.5 py-1 rounded-lg bg-gray-800
-                       text-gray-600 border border-gray-700
-                       cursor-not-allowed opacity-50">
-          Edit character
-        </button>
-      </div> -->
     </div>
 
 </div>

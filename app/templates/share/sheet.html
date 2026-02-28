@@ -3,14 +3,18 @@
 {% block title %}{{ character.name }} — Shared Sheet{% endblock %}
 {% block meta_description %}Read-only character sheet for {{ character.name }}, a level {{ character.level }} {{ character.race }} {{ character.char_class }}.{% endblock %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/share-sheet.css" />
+{% endblock %}
+
 {% block content %}
 
   {# ── Error state ──────────────────────────────────────────────── #}
   {% if error %}
-  <div class="max-w-6xl mx-auto mt-8">
-    <div class="bg-red-900/40 border border-red-700 rounded-xl px-4 py-6 text-center">
-      <p class="text-red-300 text-sm">{{ error }}</p>
-      <a href="/" class="mt-4 inline-block text-xs text-gray-400 hover:text-white">
+  <div class="error-container">
+    <div class="error-box">
+      <p class="error-message">{{ error }}</p>
+      <a href="/" class="error-link">
         ← Back to home
       </a>
     </div>
@@ -19,18 +23,19 @@
   {% else %}
 
   {# ── Share Banner ─────────────────────────────────────────────── #}
-  <div class="max-w-6xl mx-auto mb-4">
-    <div class="bg-indigo-900/40 border border-indigo-700 rounded-xl px-4 py-3
-                flex items-center justify-between gap-4">
-      <div class="flex items-center gap-2 text-sm text-indigo-300">
-        <span>🔗</span>
-        <span>
-          <strong class="text-indigo-200">Read-only shared sheet.</strong>
+  <div class="share-banner-container">
+    <div class="share-banner">
+      <div class="share-banner-content">
+        <span class="share-banner-icon">🔗</span>
+        <span class="share-banner-text">
+          <strong>Read-only shared sheet.</strong>
           This link was shared by the player or Dungeon Master.
           {% if link.expires_at %}
-            Expires <time datetime="{{ link.expires_at.isoformat() }}">
-              {{ link.expires_at.strftime("%b %d, %Y") }}
-            </time>.
+            <span class="share-banner-expiry">
+              Expires <time datetime="{{ link.expires_at.isoformat() }}">
+                {{ link.expires_at.strftime("%b %d, %Y") }}
+              </time>.
+            </span>
           {% else %}
             This link does not expire.
           {% endif %}

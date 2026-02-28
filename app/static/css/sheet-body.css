@@ -1,0 +1,1130 @@
+/* ─────────────────────────────────────────────────────────────────
+   Character Sheet Body (_sheet_body.html)
+   625-line complex component with tabs, abilities, skills, spells, etc
+   ───────────────────────────────────────────────────────────────── */
+
+/* ── Main Container ───────────────────────────────────────────────── */
+.sheet-body-container {
+  max-width: 80rem; /* 6xl */
+  margin: 0 auto;
+  padding-bottom: 6rem; /* 24px - for mobile nav */
+}
+
+@media (min-width: 1024px) {
+  .sheet-body-container {
+    padding-bottom: 2rem; /* 8px */
+  }
+}
+
+/* ── Header/Vitals Grid ───────────────────────────────────────────── */
+.sheet-header-vitals-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .sheet-header-vitals-grid {
+    grid-template-columns: 280px 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    min-height: 7.5rem;
+  }
+}
+
+.sheet-header-vitals-grid > div {
+  min-height: 0;
+}
+
+@media (min-width: 1024px) {
+  .sheet-header-vitals-grid > div {
+    height: 100%;
+  }
+}
+
+/* ── Tab System ───────────────────────────────────────────────── */
+#sheet-tabs {
+  /* Alpine.js x-data container */
+}
+
+.sheet-tab-bar {
+  display: none;
+  gap: 0.25rem;
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .sheet-tab-bar {
+    display: flex;
+  }
+}
+
+.sheet-tab-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.sheet-tab-button--active {
+  background-color: #4f46e5; /* indigo-600 */
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.sheet-tab-button--inactive {
+  color: #9ca3af; /* gray-400 */
+}
+
+.sheet-tab-button--inactive:hover {
+  color: #ffffff;
+  background-color: #1f2937; /* gray-800 */
+}
+
+.sheet-tab-icon {
+  display: inline-block;
+}
+
+.sheet-tab-label {
+  display: inline-block;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   STATS TAB SPECIFIC STYLES
+   ───────────────────────────────────────────────────────────────── */
+
+.stats-tab-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .stats-tab-content {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+.stats-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stats-panel {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.stats-panel-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Ability Scores Grid ─────────────────────────────────────────── */
+.ability-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.ability-score-card {
+  background-color: #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  text-align: center;
+  border: 1px solid #374151; /* gray-700 */
+}
+
+.ability-score-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+}
+
+.ability-score-modifier {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  margin: 0.25rem 0;
+}
+
+.ability-score-value {
+  font-size: 0.75rem;
+  background-color: #111827; /* gray-900 */
+  border-radius: 0.25rem;
+  padding: 0.125rem;
+  font-family: monospace;
+  color: #d1d5db; /* gray-300 */
+  border: 1px solid #374151; /* gray-700 */
+}
+
+/* ── Senses Section ──────────────────────────────────────────────– */
+.senses-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sense-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #1f2937; /* gray-800 */
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.sense-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  width: 2rem;
+  text-align: center;
+}
+
+.sense-label {
+  font-size: 0.75rem;
+  color: #9ca3af; /* gray-400 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Proficiencies ────────────────────────────────────────────────– */
+.proficiencies-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.proficiency-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.proficiency-label {
+  font-size: 0.75rem;
+  color: #4b5563; /* gray-600 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.proficiency-items {
+  color: #d1d5db; /* gray-300 */
+}
+
+/* ── Ability Cards (Right Panel) ──────────────────────────────────– */
+.ability-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ability-card {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.ability-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: rgba(31, 41, 55, 0.6); /* gray-800/60 */
+  border-bottom: 1px solid #1f2937; /* gray-800 */
+}
+
+.ability-card-modifier {
+  text-align: center;
+  min-width: 2.5rem;
+}
+
+.ability-card-modifier-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.ability-card-score-box {
+  background-color: #111827;
+  border: 1px solid #374151; /* gray-700 */
+  border-radius: 0.5rem;
+  padding: 0.625rem;
+  text-align: center;
+  min-width: 2.5rem;
+}
+
+.ability-card-score-label {
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+  line-height: 1;
+  margin-bottom: 0.125rem;
+}
+
+.ability-card-score-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.ability-card-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #d1d5db; /* gray-300 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ability-card-save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.6); /* gray-800/60 */
+  background-color: rgba(31, 41, 55, 0.2); /* gray-800/20 */
+}
+
+.ability-card-save-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ability-card-save-icon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.ability-card-save-icon--proficient {
+  color: #a5d6ff; /* indigo-400 */
+}
+
+.ability-card-save-icon--unproficient {
+  color: #4b5563; /* gray-600 */
+}
+
+.ability-card-save-label-text {
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+}
+
+.ability-card-save-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.ability-card-save-value--positive {
+  color: #4ade80; /* green-400 */
+}
+
+.ability-card-save-value--negative {
+  color: #f87171; /* red-400 */
+}
+
+.ability-card-save-value--neutral {
+  color: #9ca3af; /* gray-400 */
+}
+
+.ability-card-skills {
+  border-top: 1px solid rgba(31, 41, 55, 0.4); /* gray-800/40 */
+}
+
+.ability-card-skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.4); /* gray-800/40 */
+  transition: background-color 0.2s;
+}
+
+.ability-card-skill-row:hover {
+  background-color: rgba(31, 41, 55, 0.3); /* gray-800/30 */
+}
+
+.ability-card-skill-row:last-child {
+  border-bottom: none;
+}
+
+.ability-card-skill-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ability-card-skill-icon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.ability-card-skill-icon--expertise {
+  color: #facc15; /* yellow-400 */
+}
+
+.ability-card-skill-icon--proficient {
+  color: #a5d6ff; /* indigo-400 */
+}
+
+.ability-card-skill-icon--unproficient {
+  color: #4b5563; /* gray-600 */
+}
+
+.ability-card-skill-name {
+  font-size: 0.875rem;
+}
+
+.ability-card-skill-name--proficient {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.ability-card-skill-name--unproficient {
+  color: #9ca3af; /* gray-400 */
+}
+
+.ability-card-skill-bonus {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.ability-card-skill-bonus--positive {
+  color: #4ade80; /* green-400 */
+}
+
+.ability-card-skill-bonus--negative {
+  color: #f87171; /* red-400 */
+}
+
+.ability-card-skill-bonus--neutral {
+  color: #9ca3af; /* gray-400 */
+}
+
+.ability-card-no-skills {
+  padding: 0.625rem 1rem;
+  font-size: 0.75rem;
+  color: #4b5563; /* gray-600 */
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ACTIONS TAB SPECIFIC STYLES
+   ───────────────────────────────────────────────────────────────── */
+
+.actions-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actions-section {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.actions-section-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #1f2937; /* gray-800 */
+  background-color: rgba(31, 41, 55, 0.5); /* gray-800/50 */
+}
+
+.actions-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Attacks Table ───────────────────────────────────────────────── */
+.attacks-table-wrapper {
+  overflow-x: auto;
+}
+
+.attacks-table {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.attacks-table-head {
+  font-size: 0.75rem;
+  color: #4b5563; /* gray-600 */
+  text-transform: uppercase;
+  background-color: rgba(31, 41, 55, 0.3); /* gray-800/30 */
+}
+
+.attacks-table-head-cell {
+  text-align: left;
+  padding: 0.5rem 1rem;
+}
+
+.attacks-table-body {
+  border-top: 1px solid #1f2937; /* gray-800 */
+}
+
+.attacks-table-row {
+  border-bottom: 1px solid #1f2937; /* gray-800 */
+  transition: background-color 0.2s;
+}
+
+.attacks-table-row:hover {
+  background-color: rgba(31, 41, 55, 0.4); /* gray-800/40 */
+}
+
+.attacks-table-cell {
+  padding: 0.75rem 1rem;
+}
+
+.attacks-table-name {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.attacks-table-bonus {
+  color: #a5d6ff; /* indigo-400 */
+  font-family: monospace;
+}
+
+.attacks-table-damage {
+  color: #d1d5db; /* gray-300 */
+}
+
+.attacks-table-notes {
+  color: #6b7280; /* gray-500 */
+}
+
+/* ── Text Content Sections ────────────────────────────────────────– */
+.content-section {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+.content-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.content-section-text {
+  font-size: 0.875rem;
+  color: #d1d5db; /* gray-300 */
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   SPELLS TAB SPECIFIC STYLES
+   ───────────────────────────────────────────────────────────────── */
+
+.spells-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.spellcasting-info {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.spellcasting-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.spellcasting-stat {
+  background-color: #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+}
+
+.spellcasting-stat-label {
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+  margin-bottom: 0.25rem;
+}
+
+.spellcasting-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.spells-list-container {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.spell-filter-tabs {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding: 0.5rem;
+  border-bottom: 1px solid #1f2937; /* gray-800 */
+  scroll-behavior: smooth;
+}
+
+.spell-filter-tab {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.spell-filter-tab--all {
+  background-color: #4f46e5; /* indigo-600 */
+  color: #ffffff;
+}
+
+.spell-filter-tab--inactive {
+  color: #9ca3af; /* gray-400 */
+  background-color: #1f2937; /* gray-800 */
+}
+
+.spell-filter-tab--inactive:hover {
+  color: #ffffff;
+}
+
+.spell-list {
+  max-height: 24rem;
+  overflow-y: auto;
+  border-top: 1px solid #1f2937; /* gray-800 */
+}
+
+.spell-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #1f2937; /* gray-800 */
+  transition: background-color 0.2s;
+}
+
+.spell-item:hover {
+  background-color: rgba(31, 41, 55, 0.4); /* gray-800/40 */
+}
+
+.spell-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.spell-name {
+  font-weight: 500;
+  color: #ffffff;
+  font-size: 0.875rem;
+}
+
+.spell-tag {
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
+  border-radius: 9999px;
+  background-color: rgba(79, 70, 229, 0.5); /* indigo-600/50 */
+  color: #a5d6ff; /* indigo-300 */
+}
+
+.spell-tag--concentration {
+  background-color: rgba(180, 83, 9, 0.4); /* yellow-900/40 */
+  color: #fcd34d; /* yellow-300 */
+}
+
+.spell-tag--ritual {
+  background-color: rgba(75, 0, 130, 0.4); /* purple-900/40 */
+  color: #d8b4fe; /* purple-300 */
+}
+
+.spell-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  color: #9ca3af; /* gray-400 */
+}
+
+.spell-detail-item {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.spell-detail-icon {
+  display: inline-block;
+  min-width: 1rem;
+}
+
+.spell-attack-save {
+  font-weight: 600;
+  color: #d1d5db; /* gray-300 */
+}
+
+.spell-notes {
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+  margin-top: 0.5rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.spells-empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #4b5563; /* gray-600 */
+}
+
+.spells-empty-icon {
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.spells-empty-message {
+  color: #6b7280; /* gray-500 */
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   INVENTORY TAB SPECIFIC STYLES
+   ───────────────────────────────────────────────────────────────── */
+
+.inventory-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.375rem;
+}
+
+.inventory-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.inventory-bullet {
+  color: #4b5563; /* gray-600 */
+  margin-top: 0.125rem;
+}
+
+.inventory-item-text {
+  color: #d1d5db; /* gray-300 */
+}
+
+.magic-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.magic-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background-color: #1f2937; /* gray-800 */
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.magic-item-name {
+  color: #d1d5db; /* gray-300 */
+}
+
+.magic-item-status {
+  font-size: 0.75rem;
+}
+
+.magic-item-status--attuned {
+  color: #facc15; /* yellow-400 */
+}
+
+.magic-item-status--not-attuned {
+  color: #4b5563; /* gray-600 */
+}
+
+.currency-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.currency-box {
+  text-align: center;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #374151; /* gray-700 */
+}
+
+.currency-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 0.125rem;
+}
+
+.currency-value--copper {
+  color: #ea580c; /* orange-300 */
+}
+
+.currency-value--silver {
+  color: #d1d5db; /* gray-300 */
+}
+
+.currency-value--electrum {
+  color: #93c5fd; /* blue-300 */
+}
+
+.currency-value--gold {
+  color: #facc15; /* yellow-400 */
+}
+
+.currency-value--platinum {
+  color: #d8b4fe; /* purple-300 */
+}
+
+.currency-box--copper {
+  background-color: rgba(234, 88, 12, 0.3); /* orange-900/30 */
+}
+
+.currency-box--silver {
+  background-color: #1f2937; /* gray-800 */
+}
+
+.currency-box--electrum {
+  background-color: rgba(59, 130, 246, 0.3); /* blue-900/30 */
+}
+
+.currency-box--gold {
+  background-color: rgba(180, 83, 9, 0.3); /* yellow-900/30 */
+}
+
+.currency-box--platinum {
+  background-color: rgba(147, 51, 234, 0.3); /* purple-900/30 */
+}
+
+.currency-label {
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+  margin-top: 0.125rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   BIO TAB SPECIFIC STYLES
+   ───────────────────────────────────────────────────────────────── */
+
+.bio-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bio-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .bio-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.bio-card {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.bio-card-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.bio-card-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #d1d5db; /* gray-300 */
+}
+
+.bio-long-card {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+.bio-long-card-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.bio-long-card-text {
+  font-size: 0.875rem;
+  color: #d1d5db; /* gray-300 */
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   PLAYER ASSIGNMENT SECTION
+   ───────────────────────────────────────────────────────────────── */
+
+.player-assignment-section {
+  margin-top: 1.5rem;
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.player-assignment-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #1f2937; /* gray-800 */
+  background-color: rgba(31, 41, 55, 0.5); /* gray-800/50 */
+}
+
+.player-assignment-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.player-assignment-content {
+  padding: 1rem;
+}
+
+.assigned-player-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  border: 1px solid #374151; /* gray-700 */
+}
+
+.assigned-player-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.assigned-player-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: #4c1d95; /* indigo-700 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.assigned-player-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.assigned-player-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.assigned-player-label {
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+}
+
+.btn-unassign {
+  padding: 0.375rem 0.75rem;
+  background-color: rgba(127, 29, 29, 0.4); /* red-900/40 */
+  color: #fca5a5; /* red-300 */
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-unassign:hover {
+  background-color: #7f1d1d; /* red-800 */
+}
+
+.assignment-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.assignment-form-group {
+  flex: 1;
+  min-width: 11.25rem;
+}
+
+.assignment-form-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280; /* gray-500 */
+  margin-bottom: 0.25rem;
+}
+
+.assignment-form-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: #1f2937; /* gray-800 */
+  border: 1px solid #374151; /* gray-700 */
+  color: #ffffff;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.assignment-form-select:focus {
+  outline: none;
+  border-color: #4f46e5; /* indigo-500 */
+}
+
+.assignment-form-submit {
+  padding: 0.5rem 1rem;
+  background-color: #4f46e5; /* indigo-600 */
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.assignment-form-submit:hover {
+  background-color: #4338ca; /* indigo-500 */
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   MOBILE BOTTOM NAVIGATION
+   ───────────────────────────────────────────────────────────────── */
+
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background-color: rgba(17, 24, 39, 0.95); /* gray-900/95 */
+  backdrop-filter: blur(10px);
+  border-top: 1px solid #1f2937; /* gray-800 */
+  display: flex;
+}
+
+@media (min-width: 1024px) {
+  .mobile-bottom-nav {
+    display: none;
+  }
+}
+
+.mobile-nav-button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  gap: 0.125rem;
+  color: #6b7280; /* gray-500 */
+  transition: color 0.2s;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.mobile-nav-button:hover {
+  color: #ffffff;
+}
+
+.mobile-nav-button:active {
+  transform: scale(0.95);
+}
+
+.mobile-nav-icon {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.mobile-nav-label {
+  font-size: 0.75rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   UTILITY/ALPINE.JS CLASSES
+   ───────────────────────────────────────────────────────────────── */
+
+[x-cloak] {
+  display: none;
+}
