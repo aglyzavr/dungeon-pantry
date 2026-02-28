@@ -1,73 +1,71 @@
 {% extends "layout.html" %}
 {% block title %}Character Pool — DnD Manager{% endblock %}
 
-{% block content %}
-<div class="max-w-4xl mx-auto">
-    <div class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-white">Character Pool</h1>
-            <p class="text-gray-400 mt-1">{{ characters | length }} character{{ 's' if characters | length != 1 }}</p>
-        </div>
-        <a href="/characters/upload"
-           class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm
-                  font-semibold rounded-lg transition-colors">
-            + Upload Character
-        </a>
-    </div>
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/characters.css" />
+  <link rel="stylesheet" href="/static/css/shared.css" />
+{% endblock %}
 
-    {% if characters %}
-    <div class="grid gap-4 sm:grid-cols-2">
-        {% for character in characters %}
-        {% set sheet = character.sheet_data %}
-        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5
-                    hover:border-indigo-700 transition-colors group">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="font-semibold text-white">
-                        {{ sheet.character_identity.character_name }}
-                    </p>
-                    <p class="text-sm text-gray-400 mt-0.5">
-                        {{ sheet.character_identity.species }} ·
-                        {{ sheet.character_identity['class'].name }}
-                        Lv.{{ sheet.character_level.level }}
-                    </p>
-                </div>
-                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <a href="/characters/{{ character.id }}"
-                       class="text-xs px-3 py-1 rounded-md bg-gray-800 hover:bg-gray-700
-                              text-gray-300 transition-colors">View</a>
-                    <form method="post" action="/characters/{{ character.id }}/delete"
-                          onsubmit="return confirm('Delete this character permanently?')">
-                        <button type="submit"
-                                class="text-xs px-3 py-1 rounded-md bg-red-900/50
-                                       hover:bg-red-800 text-red-300 transition-colors">
-                            Delete
-                        </button>
-                    </form>
-                </div>
-            </div>
-            {% set hp = sheet.vitality.hit_points %}
-            {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
-            <div class="mt-3">
-                <div class="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>HP</span><span>{{ hp.current }} / {{ hp.max }}</span>
-                </div>
-                <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full
-                        {% if hp_pct > 50 %}bg-green-500
-                        {% elif hp_pct > 25 %}bg-yellow-500
-                        {% else %}bg-red-500{% endif %}"
-                        style="--w: {{ hp_pct }}%; width: var(--w)"></div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Character Pool</h1>
+      <p class="page-subtitle">{{ characters | length }} character{{ 's' if characters | length != 1 }}</p>
     </div>
-    {% else %}
-    {% with icon="🧙", message="No characters yet",
-            subtext="Upload a JSON character sheet to get started." %}
-        {% include "shared/_empty_state.html" %}
-    {% endwith %}
-    {% endif %}
+    <a href="/characters/upload" class="btn-primary">
+      + Upload Character
+    </a>
+  </div>
+
+  {% if characters %}
+  <div class="characters-grid">
+    {% for character in characters %}
+    {% set sheet = character.sheet_data %}
+    {% set hp = sheet.vitality.hit_points %}
+    {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
+    <div class="character-card">
+      <div class="character-card-header">
+        <div class="character-info">
+          <p class="character-name">
+            {{ sheet.character_identity.character_name }}
+          </p>
+          <p class="character-details">
+            {{ sheet.character_identity.species }} ·
+            {{ sheet.character_identity['class'].name }}
+            Lv.{{ sheet.character_level.level }}
+          </p>
+        </div>
+        <div class="character-actions">
+          <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">
+            View
+          </a>
+          <form method="post" action="/characters/{{ character.id }}/delete"
+                onsubmit="return confirm('Delete this character permanently?')">
+            <button type="submit" class="btn-sm btn-sm--danger">
+              Delete
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="hp-bar">
+        <div class="hp-label">
+          <span>HP</span>
+          <span>{{ hp.current }} / {{ hp.max }}</span>
+        </div>
+        <div class="hp-bar-container">
+          <div class="hp-bar-fill {% if hp_pct > 50 %}hp-bar-fill--healthy{% elif hp_pct > 25 %}hp-bar-fill--injured{% else %}hp-bar-fill--critical{% endif %}" style="width: {{ hp_pct }}%">
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  {% with icon="🧙", message="No characters yet",
+          subtext="Upload a JSON character sheet to get started." %}
+    {% include "shared/_empty_state.html" %}
+  {% endwith %}
+  {% endif %}
 </div>
 {% endblock %}

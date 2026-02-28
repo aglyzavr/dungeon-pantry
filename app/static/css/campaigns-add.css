@@ -1,0 +1,131 @@
+/* ========================================
+   CAMPAIGNS-ADD.CSS - Add characters page styling
+   ======================================== */
+
+/* Page Container */
+.page-container {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+.page-title-highlight {
+  color: #818cf8;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb-link {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: #d1d5db;
+}
+
+.breadcrumb-separator {
+  margin: 0 0.5rem;
+}
+
+.breadcrumb-current {
+  color: #d1d5db;
+}
+
+/* Characters Grid */
+.characters-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+@media (min-width: 640px) {
+  .characters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Character Button (Clickable Card) */
+.character-button {
+  width: 100%;
+  text-align: left;
+  background-color: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: block;
+}
+
+.character-button:hover {
+  border-color: #6366f1;
+}
+
+.character-button-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.character-info {
+  flex: 1;
+}
+
+.character-name {
+  font-weight: 600;
+  color: #ffffff;
+  transition: color 0.2s;
+}
+
+.character-button:hover .character-name {
+  color: #a5b4fc;
+}
+
+.character-details {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.25rem;
+}
+
+.character-action {
+  color: #818cf8;
+  font-size: 0.875rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.character-button:hover .character-action {
+  opacity: 1;
+}
+
+/* Back Link */
+.back-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: #d1d5db;
+}
+
+/* Empty State in Grid */
+.characters-grid .empty-state {
+  grid-column: 1 / -1;
+}

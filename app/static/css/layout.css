@@ -1,0 +1,146 @@
+/* ========================================
+   LAYOUT.CSS - Main layout styling
+   ======================================== */
+
+/* Navbar */
+.navbar {
+  background-color: #111827;
+  border-bottom: 1px solid #1f2937;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #818cf8;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.navbar-link {
+  color: #d1d5db;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navbar-link:hover {
+  color: #ffffff;
+}
+
+.navbar-user {
+  color: #9ca3af;
+}
+
+.navbar-role {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.navbar-role--dm {
+  background-color: #312e81;
+  color: #c7d2fe;
+}
+
+.navbar-role--player {
+  background-color: #374151;
+  color: #d1d5db;
+}
+
+.navbar-logout {
+  color: #9ca3af;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.navbar-logout:hover {
+  color: #f87171;
+}
+
+/* Flash Messages Container */
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.message--success {
+  background-color: #1f2817;
+  border: 1px solid #4b5563;
+  color: #86efac;
+}
+
+.message--error {
+  background-color: #7f1d1d;
+  border: 1px solid #b91c1c;
+  color: #fca5a5;
+}
+
+.message--warning {
+  background-color: #713f12;
+  border: 1px solid #f59e0b;
+  color: #fde047;
+}
+
+.message--info {
+  background-color: #1e3a8a;
+  border: 1px solid #1e40af;
+  color: #93c5fd;
+}
+
+.message-close {
+  margin-left: 1rem;
+  opacity: 0.6;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.message-close:hover {
+  opacity: 1;
+}
+
+/* Main Content */
+main {
+  flex: 1;
+}
+
+main.with-padding {
+  padding: 1.5rem;
+}
+
+/* Footer */
+.footer {
+  border-top: 1px solid #1f2937;
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #4b5563;
+}

@@ -1,75 +1,68 @@
 {% extends "layout.html" %}
 {% block title %}{{ 'Edit' if campaign else 'New' }} Campaign — DnD Manager{% endblock %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/forms.css" />
+{% endblock %}
+
 {% block content %}
-<div class="max-w-xl mx-auto">
+<div class="form-container">
 
-    <!-- Breadcrumb -->
-    <nav class="text-sm text-gray-500 mb-6">
-        <a href="/campaigns" class="hover:text-gray-300 transition-colors">Campaigns</a>
-        {% if campaign %}
-        <span class="mx-2">›</span>
-        <a href="/campaigns/{{ campaign.id }}"
-           class="hover:text-gray-300 transition-colors">{{ campaign.name }}</a>
-        {% endif %}
-        <span class="mx-2">›</span>
-        <span class="text-gray-300">{{ 'Edit' if campaign else 'New Campaign' }}</span>
-    </nav>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="/campaigns" class="breadcrumb-link">Campaigns</a>
+    {% if campaign %}
+    <span class="breadcrumb-separator">›</span>
+    <a href="/campaigns/{{ campaign.id }}" class="breadcrumb-link">{{ campaign.name }}</a>
+    {% endif %}
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">{{ 'Edit' if campaign else 'New Campaign' }}</span>
+  </nav>
 
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8">
-        <h1 class="text-2xl font-bold text-white mb-6">
-            {{ 'Edit Campaign' if campaign else 'New Campaign' }}
-        </h1>
+  <div class="form-card">
+    <h1 class="form-title">
+      {{ 'Edit Campaign' if campaign else 'New Campaign' }}
+    </h1>
 
-        {% if error %}
-        <div class="mb-5 px-4 py-3 rounded-lg bg-red-900/50 border border-red-700
-                    text-red-300 text-sm">
-            {{ error }}
-        </div>
-        {% endif %}
-
-        <form method="post"
-              action="{{ '/campaigns/' + campaign.id|string + '/edit' if campaign else '/campaigns' }}"
-              class="space-y-5">
-
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-300 mb-1">
-                    Campaign Name <span class="text-red-400">*</span>
-                </label>
-                <input type="text" id="name" name="name" required
-                       value="{{ campaign.name if campaign else '' }}"
-                       class="w-full px-4 py-2.5 rounded-lg bg-gray-800 border border-gray-700
-                              text-white placeholder-gray-500 focus:outline-none
-                              focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                       placeholder="e.g. The Lost Mines of Phandelver" />
-            </div>
-
-            <div>
-                <label for="description" class="block text-sm font-medium text-gray-300 mb-1">
-                    Description <span class="text-gray-500 font-normal">(optional)</span>
-                </label>
-                <textarea id="description" name="description" rows="4"
-                          class="w-full px-4 py-2.5 rounded-lg bg-gray-800 border border-gray-700
-                                 text-white placeholder-gray-500 focus:outline-none
-                                 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500
-                                 transition resize-none"
-                          placeholder="A brief description of the campaign...">{{ campaign.description if campaign and campaign.description else '' }}</textarea>
-            </div>
-
-            <div class="flex gap-3 pt-2">
-                <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white
-                               font-semibold rounded-lg transition-colors">
-                    {{ 'Save Changes' if campaign else 'Create Campaign' }}
-                </button>
-                <a href="{{ '/campaigns/' + campaign.id|string if campaign else '/campaigns' }}"
-                   class="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300
-                          rounded-lg transition-colors">
-                    Cancel
-                </a>
-            </div>
-
-        </form>
+    {% if error %}
+    <div class="form-error">
+      {{ error }}
     </div>
+    {% endif %}
+
+    <form method="post"
+          action="{{ '/campaigns/' + campaign.id|string + '/edit' if campaign else '/campaigns' }}">
+
+      <div class="form-field">
+        <label for="name" class="form-label">
+          Campaign Name <span class="form-label-required">*</span>
+        </label>
+        <input type="text" id="name" name="name" required
+               value="{{ campaign.name if campaign else '' }}"
+               class="form-input"
+               placeholder="e.g. The Lost Mines of Phandelver" />
+      </div>
+
+      <div class="form-field">
+        <label for="description" class="form-label">
+          Description <span class="form-label-optional">(optional)</span>
+        </label>
+        <textarea id="description" name="description" rows="4"
+                  class="form-textarea"
+                  placeholder="A brief description of the campaign...">{{ campaign.description if campaign and campaign.description else '' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-form-primary">
+          {{ 'Save Changes' if campaign else 'Create Campaign' }}
+        </button>
+        <a href="{{ '/campaigns/' + campaign.id|string if campaign else '/campaigns' }}"
+           class="btn-form-secondary">
+          Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
 </div>
 {% endblock %}

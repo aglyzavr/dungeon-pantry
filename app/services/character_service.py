@@ -64,15 +64,32 @@ class CharacterService:
         data = copy.deepcopy(character.sheet_data)
         hp = data["vitality"]["hit_points"]
         hp_max = int(hp.get("max", 0))
+        current = int(hp.get("current", 0))
+        temp = int(hp.get("temp", 0) or 0)
 
         if absolute is not None:
-            new_hp = max(0, min(absolute, hp_max))
+            # set current HP directly (temp unaffected)
+            new_current = max(0, min(absolute, hp_max))
         elif delta is not None:
-            new_hp = max(0, min(int(hp.get("current", 0)) + delta, hp_max))
+            if delta < 0:
+                # taking damage - spend temporary HP first
+                dmg = -delta
+                if temp >= dmg:
+                    # all damage absorbed by temp
+                    temp -= dmg
+                    dmg = 0
+                else:
+                    dmg -= temp
+                    temp = 0
+                new_current = max(0, current - dmg)
+            else:
+                # healing only affects current HP
+                new_current = min(hp_max, current + delta)
         else:
             return character
 
-        hp["current"] = new_hp
+        hp["current"] = new_current
+        hp["temp"] = temp
         return await self._repo.save_sheet_data(character, data)
 
     async def toggle_death_save(self, character: Character, save_type: str, action: str) -> Character:

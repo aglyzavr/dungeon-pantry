@@ -1,83 +1,77 @@
 {% extends "layout.html" %}
 {% block title %}Campaigns — DnD Manager{% endblock %}
 
-{% block content %}
-<div class="max-w-4xl mx-auto">
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/campaigns.css" />
+  <link rel="stylesheet" href="/static/css/shared.css" />
+{% endblock %}
 
-    <div class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-white">Campaigns</h1>
-            <p class="text-gray-400 mt-1">{{ campaigns | length }} campaign{{ 's' if campaigns | length != 1 }}</p>
+{% block content %}
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Campaigns</h1>
+      <p class="page-subtitle">{{ campaigns | length }} campaign{{ 's' if campaigns | length != 1 }}</p>
+    </div>
+    {% if current_user.is_dm %}
+    <a href="/campaigns/new" class="btn-primary">
+      + New Campaign
+    </a>
+    {% endif %}
+  </div>
+
+  {% if error %}
+  <div class="alert-error">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  {% if campaigns %}
+  <div class="campaigns-grid">
+    {% for campaign in campaigns %}
+    <div class="campaign-card">
+      <div class="campaign-card-header">
+        <div class="campaign-card-content">
+          <a href="/campaigns/{{ campaign.id }}" class="campaign-card-title">
+            {{ campaign.name }}
+          </a>
+          {% if campaign.description %}
+          <p class="campaign-card-description">{{ campaign.description }}</p>
+          {% else %}
+          <p class="campaign-card-description empty">No description</p>
+          {% endif %}
         </div>
         {% if current_user.is_dm %}
-        <a href="/campaigns/new"
-           class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm
-                  font-semibold rounded-lg transition-colors">
-            + New Campaign
-        </a>
-        {% endif %}
-    </div>
-
-    {% if error %}
-    <div class="mb-6 px-4 py-3 rounded-lg bg-red-900/50 border border-red-700 text-red-300 text-sm">
-        {{ error }}
-    </div>
-    {% endif %}
-
-    {% if campaigns %}
-    <div class="grid gap-4 sm:grid-cols-2">
-        {% for campaign in campaigns %}
-        <div class="bg-gray-900 border border-gray-800 rounded-xl p-6
-                    hover:border-indigo-700 transition-colors group">
-            <div class="flex items-start justify-between gap-4">
-                <div class="flex-1 min-w-0">
-                    <a href="/campaigns/{{ campaign.id }}"
-                       class="text-lg font-semibold text-white hover:text-indigo-400
-                              transition-colors truncate block">
-                        {{ campaign.name }}
-                    </a>
-                    {% if campaign.description %}
-                    <p class="text-gray-400 text-sm mt-1 line-clamp-2">{{ campaign.description }}</p>
-                    {% else %}
-                    <p class="text-gray-600 text-sm mt-1 italic">No description</p>
-                    {% endif %}
-                </div>
-                {% if current_user.is_dm %}
-                <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                    <a href="/campaigns/{{ campaign.id }}/edit"
-                       class="text-xs px-3 py-1 rounded-md bg-gray-800 hover:bg-gray-700
-                              text-gray-300 transition-colors">
-                        Edit
-                    </a>
-                    <form method="post" action="/campaigns/{{ campaign.id }}/delete"
-                          onsubmit="return confirm('Delete \'{{ campaign.name }}\'? Characters will stay in the pool.')">
-                        <button type="submit"
-                                class="text-xs px-3 py-1 rounded-md bg-red-900/50 hover:bg-red-800
-                                       text-red-300 transition-colors">
-                            Delete
-                        </button>
-                    </form>
-                </div>
-                {% endif %}
-            </div>
-            <div class="mt-4 pt-4 border-t border-gray-800 flex items-center
-                        justify-between text-xs text-gray-500">
-                <span>Created {{ campaign.created_at.strftime('%b %d, %Y') }}</span>
-                <a href="/campaigns/{{ campaign.id }}"
-                   class="text-indigo-400 hover:text-indigo-300 transition-colors">
-                    View →
-                </a>
-            </div>
+        <div class="campaign-actions">
+          <a href="/campaigns/{{ campaign.id }}/edit" class="btn-sm btn-sm--secondary">
+            Edit
+          </a>
+          <form method="post" action="/campaigns/{{ campaign.id }}/delete"
+                onsubmit="return confirm('Delete \'{{ campaign.name }}\'? Characters will stay in the pool.')">
+            <button type="submit" class="btn-sm btn-sm--danger">
+              Delete
+            </button>
+          </form>
         </div>
-        {% endfor %}
+        {% endif %}
+      </div>
+      <div class="campaign-card-footer">
+        <span>Created {{ campaign.created_at.strftime('%b %d, %Y') }}</span>
+        <a href="/campaigns/{{ campaign.id }}" class="campaign-card-link">
+          View →
+        </a>
+      </div>
     </div>
+    {% endfor %}
+  </div>
 
-    {% else %}
-    {% with icon="🗺️", message="No campaigns yet",
-            subtext="Create your first campaign to get started." %}
-        {% include "shared/_empty_state.html" %}
-    {% endwith %}
-    {% endif %}
+  {% else %}
+  {% with icon="🗺️", message="No campaigns yet",
+          subtext="Create your first campaign to get started." %}
+    {% include "shared/_empty_state.html" %}
+  {% endwith %}
+  {% endif %}
 
 </div>
 {% endblock %}

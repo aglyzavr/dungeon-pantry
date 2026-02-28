@@ -3,61 +3,65 @@
 {% block title %}Players{% endblock %}
 {% block meta_description %}Manage all registered players and their assigned characters.{% endblock %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/players.css" />
+{% endblock %}
+
 {% block content %}
-<div class="max-w-5xl mx-auto">
+<div class="page-container">
 
   {# ── Page Header ──────────────────────────────────────────────── #}
-  <div class="flex items-center justify-between mb-6">
+  <div class="page-header">
     <div>
-      <h1 class="text-2xl font-bold text-indigo-400">Players</h1>
-      <p class="text-sm text-gray-500 mt-1">
+      <h1 class="page-title">Players</h1>
+      <p class="page-subtitle">
         {{ players | length }} player{{ 's' if players | length != 1 }} registered
       </p>
     </div>
-    <a href="/players/new" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+    <a href="/players/new" class="btn-primary">
       + New Player
     </a>
   </div>
 
   {# ── Player Table ─────────────────────────────────────────────── #}
   {% if players %}
-  <div class="overflow-x-auto rounded-xl border border-gray-800" role="region" aria-label="Players list" tabindex="0">
-    <table class="w-full text-sm">
-      <thead class="bg-gray-900 border-b border-gray-800">
+  <div class="table-container" role="region" aria-label="Players list" tabindex="0">
+    <table class="table">
+      <thead class="table-head">
         <tr>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Username</th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Member Since</th>
-          <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <th scope="col" class="table-header">Username</th>
+          <th scope="col" class="table-header">Member Since</th>
+          <th scope="col" class="table-header table-header--right">
             <span class="sr-only">Actions</span>
           </th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-800">
+      <tbody class="table-body">
         {% for player in players %}
-        <tr class="hover:bg-gray-900 transition-colors">
+        <tr class="table-row">
 
           {# Username #}
-          <td class="px-4 py-3 font-semibold">
+          <td class="table-cell table-cell--username">
             <a
               href="/players/{{ player.id }}/edit"
-              class="text-indigo-400 hover:text-indigo-300 transition-colors"
+              class="table-cell-link"
               aria-label="Edit player {{ player.username }}"
             >{{ player.username }}</a>
           </td>
 
           {# Member Since #}
-          <td class="px-4 py-3 text-gray-500 text-xs">
+          <td class="table-cell table-cell--time">
             <time datetime="{{ player.created_at.isoformat() }}">
               {{ player.created_at.strftime("%b %d, %Y") }}
             </time>
           </td>
 
           {# Row Actions #}
-          <td class="px-4 py-3">
-            <div class="flex items-center justify-end gap-2">
+          <td class="table-cell table-cell--actions">
+            <div class="actions-container">
               <a
                 href="/players/{{ player.id }}/edit"
-                class="text-xs px-3 py-1.5 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                class="btn-table btn-table--edit"
                 aria-label="Edit {{ player.username }}"
               >✏️ Edit</a>
 
@@ -68,7 +72,7 @@
               >
                 <button
                   type="submit"
-                  class="text-xs px-3 py-1.5 rounded-lg border border-red-900 text-red-400 hover:bg-red-900 hover:text-red-200 transition-colors"
+                  class="btn-table btn-table--delete"
                   aria-label="Delete {{ player.username }}"
                 >🗑 Delete</button>
               </form>
@@ -83,11 +87,11 @@
 
   {# ── Empty State ───────────────────────────────────────────────── #}
   {% else %}
-  <div class="text-center py-20 text-gray-500" role="status">
-    <p class="text-5xl mb-4" aria-hidden="true">🧙</p>
-    <p class="text-lg font-semibold text-gray-400 mb-2">No players yet</p>
-    <p class="text-sm mb-6">Create the first player account to get the campaign started.</p>
-    <a href="/players/new" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+  <div class="empty-state-container" role="status">
+    <p class="empty-state-icon" aria-hidden="true">🧙</p>
+    <p class="empty-state-title">No players yet</p>
+    <p class="empty-state-text">Create the first player account to get the campaign started.</p>
+    <a href="/players/new" class="btn-primary">
       + New Player
     </a>
   </div>

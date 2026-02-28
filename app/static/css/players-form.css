@@ -1,0 +1,220 @@
+/* ========================================
+   PLAYERS-FORM.CSS - Player form styling
+   ======================================== */
+
+/* Form Container */
+.form-container {
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+/* Page Header */
+.form-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.form-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #818cf8;
+}
+
+.form-back-link {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.form-back-link:hover {
+  color: #ffffff;
+}
+
+/* Form Element */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Form Field */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.form-label-required {
+  color: #f87171;
+  aria-hidden: true;
+}
+
+.form-label-optional {
+  color: #6b7280;
+  font-weight: 400;
+  font-size: 0.875rem;
+}
+
+/* Form Input Regular */
+.form-input {
+  background-color: #111827;
+  border: 1px solid #374151;
+  color: #f3f4f6;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.form-input::placeholder {
+  color: #6b7280;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px #6366f1;
+}
+
+/* Form Input Disabled */
+.form-input:disabled {
+  background-color: #111827;
+  border-color: #374151;
+  color: #6b7280;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Form Input Error */
+.form-input--error {
+  border-color: #b91c1c;
+}
+
+.form-input--error:focus {
+  box-shadow: 0 0 0 1px #b91c1c;
+}
+
+/* Form Field with Icon/Toggle */
+.form-field-with-icon {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-field-with-icon .form-input {
+  flex: 1;
+}
+
+/* Password Toggle Button */
+.btn-toggle-password {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  color: #9ca3af;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.btn-toggle-password:hover {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+/* Form Hint / Help Text */
+.form-hint {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Form Error Message */
+.form-error {
+  font-size: 0.75rem;
+  color: #f87171;
+}
+
+/* Form with Tooltip */
+.form-field-tooltip {
+  position: relative;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 0.5rem;
+  background-color: #1f2937;
+  color: #d1d5db;
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  white-space: nowrap;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 10;
+}
+
+.tooltip-wrapper:hover .tooltip-content,
+.tooltip-wrapper:focus-within .tooltip-content {
+  display: block;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 1rem;
+  border: 0.25rem solid transparent;
+  border-top-color: #1f2937;
+}
+
+.form-disabled-hint {
+  font-size: 0.75rem;
+  color: #4b5563;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-submit {
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+  background-color: #4338ca;
+}
+
+.btn-submit:disabled {
+  background-color: #6b7280;
+  cursor: not-allowed;
+  opacity: 0.6;
+}

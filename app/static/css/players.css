@@ -1,0 +1,186 @@
+/* ========================================
+   PLAYERS.CSS - Players page styling
+   ======================================== */
+
+/* Page Container */
+.page-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #818cf8;
+}
+
+.page-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Primary Button */
+.btn-primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+/* Table Container */
+.table-container {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  border: 1px solid #1f2937;
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  font-size: 0.875rem;
+  border-collapse: collapse;
+}
+
+.table-head {
+  background-color: #111827;
+  border-bottom: 1px solid #1f2937;
+}
+
+.table-header {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-header--right {
+  text-align: right;
+}
+
+.table-body {
+  border-collapse: collapse;
+}
+
+.table-row {
+  border-bottom: 1px solid #1f2937;
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: #111827;
+}
+
+.table-cell {
+  padding: 0.75rem 1rem;
+}
+
+.table-cell--username {
+  font-weight: 600;
+}
+
+.table-cell-link {
+  color: #818cf8;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.table-cell-link:hover {
+  color: #a5b4fc;
+}
+
+.table-cell--time {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.table-cell--actions {
+  text-align: right;
+}
+
+/* Action Buttons Container */
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Table Buttons */
+.btn-table {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s;
+}
+
+.btn-table--edit {
+  color: #d1d5db;
+  background-color: transparent;
+}
+
+.btn-table--edit:hover {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+.btn-table--delete {
+  color: #f87171;
+  border-color: #7f1d1d;
+  background-color: transparent;
+}
+
+.btn-table--delete:hover {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+/* Empty State Container */
+.empty-state-container {
+  text-align: center;
+  padding: 5rem 1rem;
+  color: #6b7280;
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}

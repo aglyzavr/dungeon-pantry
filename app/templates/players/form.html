@@ -3,15 +3,19 @@
 {% block title %}{{ "Edit Player" if player else "New Player" }}{% endblock %}
 {% block meta_description %}{{ "Edit an existing player account." if player else "Create a new player account." }}{% endblock %}
 
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/players-form.css" />
+{% endblock %}
+
 {% block content %}
-<div class="max-w-lg mx-auto">
+<div class="form-container">
 
   {# ── Page Header ──────────────────────────────────────────────── #}
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-indigo-400">
+  <div class="form-page-header">
+    <h1 class="form-page-title">
       {{ "Edit Player" if player else "New Player" }}
     </h1>
-    <a href="/players" class="text-sm text-gray-400 hover:text-white transition-colors">
+    <a href="/players" class="form-back-link">
       ← Back to Players
     </a>
   </div>
@@ -22,79 +26,70 @@
     action="{{ '/players/' ~ player.id ~ '/edit' if player else '/players' }}"
     novalidate
     aria-label="{{ 'Edit player form' if player else 'New player form' }}"
-    class="flex flex-col gap-5"
   >
 
     {# ── Username ──────────────────────────────────────────────── #}
-<div class="flex flex-col gap-1">
-  <label class="text-sm font-semibold text-gray-400" for="username">
-    Username
-    {% if not player %}<span class="text-red-400" aria-hidden="true">*</span>{% endif %}
-  </label>
+    <div class="form-field">
+      <label class="form-label" for="username">
+        Username
+        {% if not player %}<span class="form-label-required" aria-hidden="true">*</span>{% endif %}
+      </label>
 
-  {% if player %}
-  {# Edit mode — disabled with tooltip #}
-  <div class="relative group">
-    <input
-      type="text"
-      id="username"
-      name="username"
-      value="{{ player.username }}"
-      disabled
-      class="bg-gray-900 border border-gray-700 text-gray-500
-             text-sm rounded-lg px-3 py-2 w-full
-             opacity-60 cursor-not-allowed"
-    />
-    <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-10">
-      <div class="bg-gray-700 text-gray-200 text-xs rounded-lg px-3 py-2
-                  whitespace-nowrap shadow-lg">
-        🔒 Username changes will be available in a future update
-        <div class="absolute top-full left-4 border-4 border-transparent
-                    border-t-gray-700"></div>
+      {% if player %}
+      {# Edit mode — disabled with tooltip #}
+      <div class="form-field-tooltip">
+        <div class="tooltip-wrapper">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value="{{ player.username }}"
+            disabled
+            class="form-input"
+          />
+          <div class="tooltip-content">
+            🔒 Username changes will be available in a future update
+            <div class="tooltip-arrow"></div>
+          </div>
+        </div>
+        <p class="form-disabled-hint">Usernames cannot be changed at this time.</p>
       </div>
+
+      {% else %}
+      {# Create mode — fully editable #}
+      <input
+        type="text"
+        id="username"
+        name="username"
+        value="{{ form.username or '' }}"
+        required
+        minlength="3"
+        maxlength="32"
+        autocomplete="username"
+        aria-required="true"
+        aria-describedby="{{ 'username-error' if errors.username else 'username-hint' }}"
+        class="form-input {% if errors.username %}form-input--error{% endif %}"
+      />
+      <p id="username-hint" class="form-hint">Between 3 and 32 characters.</p>
+      {% if errors.username %}
+        <p id="username-error" class="form-error" role="alert">
+          {{ errors.username }}
+        </p>
+      {% endif %}
+      {% endif %}
     </div>
-  </div>
-  <p class="text-xs text-gray-600">Usernames cannot be changed at this time.</p>
-
-  {% else %}
-  {# Create mode — fully editable #}
-  <input
-    type="text"
-    id="username"
-    name="username"
-    value="{{ form.username or '' }}"
-    required
-    minlength="3"
-    maxlength="32"
-    autocomplete="username"
-    aria-required="true"
-    aria-describedby="{{ 'username-error' if errors.username else 'username-hint' }}"
-    class="bg-gray-900 border {{ 'border-red-700' if errors.username else 'border-gray-700' }}
-           text-gray-100 text-sm rounded-lg px-3 py-2 w-full
-           focus:outline-none focus:border-indigo-500 transition-colors"
-  />
-  <p id="username-hint" class="text-xs text-gray-500">Between 3 and 32 characters.</p>
-  {% if errors.username %}
-    <p id="username-error" class="text-xs text-red-400" role="alert">
-      {{ errors.username }}
-    </p>
-  {% endif %}
-  {% endif %}
-
-</div>
-
 
     {# ── Password ──────────────────────────────────────────────── #}
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-semibold text-gray-400" for="password">
+    <div class="form-field">
+      <label class="form-label" for="password">
         {% if player %}
           New Password
-          <span class="text-gray-500 font-normal">(leave blank to keep current)</span>
+          <span class="form-label-optional">(leave blank to keep current)</span>
         {% else %}
-          Password <span class="text-red-400" aria-hidden="true">*</span>
+          Password <span class="form-label-required" aria-hidden="true">*</span>
         {% endif %}
       </label>
-      <div class="flex gap-2">
+      <div class="form-field-with-icon">
         <input
           type="password"
           id="password"
@@ -105,30 +100,28 @@
           autocomplete="new-password"
           aria-required="{{ 'true' if not player else 'false' }}"
           aria-describedby="{{ 'password-error' if errors.password else 'password-hint' }}"
-          class="flex-1 bg-gray-900 border {{ 'border-red-700' if errors.password else 'border-gray-700' }}
-                 text-gray-100 text-sm rounded-lg px-3 py-2
-                 focus:outline-none focus:border-indigo-500 transition-colors"
+          class="form-input {% if errors.password %}form-input--error{% endif %}"
         />
         <button
           type="button"
           data-toggle-password="password"
           aria-label="Toggle password visibility"
-          class="px-3 py-2 rounded-lg border border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors text-sm"
+          class="btn-toggle-password"
         >👁</button>
       </div>
-      <p id="password-hint" class="text-xs text-gray-500">Minimum 8 characters.</p>
+      <p id="password-hint" class="form-hint">Minimum 8 characters.</p>
       {% if errors.password %}
-        <p id="password-error" class="text-xs text-red-400" role="alert">{{ errors.password }}</p>
+        <p id="password-error" class="form-error" role="alert">{{ errors.password }}</p>
       {% endif %}
     </div>
 
     {# ── Confirm Password ──────────────────────────────────────── #}
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-semibold text-gray-400" for="confirm_password">
+    <div class="form-field">
+      <label class="form-label" for="confirm_password">
         {% if player %}
           Confirm New Password
         {% else %}
-          Confirm Password <span class="text-red-400" aria-hidden="true">*</span>
+          Confirm Password <span class="form-label-required" aria-hidden="true">*</span>
         {% endif %}
       </label>
       <input
@@ -140,23 +133,18 @@
         autocomplete="new-password"
         aria-required="{{ 'true' if not player else 'false' }}"
         aria-describedby="{{ 'confirm-password-error' if errors.confirm_password }}"
-        class="bg-gray-900 border {{ 'border-red-700' if errors.confirm_password else 'border-gray-700' }}
-               text-gray-100 text-sm rounded-lg px-3 py-2 w-full
-               focus:outline-none focus:border-indigo-500 transition-colors"
+        class="form-input {% if errors.confirm_password %}form-input--error{% endif %}"
       />
       {% if errors.confirm_password %}
-        <p id="confirm-password-error" class="text-xs text-red-400" role="alert">
+        <p id="confirm-password-error" class="form-error" role="alert">
           {{ errors.confirm_password }}
         </p>
       {% endif %}
     </div>
 
     {# ── Form Actions ──────────────────────────────────────────── #}
-    <div class="flex items-center gap-3 pt-2 flex-wrap">
-      <button
-        type="submit"
-        class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-      >
+    <div class="form-actions">
+      <button type="submit" class="btn-submit">
         {{ "Save Changes" if player else "Create Player" }}
       </button>
     </div>
