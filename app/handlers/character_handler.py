@@ -94,6 +94,10 @@ async def upload_character(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
+    # create the character after normalization/validation; if the DB write
+    # succeeds we'll simply redirect.  Any template errors will be caught later
+    # when the user views the sheet (and our character_sheet handler now
+    # displays a helpful message).
     character = await service.create(
         sheet_data=data,
         owner_id=UUID(current_user.user_id),
@@ -129,14 +133,25 @@ async def character_sheet(
     # Load players for assignment dropdown (DM only)
     players = await player_service.list_players() if current_user.is_dm else []
 
-    return templates.TemplateResponse("characters/sheet.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "players": players,
-        "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-    })
+    # produce the template; construction of TemplateResponse already renders
+    # the Jinja template, so wrap instantiation in try/except to catch any
+    # rendering issues.
+    try:
+        resp = templates.TemplateResponse("characters/sheet.html", {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "players": players,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        })
+        return resp
+    except Exception as e:
+        return templates.TemplateResponse("characters/upload.html", {
+            "request": request,
+            "current_user": current_user,
+            "errors": [f"Unable to display character: {e}"]
+        }, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ── Delete ────────────────────────────────────────────────────────────────
 

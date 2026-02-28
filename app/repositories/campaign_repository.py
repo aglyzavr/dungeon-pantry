@@ -20,6 +20,27 @@ class CampaignRepository:
         )
         return list(result.scalars().all())
 
+    async def get_for_user(self, user_id: UUID, is_dm: bool) -> list[Campaign]:
+        """Return campaigns visible to *user_id*.
+
+        Dungeon masters see every campaign. Players only see campaigns in which
+        they have at least one character assigned. A join is performed through
+        the association table to avoid loading unrelated campaigns.
+        """
+        if is_dm:
+            return await self.get_all()
+
+        # non-dm: join through characters owned by the user
+        result = await self._db.execute(
+            select(Campaign)
+            .join(campaign_characters, Campaign.id == campaign_characters.c.campaign_id)
+            .join(Character, campaign_characters.c.character_id == Character.id)
+            .where(Character.owner_id == user_id)
+            .order_by(Campaign.created_at.desc())
+            .distinct()
+        )
+        return list(result.scalars().all())
+
     async def get_by_id(self, campaign_id: UUID) -> Campaign | None:
         result = await self._db.execute(
             select(Campaign)
@@ -48,12 +69,20 @@ class CampaignRepository:
     # ── Character assignment ──────────────────────────────────────────────────
 
     async def get_unassigned_characters(self, campaign_id: UUID) -> list[Character]:
-        """All characters NOT yet in this campaign."""
-        already_in = select(campaign_characters.c.character_id).where(
-            campaign_characters.c.campaign_id == campaign_id
-        )
+        """All characters not assigned to *any* campaign.
+
+        The `campaign_id` parameter is still accepted by the public API because
+        callers previously passed it, but it is ignored. Previously the query
+        only excluded characters already in the current campaign, which meant a
+        character assigned elsewhere would still be considered "unassigned" and
+        show up in the DM view. The updated query returns only characters that
+        have no rows in the join table at all.
+        """
+        # we don't actually use ``campaign_id`` any more; the filter is global
+        all_assigned = select(campaign_characters.c.character_id)
         result = await self._db.execute(
-            select(Character).where(Character.id.not_in(already_in))
+            select(Character)
+            .where(Character.id.not_in(all_assigned))
             .order_by(Character.created_at.desc())
         )
         return list(result.scalars().all())

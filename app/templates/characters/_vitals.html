@@ -165,9 +165,11 @@
       </div>
 
       {# Spell slots #}
+      {% set slots = sheet.spell_slots | default({}) %}
       {% set has_slots = namespace(found=false) %}
       {% for lvl in range(1, 10) %}
-        {% if sheet.spell_slots["level_" ~ lvl].total > 0 %}
+        {% set key = "level_" ~ lvl %}
+        {% if (slots.get(key, {}).total | default(0)) > 0 %}
           {% set has_slots.found = true %}
         {% endif %}
       {% endfor %}
@@ -177,8 +179,9 @@
       <div class="flex items-center gap-2 flex-wrap">
         <span class="text-xs text-gray-500 uppercase tracking-wide">Slots</span>
         {% for lvl in range(1, 10) %}
-        {% set slot = sheet.spell_slots["level_" ~ lvl] %}
-        {% if slot.total > 0 %}
+        {% set key = "level_" ~ lvl %}
+        {% set slot = slots.get(key, {}) %}
+        {% if (slot.total | default(0)) > 0 %}
         <div class="flex items-center gap-1 bg-gray-800 rounded px-2 py-1">
           <span class="text-xs text-gray-500">{{ lvl }}</span>
           <div class="flex gap-0.5 mx-1">

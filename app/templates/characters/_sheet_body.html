@@ -462,7 +462,7 @@
             </div>
             {% endif %}
 
-            {% set c = sheet.coins %}
+            {% set c = sheet.coins | default({'cp':0,'sp':0,'ep':0,'gp':0,'pp':0}) %}
             {% if c.cp or c.sp or c.ep or c.gp or c.pp %}
             <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
@@ -493,7 +493,7 @@
             {# ── Short fields row: Background + Alignment ── #}
             {% set short_fields = [
             ("Background", sheet.character_identity.background),
-            ("Alignment", sheet.backstory_and_personality.alignment)
+            ("Alignment", sheet.get("backstory_and_personality", {}).get("alignment"))
             ] %}
             {% if short_fields[0][1] or short_fields[1][1] %}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

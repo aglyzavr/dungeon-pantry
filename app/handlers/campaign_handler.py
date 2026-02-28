@@ -27,7 +27,10 @@ async def campaign_list(
     current_user: UserSession = Depends(require_login),
     service: CampaignService = Depends(_service),
 ):
-    campaigns = await service.list_campaigns()
+    campaigns = await service.list_campaigns(
+        user_id=UUID(current_user.user_id),
+        is_dm=current_user.is_dm,
+    )
     return templates.TemplateResponse("campaigns/list.html", {
         "request": request,
         "current_user": current_user,
