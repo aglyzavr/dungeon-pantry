@@ -1,5 +1,7 @@
 import json
+import os
 from uuid import UUID
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile, status
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -385,3 +387,104 @@ async def toggle_shield(
         "sheet": character.sheet_data,
         "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
     })
+
+
+# ── Portrait Upload ───────────────────────────────────────────────────────
+
+PORTRAIT_DIR = Path("app/static/portraits")
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
+MAX_PORTRAIT_SIZE = 5_242_880  # 5MB
+
+
+def _ensure_portrait_dir():
+    """Create portraits directory if it doesn't exist"""
+    PORTRAIT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+@router.get("/{character_id}/portrait/upload", response_class=HTMLResponse)
+async def portrait_upload_form(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    """Display portrait upload modal"""
+    try:
+        character = await service.get_character(
+            character_id, UUID(current_user.user_id), current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    return templates.TemplateResponse("characters/_portrait_upload_modal.html", {
+        "request": request,
+        "character": character,
+    })
+
+
+@router.post("/{character_id}/portrait/upload", response_class=HTMLResponse)
+async def upload_portrait(
+    request: Request,
+    character_id: UUID,
+    file: UploadFile = File(...),
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    """Handle portrait image upload"""
+    try:
+        character = await service.get_character(
+            character_id, UUID(current_user.user_id), current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    # Validate file extension
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in ALLOWED_EXTENSIONS:
+        return templates.TemplateResponse(
+            "characters/_portrait_upload_modal.html",
+            {
+                "request": request,
+                "character": character,
+                "error": "Only JPEG and PNG files are allowed.",
+            },
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+    # Read and validate file size
+    contents = await file.read(MAX_PORTRAIT_SIZE + 1)
+    if len(contents) > MAX_PORTRAIT_SIZE:
+        return templates.TemplateResponse(
+            "characters/_portrait_upload_modal.html",
+            {
+                "request": request,
+                "character": character,
+                "error": "File too large. Maximum size is 5MB.",
+            },
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+    # Create portraits directory
+    _ensure_portrait_dir()
+
+    # Generate filename with character ID to ensure uniqueness
+    filename = f"{character_id}{file_ext}"
+    filepath = PORTRAIT_DIR / filename
+    relative_path = f"/static/portraits/{filename}"
+
+    # Write file
+    with open(filepath, "wb") as f:
+        f.write(contents)
+
+    # Update character portrait path in database
+    updated_character = await service.update_portrait(character_id, relative_path)
+
+    # Return updated sheet header which will replace the old one
+    return templates.TemplateResponse("characters/_sheet_header.html", {
+        "request": request,
+        "current_user": current_user,
+        "character": updated_character,
+        "sheet": updated_character.sheet_data,
+        "can_edit": current_user.is_dm or str(updated_character.owner_id) == current_user.user_id,
+    })
+

@@ -38,6 +38,9 @@ class Character(Base):
         nullable=True,
     )
     sheet_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    portrait_path: Mapped[str | None] = mapped_column(
+        nullable=True,  # path to uploaded portrait image
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

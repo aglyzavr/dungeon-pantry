@@ -41,6 +41,25 @@
   font-size: 1.5rem;
 }
 
+.sheet-header-avatar-button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sheet-header-avatar-button:hover {
+  border-color: #3b82f6; /* blue-500 */
+  background-color: #1e3a8a; /* blue-900 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.portrait-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+
 .btn-inspiration {
   width: 4rem;
   display: flex;

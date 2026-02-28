@@ -5,9 +5,29 @@
     <div class="sheet-header-main">
         {# ── Avatar Section ─────────────────────────────────────────── #}
         <div class="sheet-header-avatar">
-            <div class="sheet-header-avatar-icon">
+            {% if can_edit %}
+            <button
+                hx-get="/characters/{{ character.id }}/portrait/upload"
+                hx-target="body"
+                hx-swap="beforeend"
+                class="sheet-header-avatar-icon sheet-header-avatar-button"
+                title="Click to upload portrait"
+            >
+                {% if character.portrait_path %}
+                <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+                {% else %}
                 🧙
+                {% endif %}
+            </button>
+            {% else %}
+            <div class="sheet-header-avatar-icon">
+                {% if character.portrait_path %}
+                <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+                {% else %}
+                🧙
+                {% endif %}
             </div>
+            {% endif %}
 
             {% if can_edit %}
             <button

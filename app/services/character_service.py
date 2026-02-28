@@ -246,3 +246,11 @@ class CharacterService:
         data = copy.deepcopy(character.sheet_data)
         data["shield_equipped"] = not bool(data.get("shield_equipped", False))
         return await self._repo.save_sheet_data(character, data)
+    async def update_portrait(self, character_id: UUID, portrait_path: str) -> Character:
+        """Update character portrait path"""
+        character = await self._repo.get_by_id(character_id)
+        if character is None:
+            raise CharacterNotFound(f"Character {character_id} not found")
+        character.portrait_path = portrait_path
+        await self._repo._db.flush()
+        return character
