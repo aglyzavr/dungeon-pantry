@@ -87,6 +87,11 @@
           <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">
             View
           </a>
+          {% if current_user.is_dm or (character.owner and character.owner.id == current_user.user_id) %}
+          <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary">
+            Edit
+          </a>
+          {% endif %}
           {% if current_user.is_dm %}
           <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove">
             <button type="submit" class="btn-sm btn-sm--secondary">

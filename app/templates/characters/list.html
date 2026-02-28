@@ -40,6 +40,9 @@
           <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">
             View
           </a>
+          <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary">
+            Edit
+          </a>
           <form method="post" action="/characters/{{ character.id }}/delete"
                 onsubmit="return confirm('Delete this character permanently?')">
             <button type="submit" class="btn-sm btn-sm--danger">

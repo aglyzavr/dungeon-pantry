@@ -1,0 +1,441 @@
+{% extends "layout.html" %}
+{% block title %}Edit {{ sheet.character_identity.character_name }} — DnD Manager{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/edit.css" />
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+  <div class="edit-header">
+    <h1 class="edit-title">Edit Character</h1>
+    <div class="edit-actions">
+      <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">Cancel</a>
+      <button type="submit" form="edit-form" class="btn-sm btn-sm--primary">Save Changes</button>
+    </div>
+  </div>
+
+  {% if error %}
+  <div class="error-message">{{ error }}</div>
+  {% endif %}
+
+  <div x-data="{ activeTab: 'identity' }">
+    <div class="tab-navigation">
+      <button type="button" class="tab-btn" @click="activeTab = 'identity'" :class="{ 'active': activeTab === 'identity' }">
+        Identity
+      </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'stats'" :class="{ 'active': activeTab === 'stats' }">
+        Stats & Abilities
+      </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'vitals'" :class="{ 'active': activeTab === 'vitals' }">
+        Vitals
+      </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'skills'" :class="{ 'active': activeTab === 'skills' }">
+        Skills
+      </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'features'" :class="{ 'active': activeTab === 'features' }">
+        Features & Traits
+      </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'equipment'" :class="{ 'active': activeTab === 'equipment' }">
+        Equipment
+      </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'bio'" :class="{ 'active': activeTab === 'bio' }">
+        Biography
+      </button>
+    </div>
+
+    <form id="edit-form" method="post" action="/characters/{{ character.id }}/edit">
+    
+    {# ── TAB: IDENTITY ────────────────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'identity'" x-cloak>
+      <div class="form-section">
+        <h2 class="form-section-title">Basic Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="character_name">Character Name *</label>
+            <input type="text" id="character_name" name="character_name" 
+                   value="{{ sheet.character_identity.character_name }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="background">Background</label>
+            <input type="text" id="background" name="background" 
+                   value="{{ sheet.character_identity.background }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Class</h2>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="class_name">Class Name *</label>
+            <input type="text" id="class_name" name="class_name" 
+                   value="{{ sheet.character_identity.class.name }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="class_subclass">Subclass</label>
+            <input type="text" id="class_subclass" name="class_subclass" 
+                   value="{{ sheet.character_identity.class.subclass or '' }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Species</h2>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="species_name">Species Name *</label>
+            <input type="text" id="species_name" name="species_name" 
+                   value="{{ sheet.character_identity.species.name }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="species_subtype">Subtype</label>
+            <input type="text" id="species_subtype" name="species_subtype" 
+                   value="{{ sheet.character_identity.species.subtype or '' }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Level & Experience</h2>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="level">Level *</label>
+            <input type="number" id="level" name="level" min="1" max="20"
+                   value="{{ sheet.character_level.level }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="xp">XP</label>
+            <input type="text" id="xp" name="xp" 
+                   value="{{ sheet.character_level.xp }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ── TAB: STATS & ABILITIES ───────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'stats'" x-cloak>
+      <div class="form-section">
+        <h2 class="form-section-title">Basic Stats</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="armor_class">Armor Class</label>
+            <input type="number" id="armor_class" name="armor_class" 
+                   value="{{ sheet.armor_class }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="initiative">Initiative</label>
+            <input type="text" id="initiative" name="initiative" 
+                   value="{{ sheet.initiative }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="speed">Speed</label>
+            <input type="text" id="speed" name="speed" 
+                   value="{{ sheet.speed }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="size">Size</label>
+            <input type="text" id="size" name="size" 
+                   value="{{ sheet.size }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="proficiency_bonus">Proficiency Bonus</label>
+            <input type="number" id="proficiency_bonus" name="proficiency_bonus" 
+                   value="{{ sheet.proficiency_bonus }}">
+          </div>
+        </div>
+        
+        <div class="form-grid-3" style="margin-top: 1rem;">
+          <div class="form-group">
+            <label for="passive_perception">Passive Perception</label>
+            <input type="number" id="passive_perception" name="passive_perception" 
+                   value="{{ sheet.passive_perception }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="passive_investigation">Passive Investigation</label>
+            <input type="number" id="passive_investigation" name="passive_investigation" 
+                   value="{{ sheet.get('passive_investigation', 10) }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="passive_insight">Passive Insight</label>
+            <input type="number" id="passive_insight" name="passive_insight" 
+                   value="{{ sheet.get('passive_insight', 10) }}">
+          </div>
+        </div>
+        
+        <div class="checkbox-group" style="margin-top: 1rem;">
+          <input type="checkbox" id="heroic_inspiration" name="heroic_inspiration" 
+                 {% if sheet.heroic_inspiration %}checked{% endif %}>
+          <label for="heroic_inspiration">Heroic Inspiration</label>
+        </div>
+      </div>
+
+      {# Ability Scores #}
+      {% for ability_name, ability_label in [
+        ('strength', 'Strength'),
+        ('dexterity', 'Dexterity'),
+        ('constitution', 'Constitution'),
+        ('intelligence', 'Intelligence'),
+        ('wisdom', 'Wisdom'),
+        ('charisma', 'Charisma')
+      ] %}
+      {% set ability = sheet[ability_name] %}
+      <div class="form-section">
+        <h2 class="form-section-title">{{ ability_label }}</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="{{ ability_name }}_score">Score</label>
+            <input type="number" id="{{ ability_name }}_score" name="{{ ability_name }}_score" 
+                   value="{{ ability.score }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ ability_name }}_modifier">Modifier</label>
+            <input type="number" id="{{ ability_name }}_modifier" name="{{ ability_name }}_modifier" 
+                   value="{{ ability.modifier }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ ability_name }}_save">Saving Throw</label>
+            <input type="number" id="{{ ability_name }}_save" name="{{ ability_name }}_save" 
+                   value="{{ ability.saving_throw }}">
+          </div>
+          
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="{{ ability_name }}_save_prof" name="{{ ability_name }}_save_prof" 
+                   {% if ability.saving_throw_proficient %}checked{% endif %}>
+            <label for="{{ ability_name }}_save_prof">Save Proficient</label>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {# ── TAB: VITALS ──────────────────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'vitals'" x-cloak>
+      <div class="form-section">
+        <h2 class="form-section-title">Hit Points</h2>
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label for="hp_current">Current HP *</label>
+            <input type="number" id="hp_current" name="hp_current" min="0"
+                   value="{{ sheet.vitality.hit_points.current }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="hp_max">Max HP *</label>
+            <input type="number" id="hp_max" name="hp_max" min="1"
+                   value="{{ sheet.vitality.hit_points.max }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="hp_temp">Temp HP</label>
+            <input type="number" id="hp_temp" name="hp_temp" min="0"
+                   value="{{ sheet.vitality.hit_points.temp }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Hit Dice</h2>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="hit_dice_total">Total</label>
+            <input type="text" id="hit_dice_total" name="hit_dice_total" 
+                   value="{{ sheet.vitality.hit_dice.total }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="hit_dice_spent">Spent</label>
+            <input type="text" id="hit_dice_spent" name="hit_dice_spent" 
+                   value="{{ sheet.vitality.hit_dice.spent }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ── TAB: SKILLS ──────────────────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'skills'" x-cloak>
+      {% for ability_name, ability_label in [
+        ('strength', 'Strength'),
+        ('dexterity', 'Dexterity'),
+        ('intelligence', 'Intelligence'),
+        ('wisdom', 'Wisdom'),
+        ('charisma', 'Charisma')
+      ] %}
+      {% set ability = sheet[ability_name] %}
+      {% if ability.get('ability_scores') %}
+      <div class="form-section">
+        <h2 class="form-section-title">{{ ability_label }} Skills</h2>
+        {% for skill_name, skill_data in ability.ability_scores.items() %}
+        {% set skill_key = (ability_name ~ '_' ~ skill_name.replace(' ', '_').lower().replace('_of_', '_')) %}
+        <div class="form-grid" style="margin-bottom: 0.75rem; align-items: center;">
+          <div style="font-weight: 500;">{{ skill_name | title }}</div>
+          
+          <div class="form-group">
+            <label for="{{ skill_key }}_bonus">Bonus</label>
+            <input type="number" id="{{ skill_key }}_bonus" name="{{ skill_key }}_bonus" 
+                   value="{{ skill_data.bonus }}">
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="{{ skill_key }}_prof" name="{{ skill_key }}_prof" 
+                   {% if skill_data.proficient %}checked{% endif %}>
+            <label for="{{ skill_key }}_prof">Proficient</label>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="{{ skill_key }}_exp" name="{{ skill_key }}_exp" 
+                   {% if skill_data.expertise %}checked{% endif %}>
+            <label for="{{ skill_key }}_exp">Expertise</label>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+    {# ── TAB: FEATURES & TRAITS ───────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'features'" x-cloak>
+      <div class="form-section">
+        <h2 class="form-section-title">Proficiencies</h2>
+        <div class="form-group">
+          <label for="armor_training">Armor Training (comma-separated)</label>
+          <input type="text" id="armor_training" name="armor_training" 
+                 value="{{ sheet.equipment_training_proficiencies.armor_training | join(', ') }}">
+        </div>
+        
+        <div class="form-group">
+          <label for="weapons">Weapons (comma-separated)</label>
+          <input type="text" id="weapons" name="weapons" 
+                 value="{{ sheet.equipment_training_proficiencies.weapons | join(', ') }}">
+        </div>
+        
+        <div class="form-group">
+          <label for="tools">Tools (comma-separated)</label>
+          <input type="text" id="tools" name="tools" 
+                 value="{{ sheet.equipment_training_proficiencies.tools | join(', ') }}">
+        </div>
+        
+        <div class="form-group">
+          <label for="languages">Languages</label>
+          <input type="text" id="languages" name="languages" 
+                 value="{{ sheet.languages }}">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Class Features</h2>
+        <div class="form-group">
+          <textarea id="class_features" name="class_features">{{ sheet.class_features or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Species Traits</h2>
+        <div class="form-group">
+          <textarea id="species_traits" name="species_traits">{{ sheet.species_traits or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Feats</h2>
+        <div class="form-group">
+          <textarea id="feats" name="feats">{{ sheet.feats or '' }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    {# ── TAB: EQUIPMENT ───────────────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'equipment'" x-cloak>
+      <div class="form-section">
+        <h2 class="form-section-title">Equipment</h2>
+        <div class="form-group">
+          <label for="equipment_list">Equipment List (comma-separated)</label>
+          <textarea id="equipment_list" name="equipment_list">{{ sheet.equipment.equipment_list | join(', ') }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Coins</h2>
+        <div class="form-grid-6">
+          <div class="form-group">
+            <label for="coins_cp">CP</label>
+            <input type="number" id="coins_cp" name="coins_cp" min="0"
+                   value="{{ sheet.coins.cp }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="coins_sp">SP</label>
+            <input type="number" id="coins_sp" name="coins_sp" min="0"
+                   value="{{ sheet.coins.sp }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="coins_ep">EP</label>
+            <input type="number" id="coins_ep" name="coins_ep" min="0"
+                   value="{{ sheet.coins.ep }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="coins_gp">GP</label>
+            <input type="number" id="coins_gp" name="coins_gp" min="0"
+                   value="{{ sheet.coins.gp }}">
+          </div>
+          
+          <div class="form-group">
+            <label for="coins_pp">PP</label>
+            <input type="number" id="coins_pp" name="coins_pp" min="0"
+                   value="{{ sheet.coins.pp }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# ── TAB: BIOGRAPHY ───────────────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'bio'" x-cloak>
+      <div class="form-section">
+        <h2 class="form-section-title">Appearance</h2>
+        <div class="form-group">
+          <textarea id="appearance" name="appearance">{{ sheet.appearance or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Backstory</h2>
+        <div class="form-group">
+          <textarea id="backstory" name="backstory">{{ sheet.backstory_and_personality.backstory or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Personality</h2>
+        <div class="form-group">
+          <textarea id="personality" name="personality">{{ sheet.backstory_and_personality.personality or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Alignment</h2>
+        <div class="form-group">
+          <input type="text" id="alignment" name="alignment" 
+                 value="{{ sheet.backstory_and_personality.alignment or '' }}">
+        </div>
+      </div>
+    </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

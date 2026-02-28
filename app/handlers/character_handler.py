@@ -170,6 +170,95 @@ async def character_delete(
     return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
 
 
+# ── Edit character ────────────────────────────────────────────────────────
+
+@router.get("/{character_id}/edit", response_class=HTMLResponse)
+async def edit_character_form(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    try:
+        character = await service.get_character(
+            character_id, UUID(current_user.user_id), current_user.is_dm
+        )
+    except CharacterNotFound:
+        return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
+    except CharacterPermissionError:
+        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Check if user can edit (DM or character owner)
+    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    if not can_edit:
+        return RedirectResponse(url=f"/characters/{character_id}", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse("characters/edit.html", {
+        "request": request,
+        "current_user": current_user,
+        "character": character,
+        "sheet": character.sheet_data,
+    })
+
+
+@router.post("/{character_id}/edit", response_class=HTMLResponse)
+async def edit_character_submit(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    try:
+        character = await service.get_character(
+            character_id, UUID(current_user.user_id), current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Check if user can edit
+    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    if not can_edit:
+        return RedirectResponse(url=f"/characters/{character_id}", status_code=status.HTTP_303_SEE_OTHER)
+
+    form = await request.form()
+    
+    # Build the updated sheet data from form
+    try:
+        updated_sheet = await service.build_sheet_from_form(character, form)
+        errors = validate_mandatory_fields(updated_sheet)
+        
+        if errors:
+            return templates.TemplateResponse(
+                "characters/edit.html",
+                {
+                    "request": request,
+                    "current_user": current_user,
+                    "character": character,
+                    "sheet": character.sheet_data,
+                    "error": "Validation failed: " + "; ".join(errors),
+                },
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        
+        await service.update_sheet_data(character_id, updated_sheet)
+        return RedirectResponse(
+            url=f"/characters/{character_id}",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            "characters/edit.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "character": character,
+                "sheet": character.sheet_data,
+                "error": f"Error updating character: {str(e)}",
+            },
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
 # ── Vitals: HP ────────────────────────────────────────────────────────────
 
 @router.post("/{character_id}/vitals/hp", response_class=HTMLResponse)

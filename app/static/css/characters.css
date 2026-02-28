@@ -115,6 +115,16 @@
   text-decoration: none;
   display: inline-block;
   transition: background-color 0.2s;
+  font-weight: 500;
+}
+
+.btn-sm--primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+
+.btn-sm--primary:hover {
+  background-color: #4338ca;
 }
 
 .btn-sm--secondary {

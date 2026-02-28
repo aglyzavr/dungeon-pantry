@@ -101,11 +101,39 @@
   min-width: 0; /* Allow text overflow handling */
 }
 
+.sheet-header-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
 .sheet-header-name {
   font-size: 1.25rem;
   font-weight: 700;
   color: #ffffff;
   line-height: 1.25;
+}
+
+.btn-edit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-edit-icon:hover {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+  transform: scale(1.05);
 }
 
 @media (min-width: 1024px) {

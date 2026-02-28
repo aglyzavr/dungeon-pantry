@@ -254,3 +254,161 @@ class CharacterService:
         character.portrait_path = portrait_path
         await self._repo._db.flush()
         return character
+
+    async def update_sheet_data(self, character_id: UUID, sheet_data: dict) -> Character:
+        """Update the entire character sheet data"""
+        character = await self._repo.get_by_id(character_id)
+        if character is None:
+            raise CharacterNotFound(f"Character {character_id} not found")
+        
+        errors = validate_mandatory_fields(sheet_data)
+        if errors:
+            raise CharacterValidationError(errors)
+        
+        sheet_data = self._normalize_sheet(sheet_data)
+        return await self._repo.save_sheet_data(character, sheet_data)
+
+    async def build_sheet_from_form(self, character: Character, form) -> dict:
+        """Build a complete sheet_data dict from the submitted form"""
+        sheet = copy.deepcopy(character.sheet_data)
+        
+        # Helper to safely get form values
+        def get_form(key: str, default=""):
+            val = form.get(key, default)
+            return val if val != "" else default
+        
+        def get_int(key: str, default=0):
+            try:
+                return int(get_form(key, str(default)))
+            except (ValueError, TypeError):
+                return default
+        
+        def get_bool(key: str):
+            return get_form(key) in ["on", "true", "True", "1"]
+        
+        # Character Identity
+        sheet["character_identity"] = {
+            "character_name": get_form("character_name"),
+            "background": get_form("background"),
+            "class": {
+                "name": get_form("class_name"),
+                "subclass": get_form("class_subclass", "")
+            },
+            "species": {
+                "name": get_form("species_name"),
+                "subtype": get_form("species_subtype", "")
+            }
+        }
+        
+        # Character Level
+        sheet["character_level"] = {
+            "level": get_int("level", 1),
+            "xp": get_form("xp", "0")
+        }
+        
+        # Basic stats
+        sheet["armor_class"] = get_int("armor_class", 10)
+        sheet["initiative"] = get_form("initiative", "+0")
+        sheet["speed"] = get_form("speed", "30 ft")
+        sheet["size"] = get_form("size", "Medium")
+        sheet["proficiency_bonus"] = get_int("proficiency_bonus", 2)
+        sheet["heroic_inspiration"] = get_bool("heroic_inspiration")
+        
+        # Passive senses
+        sheet["passive_perception"] = get_int("passive_perception", 10)
+        sheet["passive_investigation"] = get_int("passive_investigation", 10)
+        sheet["passive_insight"] = get_int("passive_insight", 10)
+        
+        # Vitality
+        sheet["vitality"] = {
+            "hit_points": {
+                "current": get_int("hp_current", 1),
+                "max": get_int("hp_max", 1),
+                "temp": get_int("hp_temp", 0)
+            },
+            "hit_dice": {
+                "total": get_form("hit_dice_total", "1d8"),
+                "spent": get_form("hit_dice_spent", "0")
+            },
+            "death_saves": {
+                "successes": sheet.get("vitality", {}).get("death_saves", {}).get("successes", 0),
+                "failures": sheet.get("vitality", {}).get("death_saves", {}).get("failures", 0)
+            }
+        }
+        
+        # Ability scores
+        for ability in ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"]:
+            score = get_int(f"{ability}_score", 10)
+            modifier = get_int(f"{ability}_modifier", 0)
+            save_throw = get_int(f"{ability}_save", modifier)
+            save_prof = get_bool(f"{ability}_save_prof")
+            
+            sheet[ability] = {
+                "score": score,
+                "modifier": modifier,
+                "saving_throw": save_throw,
+                "saving_throw_proficient": save_prof
+            }
+            
+            # Skills for the ability (if any)
+            ability_data = character.sheet_data.get(ability, {})
+            if "ability_scores" in ability_data:
+                sheet[ability]["ability_scores"] = {}
+                for skill_name in ability_data["ability_scores"].keys():
+                    skill_key = f"{ability}_{skill_name.replace(' ', '_').replace('_of_', '_')}"
+                    bonus = get_int(f"{skill_key}_bonus", 0)
+                    prof = get_bool(f"{skill_key}_prof")
+                    exp = get_bool(f"{skill_key}_exp")
+                    
+                    sheet[ability]["ability_scores"][skill_name] = {
+                        "bonus": bonus,
+                        "proficient": prof,
+                        "expertise": exp
+                    }
+        
+        # Equipment & proficiencies
+        sheet["equipment_training_proficiencies"] = {
+            "armor_training": [x.strip() for x in get_form("armor_training", "").split(",") if x.strip()],
+            "weapons": [x.strip() for x in get_form("weapons", "").split(",") if x.strip()],
+            "tools": [x.strip() for x in get_form("tools", "").split(",") if x.strip()]
+        }
+        
+        # Languages
+        sheet["languages"] = get_form("languages", "")
+        
+        # Features and traits
+        sheet["class_features"] = get_form("class_features", "")
+        sheet["species_traits"] = get_form("species_traits", "")
+        sheet["feats"] = get_form("feats", "")
+        
+        # Appearance and backstory
+        sheet["appearance"] = get_form("appearance", "")
+        sheet["backstory_and_personality"] = {
+            "backstory": get_form("backstory", ""),
+            "personality": get_form("personality", ""),
+            "alignment": get_form("alignment", "")
+        }
+        
+        # Equipment
+        equipment_list = [x.strip() for x in get_form("equipment_list", "").split(",") if x.strip()]
+        sheet["equipment"] = {
+            "equipment_list": equipment_list,
+            "magic_item_attunement": sheet.get("equipment", {}).get("magic_item_attunement", [])
+        }
+        
+        # Coins
+        sheet["coins"] = {
+            "cp": get_int("coins_cp", 0),
+            "sp": get_int("coins_sp", 0),
+            "ep": get_int("coins_ep", 0),
+            "gp": get_int("coins_gp", 0),
+            "pp": get_int("coins_pp", 0)
+        }
+        
+        # Preserve existing complex structures (spells, weapons, etc.)
+        # These would need more sophisticated form handling
+        for key in ["weapons_damage_cantrips", "cantrips_and_prepared_spells", "spell_slots", "spellcasting_ability"]:
+            if key in character.sheet_data:
+                sheet[key] = character.sheet_data[key]
+        
+        return sheet
