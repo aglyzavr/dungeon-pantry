@@ -1,4 +1,4 @@
-<div id="vitals-section">
+<div id="vitals-section" class="h-full">
   {% set hp  = sheet.vitality.hit_points %}
   {% set ds  = sheet.vitality.death_saves %}
   {% set shield   = sheet.get("shield_equipped", false) %}
@@ -82,20 +82,20 @@
                class="w-14 text-center px-1 py-0.5 bg-gray-800 border border-gray-700
                       text-white rounded text-sm focus:outline-none focus:border-indigo-500" />
         <button onclick="
-            const val = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
+            const healVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
             htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
               target: '#vitals-section', swap: 'outerHTML',
-              values: { delta: val }
+              values: { delta: healVal }
             });"
             class="px-2.5 py-0.5 bg-green-900/50 hover:bg-green-800
                    text-green-300 text-xs font-medium rounded transition-colors">
           Heal
         </button>
         <button onclick="
-            const val = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
+            const dmgVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
             htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
               target: '#vitals-section', swap: 'outerHTML',
-              values: { delta: -val }
+              values: { delta: -dmgVal }
             });"
             class="px-2.5 py-0.5 bg-red-900/50 hover:bg-red-800
                    text-red-300 text-xs font-medium rounded transition-colors">

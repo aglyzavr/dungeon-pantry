@@ -1,17 +1,15 @@
-
-  <div id="sheet-header" class="bg-gray-900 border border-gray-800 rounded-2xl p-4
+<div id="sheet-header" class="bg-gray-900 border border-gray-800 rounded-2xl p-4
                                flex gap-4 items-start h-full">
 
     <div class="shrink-0 flex flex-col items-center gap-2">
-      <div class="w-16 h-16 rounded-xl bg-gray-800
+        <div class="w-16 h-16 rounded-xl bg-gray-800
                   border border-gray-700 flex items-center justify-center text-2xl">
-        🧙
-      </div>
+            🧙
+        </div>
 
-      {% if can_edit %}
-      <button hx-post="/characters/{{ character.id }}/vitals/inspiration"
-              hx-target="#sheet-header" hx-swap="outerHTML"
-              class="w-16 flex items-center justify-center gap-1 px-1 py-1
+        {% if can_edit %}
+        <button hx-post="/characters/{{ character.id }}/vitals/inspiration" hx-target="#sheet-header"
+            hx-swap="outerHTML" class="w-16 flex items-center justify-center gap-1 px-1 py-1
                      rounded-lg border text-xs font-medium transition-colors
                      {% if sheet.heroic_inspiration %}
                        border-yellow-500 bg-yellow-500/10 text-yellow-300
@@ -19,41 +17,35 @@
                        border-gray-700 text-gray-500 hover:border-yellow-600
                        hover:text-yellow-400
                      {% endif %}">
-        {{ "⭐" if sheet.heroic_inspiration else "☆" }}
-      </button>
-      {% else %}
+            {{ "⭐" if sheet.heroic_inspiration else "☆" }}
+        </button>
+        {% else %}
         {% if sheet.heroic_inspiration %}
         <span class="text-lg">⭐</span>
         {% endif %}
-      {% endif %}
+        {% endif %}
     </div>
 
     <div class="min-w-0">
-      <h1 class="text-xl lg:text-2xl font-bold text-white leading-tight">
-        {{ sheet.character_identity.character_name }}
-      </h1>
-      <div class="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 text-sm text-gray-400">
-        <span>{{ sheet.character_identity.species }}</span>
-        <span class="text-gray-700">·</span>
+        <h1 class="text-xl lg:text-2xl font-bold text-white leading-tight">
+            {{ sheet.character_identity.character_name }}
+        </h1>
+        <div class="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 text-sm text-gray-400">
+            <span>{{ sheet.character_identity.species }}</span>
+            <span class="text-gray-700">·</span>
+            <span class="text-yellow-400 font-semibold">
+                Level {{ sheet.character_level.level }}
+            </span>
+        </div>
         <span class="text-indigo-400 font-medium">
-          {{ sheet.character_identity['class'].name }}
+            {{ sheet.character_identity['class'].name }}
         </span>
         {% if sheet.character_identity['class'].subclass %}
         <span class="text-gray-500 text-xs self-center">
-          ({{ sheet.character_identity['class'].subclass }})
+            ({{ sheet.character_identity['class'].subclass }})
         </span>
         {% endif %}
-        <span class="text-gray-700">·</span>
-        <span class="text-yellow-400 font-semibold">
-          Level {{ sheet.character_identity.level }}
-        </span>
-      </div>
-      {% if sheet.character_identity.background %}
-      <!-- <div class="mt-1 text-xs text-gray-500">
-        {{ sheet.character_identity.background }}
-      </div> -->
-      {% endif %}
-      <!-- <div class="mt-3">
+        <!-- <div class="mt-3">
         <button disabled
                 class="text-xs px-2.5 py-1 rounded-lg bg-gray-800
                        text-gray-600 border border-gray-700
@@ -63,4 +55,4 @@
       </div> -->
     </div>
 
-  </div>
+</div>
