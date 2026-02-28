@@ -63,9 +63,10 @@ async def seed_dm_user(db: AsyncSession) -> None:
     if await repo.exists_any_dm():
         return
 
+    # the settings object exposes dm_seed_username/password
     await repo.create(
-        username=settings.dm_username,
-        password_hash=hash_password(settings.dm_password),  # ← fix
-        role="dm",                                           # ← fix
+        username=settings.dm_seed_username,
+        password_hash=hash_password(settings.dm_seed_password or ""),
+        is_dm=True,
     )
     await db.commit()

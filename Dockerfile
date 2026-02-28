@@ -17,4 +17,9 @@ COPY ./alembic ./alembic
 
 EXPOSE 8080
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+# copy the startup script and make sure it's executable
+COPY start.sh .
+RUN chmod +x start.sh
+
+# use the script as the container entrypoint so migrations run on boot
+CMD ["./start.sh"]

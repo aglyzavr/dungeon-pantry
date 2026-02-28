@@ -31,13 +31,13 @@ class UserRepository:
     async def create(
         self,
         username: str,
-        hashed_password: str,
+        password_hash: str,
         is_dm: bool = False,
     ) -> User:
         user = User(
             username=username,
-            hashed_password=hashed_password,
-            is_dm=is_dm,
+            password_hash=password_hash,
+            role="dm" if is_dm else "player",
         )
         self._db.add(user)
         await self._db.flush()
