@@ -60,6 +60,13 @@
     {% set hp = sheet.vitality.hit_points %}
     {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
     <div class="character-card">
+      <div class="sheet-header-avatar-icon">
+        {% if character.portrait_path %}
+        <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+        {% else %}
+        🧙
+        {% endif %}
+      </div>
       <div class="character-card-header">
         <div class="character-info">
           <p class="character-name">
@@ -87,17 +94,6 @@
             </button>
           </form>
           {% endif %}
-        </div>
-      </div>
-      <!-- HP bar -->
-      <div class="hp-bar">
-        <div class="hp-label">
-          <span>HP</span>
-          <span>{{ hp.current }} / {{ hp.max }}</span>
-        </div>
-        <div class="hp-bar-container">
-          <div class="hp-bar-fill {% if hp_pct > 50 %}hp-bar-fill--healthy{% elif hp_pct > 25 %}hp-bar-fill--injured{% else %}hp-bar-fill--critical{% endif %}" style="width: {{ hp_pct }}%">
-          </div>
         </div>
       </div>
     </div>
@@ -128,6 +124,13 @@
       {% set hp = sheet.vitality.hit_points %}
       {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
       <div class="character-card character-card--unavailable">
+        <div class="sheet-header-avatar-icon">
+          {% if character.portrait_path %}
+          <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+          {% else %}
+          🧙
+          {% endif %}
+        </div>
         <div class="character-card-header">
           <div class="character-info">
             <p class="character-name">
@@ -158,17 +161,6 @@
                 + Add
               </button>
             </form>
-          </div>
-        </div>
-        <!-- HP bar -->
-        <div class="hp-bar">
-          <div class="hp-label">
-            <span>HP</span>
-            <span>{{ hp.current }} / {{ hp.max }}</span>
-          </div>
-          <div class="hp-bar-container">
-            <div class="hp-bar-fill {% if hp_pct > 50 %}hp-bar-fill--healthy{% elif hp_pct > 25 %}hp-bar-fill--injured{% else %}hp-bar-fill--critical{% endif %}" style="width: {{ hp_pct }}%">
-            </div>
           </div>
         </div>
       </div>
