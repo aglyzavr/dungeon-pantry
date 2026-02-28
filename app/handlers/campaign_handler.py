@@ -85,6 +85,7 @@ async def campaign_detail(
 ):
     try:
         campaign = await service.get_campaign(campaign_id)
+        unassigned_characters = await service.get_unassigned_characters(campaign_id)
     except CampaignNotFound:
         return templates.TemplateResponse(
             "campaigns/list.html",
@@ -96,6 +97,7 @@ async def campaign_detail(
         "request": request,
         "current_user": current_user,
         "campaign": campaign,
+        "unassigned_characters": unassigned_characters,
     })
 
 

@@ -26,7 +26,6 @@
       <thead class="bg-gray-900 border-b border-gray-800">
         <tr>
           <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Username</th>
-          <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Assigned Character</th>
           <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Member Since</th>
           <th scope="col" class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
             <span class="sr-only">Actions</span>
@@ -44,28 +43,6 @@
               class="text-indigo-400 hover:text-indigo-300 transition-colors"
               aria-label="Edit player {{ player.username }}"
             >{{ player.username }}</a>
-          </td>
-
-          {# Assigned Character #}
-          <td class="px-4 py-3">
-            {% if player.character %}
-              <a
-                href="/characters/{{ player.character.id }}"
-                class="text-gray-200 hover:text-white transition-colors"
-                aria-label="View character sheet for {{ player.character.name }}"
-              >
-                <span class="font-medium">{{ player.character.name }}</span>
-                <span class="block text-xs text-gray-500 mt-0.5">
-                  Lv.{{ player.character.level }}
-                  {{ player.character.race }}
-                  {{ player.character.char_class }}
-                </span>
-              </a>
-            {% else %}
-              <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-800 text-gray-500">
-                Unassigned
-              </span>
-            {% endif %}
           </td>
 
           {# Member Since #}
