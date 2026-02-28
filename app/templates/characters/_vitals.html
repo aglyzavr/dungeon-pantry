@@ -1,188 +1,210 @@
-<div id="vitals-section" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+<div id="vitals-section">
+  {% set hp  = sheet.vitality.hit_points %}
+  {% set ds  = sheet.vitality.death_saves %}
+  {% set shield   = sheet.get("shield_equipped", false) %}
+  {% set total_ac = sheet.armor_class + (2 if shield else 0) %}
+  {% set hp_pct   = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
 
-    <!-- Hit Points -->
-    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Hit Points</h3>
-        {% set hp = sheet.vitality.hit_points %}
-        {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
+  {# ── Combat stats strip ── #}
+  <div class="grid grid-cols-4 gap-1.5 mb-3">
 
-        <div class="text-center mb-3">
-            <span class="text-4xl font-bold
-                {% if hp_pct > 50 %}text-green-400
-                {% elif hp_pct > 25 %}text-yellow-400
-                {% else %}text-red-400{% endif %}">
-                {{ hp.current }}
-            </span>
-            <span class="text-gray-500 text-lg"> / {{ hp.max }}</span>
-            {% if hp.temp and hp.temp > 0 %}
-            <span class="ml-2 text-xs px-2 py-0.5 bg-blue-900/50 text-blue-300 rounded-full">
-                +{{ hp.temp }} temp
-            </span>
-            {% endif %}
-        </div>
-
-        <div class="h-2 bg-gray-800 rounded-full overflow-hidden mb-4">
-            <div class="h-full rounded-full transition-all
-                {% if hp_pct > 50 %}bg-green-500
-                {% elif hp_pct > 25 %}bg-yellow-500
-                {% else %}bg-red-500{% endif %}"
-                style="--w: {{ hp_pct }}%; width: var(--w)"></div>
-        </div>
-
-        {% if can_edit %}
-        <!-- HP +/- stepper -->
-        <div class="flex items-center gap-2 justify-center mb-2">
-            <button hx-post="/characters/{{ character.id }}/vitals/hp"
-                    hx-vals='{"delta": -1}'
-                    hx-target="#vitals-section" hx-swap="outerHTML"
-                    class="w-9 h-9 rounded-lg bg-red-900/40 hover:bg-red-800 text-red-300
-                           text-xl font-bold transition-colors flex items-center justify-center">
-                −
-            </button>
-            <form hx-post="/characters/{{ character.id }}/vitals/hp"
-                  hx-target="#vitals-section" hx-swap="outerHTML"
-                  class="flex gap-1">
-                <input type="number" name="value" value="{{ hp.current }}"
-                       min="0" max="{{ hp.max }}"
-                       class="w-16 text-center px-2 py-1 bg-gray-800 border border-gray-700
-                              text-white rounded-lg text-sm focus:outline-none focus:border-indigo-500" />
-                <button type="submit"
-                        class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300
-                               text-xs rounded-lg transition-colors">Set</button>
-            </form>
-            <button hx-post="/characters/{{ character.id }}/vitals/hp"
-                    hx-vals='{"delta": 1}'
-                    hx-target="#vitals-section" hx-swap="outerHTML"
-                    class="w-9 h-9 rounded-lg bg-green-900/40 hover:bg-green-800 text-green-300
-                           text-xl font-bold transition-colors flex items-center justify-center">
-                +
-            </button>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Death Saves -->
-    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Death Saves</h3>
-        {% set ds = sheet.vitality.death_saves %}
-
-        <div class="space-y-3">
-            <div>
-                <p class="text-xs text-gray-500 mb-1.5">Successes</p>
-                <div class="flex gap-2">
-                    {% for i in range(1, 4) %}
-                    {% if can_edit %}
-                    <button hx-post="/characters/{{ character.id }}/vitals/death-save"
-                            hx-vals='{"save_type": "successes", "action": "{{ "remove" if i <= ds.successes else "add" }}"}'
-                            hx-target="#vitals-section" hx-swap="outerHTML"
-                            class="w-7 h-7 rounded-full border-2 transition-colors
-                                {% if i <= ds.successes %}bg-green-500 border-green-500
-                                {% else %}border-gray-600 hover:border-green-500{% endif %}">
-                    </button>
-                    {% else %}
-                    <div class="w-7 h-7 rounded-full border-2
-                        {{ 'bg-green-500 border-green-500' if i <= ds.successes else 'border-gray-600' }}">
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            <div>
-                <p class="text-xs text-gray-500 mb-1.5">Failures</p>
-                <div class="flex gap-2">
-                    {% for i in range(1, 4) %}
-                    {% if can_edit %}
-                    <button hx-post="/characters/{{ character.id }}/vitals/death-save"
-                            hx-vals='{"save_type": "failures", "action": "{{ "remove" if i <= ds.failures else "add" }}"}'
-                            hx-target="#vitals-section" hx-swap="outerHTML"
-                            class="w-7 h-7 rounded-full border-2 transition-colors
-                                {% if i <= ds.failures %}bg-red-500 border-red-500
-                                {% else %}border-gray-600 hover:border-red-500{% endif %}">
-                    </button>
-                    {% else %}
-                    <div class="w-7 h-7 rounded-full border-2
-                        {{ 'bg-red-500 border-red-500' if i <= ds.failures else 'border-gray-600' }}">
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Heroic Inspiration -->
-    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-            Heroic Inspiration
-        </h3>
-        {% if can_edit %}
-        <button hx-post="/characters/{{ character.id }}/vitals/inspiration"
-                hx-target="#vitals-section" hx-swap="outerHTML"
-                class="w-full py-3 rounded-lg border-2 font-semibold transition-colors
-                    {% if sheet.heroic_inspiration %}
-                        bg-yellow-500/20 border-yellow-500 text-yellow-300 hover:bg-yellow-500/30
-                    {% else %}
-                        border-gray-700 text-gray-500 hover:border-yellow-500 hover:text-yellow-400
-                    {% endif %}">
-            {% if sheet.heroic_inspiration %}⭐ Inspired{% else %}☆ No Inspiration{% endif %}
-        </button>
-        {% else %}
-        <div class="text-center py-3 text-2xl">
-            {{ "⭐" if sheet.heroic_inspiration else "☆" }}
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Spell Slots -->
-    {% set has_slots = namespace(found=false) %}
-    {% for lvl in range(1, 10) %}
-        {% set key = "level_" ~ lvl %}
-        {% if sheet.spell_slots[key].total > 0 %}{% set has_slots.found = true %}{% endif %}
-    {% endfor %}
-
-    {% if has_slots.found %}
-    <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 sm:col-span-2 lg:col-span-3">
-        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Spell Slots</h3>
-        <div class="flex flex-wrap gap-3">
-            {% for lvl in range(1, 10) %}
-            {% set key = "level_" ~ lvl %}
-            {% set slot = sheet.spell_slots[key] %}
-            {% if slot.total > 0 %}
-            <div class="flex flex-col items-center gap-1.5 bg-gray-800 rounded-lg px-4 py-3">
-                <span class="text-xs text-gray-500">Level {{ lvl }}</span>
-                <div class="flex gap-1.5">
-                    {% for i in range(1, slot.total + 1) %}
-                    <div class="w-5 h-5 rounded-full border-2
-                        {{ 'border-purple-500 bg-purple-500/30' if i > slot.expended else 'border-gray-600 bg-gray-700' }}">
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="text-xs text-gray-400">
-                    {{ slot.total - slot.expended }} / {{ slot.total }}
-                </div>
-                {% if can_edit %}
-                <div class="flex gap-1 mt-1">
-                    <button hx-post="/characters/{{ character.id }}/vitals/spell-slot"
-                            hx-vals='{"level": {{ lvl }}, "delta": 1}'
-                            hx-target="#vitals-section" hx-swap="outerHTML"
-                            class="w-6 h-6 rounded bg-gray-700 hover:bg-purple-800 text-gray-300
-                                   text-sm flex items-center justify-center transition-colors">
-                        −
-                    </button>
-                    <button hx-post="/characters/{{ character.id }}/vitals/spell-slot"
-                            hx-vals='{"level": {{ lvl }}, "delta": -1}'
-                            hx-target="#vitals-section" hx-swap="outerHTML"
-                            class="w-6 h-6 rounded bg-gray-700 hover:bg-purple-800 text-gray-300
-                                   text-sm flex items-center justify-center transition-colors">
-                        +
-                    </button>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-            {% endfor %}
-        </div>
+    {# AC — shield toggle #}
+    {% if can_edit %}
+    <button hx-post="/characters/{{ character.id }}/vitals/shield"
+            hx-target="#vitals-section" hx-swap="outerHTML"
+            class="bg-gray-800 rounded-lg px-2 py-1.5 text-center border-2
+                   transition-colors
+                   {{ 'border-indigo-500' if shield else 'border-transparent hover:border-gray-600' }}">
+      <div class="text-[10px] text-gray-500 uppercase tracking-wide leading-none">
+        AC {{ '🛡️' if shield else '' }}
+      </div>
+      <div class="text-lg font-bold text-white mt-0.5 leading-none">{{ total_ac }}</div>
+      <div class="text-[10px] mt-0.5 leading-none {{ 'text-indigo-400' if shield else 'text-gray-600' }}">
+        {{ "+2 shield" if shield else "equip" }}
+      </div>
+    </button>
+    {% else %}
+    <div class="bg-gray-800 rounded-lg px-2 py-1.5 text-center">
+      <div class="text-[10px] text-gray-500 uppercase tracking-wide leading-none">
+        AC {{ '🛡️' if shield else '' }}
+      </div>
+      <div class="text-lg font-bold text-white mt-0.5 leading-none">{{ total_ac }}</div>
     </div>
     {% endif %}
+
+    {# Initiative, Speed, Prof. Bonus #}
+    {% for label, value in [
+      ("Initiative", sheet.initiative),
+      ("Speed",      sheet.speed),
+      ("Prof.",      "+" ~ sheet.proficiency_bonus)
+    ] %}
+    <div class="bg-gray-800 rounded-lg px-2 py-1.5 text-center">
+      <div class="text-[10px] text-gray-500 uppercase tracking-wide leading-none">{{ label }}</div>
+      <div class="text-lg font-bold text-white mt-0.5 leading-none">{{ value }}</div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  {# ── HP bar ── #}
+  <div class="bg-gray-900 border border-gray-800 rounded-xl">
+
+    <div class="h-1 rounded-t-xl overflow-hidden">
+      <div class="h-full transition-all duration-500
+        {% if hp_pct > 50 %}bg-green-500
+        {% elif hp_pct > 25 %}bg-yellow-500
+        {% else %}bg-red-500{% endif %}"
+        style="width: {{ hp_pct }}%"></div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
+
+      {# HP numbers #}
+      <div class="flex items-baseline gap-1.5">
+        <span class="text-xs text-gray-500 uppercase tracking-wide mr-1">HP</span>
+        <span class="text-2xl font-bold leading-none
+          {% if hp_pct > 50 %}text-green-400
+          {% elif hp_pct > 25 %}text-yellow-400
+          {% else %}text-red-400{% endif %}">{{ hp.current }}</span>
+        <span class="text-gray-600">/</span>
+        <span class="text-gray-300 font-medium">{{ hp.max }}</span>
+        {% if hp.temp and hp.temp > 0 %}
+        <span class="text-xs px-1.5 py-0.5 bg-blue-900/50
+                     text-blue-300 rounded-full ml-1">+{{ hp.temp }}</span>
+        {% endif %}
+      </div>
+
+      {# HP controls #}
+      {% if can_edit %}
+      <div class="flex items-center gap-1.5">
+        <input type="number" id="hp-input-{{ character.id }}"
+               value="0" min="0"
+               class="w-14 text-center px-1 py-0.5 bg-gray-800 border border-gray-700
+                      text-white rounded text-sm focus:outline-none focus:border-indigo-500" />
+        <button onclick="
+            const val = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
+            htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
+              target: '#vitals-section', swap: 'outerHTML',
+              values: { delta: val }
+            });"
+            class="px-2.5 py-0.5 bg-green-900/50 hover:bg-green-800
+                   text-green-300 text-xs font-medium rounded transition-colors">
+          Heal
+        </button>
+        <button onclick="
+            const val = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
+            htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
+              target: '#vitals-section', swap: 'outerHTML',
+              values: { delta: -val }
+            });"
+            class="px-2.5 py-0.5 bg-red-900/50 hover:bg-red-800
+                   text-red-300 text-xs font-medium rounded transition-colors">
+          Dmg
+        </button>
+      </div>
+
+      {# Temp + Max HP #}
+      <div class="flex items-center gap-2">
+        <form hx-post="/characters/{{ character.id }}/vitals/temp-hp"
+              hx-target="#vitals-section" hx-swap="outerHTML"
+              class="flex items-center gap-1">
+          <span class="text-xs text-blue-400">Tmp</span>
+          <input type="number" name="value" value="{{ hp.temp or 0 }}" min="0"
+                 class="w-10 text-center px-1 py-0.5 bg-gray-800 border border-gray-700
+                        text-white rounded text-xs focus:outline-none focus:border-blue-500" />
+          <button type="submit"
+                  class="px-1.5 py-0.5 bg-gray-700 hover:bg-gray-600
+                         text-gray-300 text-xs rounded transition-colors">Set</button>
+        </form>
+
+        {% if current_user and current_user.is_dm %}
+        <form hx-post="/characters/{{ character.id }}/vitals/max-hp"
+              hx-target="#vitals-section" hx-swap="outerHTML"
+              class="flex items-center gap-1">
+          <span class="text-xs text-gray-500">Max</span>
+          <input type="number" name="value" value="{{ hp.max }}" min="1"
+                 class="w-10 text-center px-1 py-0.5 bg-gray-800 border border-gray-700
+                        text-white rounded text-xs focus:outline-none focus:border-indigo-500" />
+          <button type="submit"
+                  class="px-1.5 py-0.5 bg-gray-700 hover:bg-gray-600
+                         text-gray-300 text-xs rounded transition-colors">Set</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <div class="hidden lg:block w-px h-6 bg-gray-800"></div>
+
+      {# Death saves #}
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-gray-500 uppercase tracking-wide">Saves</span>
+        {% for save_type, color in [("successes","green"),("failures","red")] %}
+        {% set count = ds[save_type] %}
+        <div class="flex items-center gap-1">
+          {% for i in range(1, 4) %}
+          {% if can_edit %}
+          <button hx-post="/characters/{{ character.id }}/vitals/death-save"
+                  hx-vals='{"save_type": "{{ save_type }}", "action": "{{ "remove" if i <= count else "add" }}"}'
+                  hx-target="#vitals-section" hx-swap="outerHTML"
+                  class="w-4 h-4 rounded-full border-2 transition-colors
+                    {{ 'bg-' ~ color ~ '-500 border-' ~ color ~ '-500'
+                       if i <= count
+                       else 'border-gray-600 hover:border-' ~ color ~ '-400' }}">
+          </button>
+          {% else %}
+          <div class="w-4 h-4 rounded-full border-2
+            {{ 'bg-' ~ color ~ '-500 border-' ~ color ~ '-500'
+               if i <= count else 'border-gray-600' }}"></div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% if not loop.last %}
+        <span class="text-gray-700 text-xs">|</span>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      {# Spell slots #}
+      {% set has_slots = namespace(found=false) %}
+      {% for lvl in range(1, 10) %}
+        {% if sheet.spell_slots["level_" ~ lvl].total > 0 %}
+          {% set has_slots.found = true %}
+        {% endif %}
+      {% endfor %}
+
+      {% if has_slots.found %}
+      <div class="hidden lg:block w-px h-6 bg-gray-800"></div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs text-gray-500 uppercase tracking-wide">Slots</span>
+        {% for lvl in range(1, 10) %}
+        {% set slot = sheet.spell_slots["level_" ~ lvl] %}
+        {% if slot.total > 0 %}
+        <div class="flex items-center gap-1 bg-gray-800 rounded px-2 py-1">
+          <span class="text-xs text-gray-500">{{ lvl }}</span>
+          <div class="flex gap-0.5 mx-1">
+            {% for i in range(1, slot.total + 1) %}
+            <div class="w-2.5 h-2.5 rounded-full border
+              {{ 'border-purple-500 bg-purple-500/50' if i > slot.expended
+                 else 'border-gray-600 bg-gray-800' }}"></div>
+            {% endfor %}
+          </div>
+          {% if can_edit %}
+          <button hx-post="/characters/{{ character.id }}/vitals/spell-slot"
+                  hx-vals='{"level": {{ lvl }}, "delta": 1}'
+                  hx-target="#vitals-section" hx-swap="outerHTML"
+                  class="text-gray-500 hover:text-red-400 text-xs transition-colors leading-none">−</button>
+          <button hx-post="/characters/{{ character.id }}/vitals/spell-slot"
+                  hx-vals='{"level": {{ lvl }}, "delta": -1}'
+                  hx-target="#vitals-section" hx-swap="outerHTML"
+                  class="text-gray-500 hover:text-purple-400 text-xs transition-colors leading-none">+</button>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
 
 </div>

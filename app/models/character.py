@@ -32,10 +32,10 @@ class Character(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    owner_id: Mapped[uuid.UUID] = mapped_column(
+    owner_id: Mapped[uuid.UUID | None] = mapped_column(  # ← nullable for unassign
         UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False,
+        ForeignKey("users.id", ondelete="SET NULL"),      # ← SET NULL on user delete
+        nullable=True,
     )
     sheet_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -44,8 +44,10 @@ class Character(Base):
         nullable=False,
     )
 
-    owner: Mapped["User"] = relationship(
-        "User", back_populates="characters"
+    owner: Mapped["User | None"] = relationship(
+        "User",
+        back_populates="characters",
+        lazy="selectin",                                   
     )
     campaigns: Mapped[list["Campaign"]] = relationship(
         "Campaign",
@@ -56,5 +58,5 @@ class Character(Base):
         "ShareLink",
         back_populates="character",
         cascade="all, delete-orphan",
-        lazy="select",
+        lazy="selectin",                                 
     )

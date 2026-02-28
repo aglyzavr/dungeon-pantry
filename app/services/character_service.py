@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.character import Character
 from app.repositories.character_repository import CharacterRepository
 from app.schemas.character import validate_mandatory_fields
+from sqlalchemy import select
 
 
 class CharacterNotFound(Exception):
@@ -33,11 +34,16 @@ class CharacterService:
     async def list_for_user(self, user_id: UUID) -> list[Character]:
         return await self._repo.get_by_owner(user_id)
 
-    async def get_character(self, character_id: UUID, requesting_user_id: str, is_dm: bool) -> Character:
+    async def get_character(
+        self,
+        character_id: UUID,
+        requesting_user_id: UUID,  # ← was str
+        is_dm: bool,
+    ) -> Character:
         character = await self._repo.get_by_id(character_id)
         if character is None:
             raise CharacterNotFound(f"Character {character_id} not found")
-        if not is_dm and str(character.owner_id) != requesting_user_id:
+        if not is_dm and character.owner_id != requesting_user_id:  # ← UUID == UUID
             raise CharacterPermissionError("You do not have access to this character")
         return character
 
@@ -80,10 +86,18 @@ class CharacterService:
             saves[save_type] = max(0, current - 1)
         return await self._repo.save_sheet_data(character, data)
 
-    async def toggle_inspiration(self, character: Character) -> Character:
+    async def toggle_inspiration(
+        self, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        return await self._toggle_inspiration(character)
+
+
+    async def _toggle_inspiration(self, character: Character) -> Character:
         data = copy.deepcopy(character.sheet_data)
         data["heroic_inspiration"] = not bool(data.get("heroic_inspiration", False))
         return await self._repo.save_sheet_data(character, data)
+
 
     async def adjust_spell_slot(self, character: Character, level: int, delta: int) -> Character:
         data = copy.deepcopy(character.sheet_data)
@@ -100,3 +114,78 @@ class CharacterService:
         if character is None:
             raise CharacterNotFound(f"Character {character_id} not found")
         await self._repo.delete(character)
+
+    async def assign_owner(
+        self, character_id: UUID, player_id: UUID | None
+    ) -> None:
+        character = await self._repo.get_by_id(character_id)
+        if character is None:
+            raise CharacterNotFound(f"Character {character_id} not found")
+        character.owner_id = player_id
+        await self._repo._db.flush()
+
+    async def create(self, sheet_data: dict, owner_id: UUID) -> Character:
+        errors = validate_mandatory_fields(sheet_data)
+        if errors:
+            raise CharacterValidationError(errors)
+        return await self._repo.create(owner_id=owner_id, sheet_data=sheet_data)
+
+
+    async def delete(self, character_id: UUID) -> None:
+        await self.delete_character(character_id)
+
+
+    async def update_hp(
+        self, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        return await self.adjust_hp(character, payload.delta, payload.value)
+
+
+    async def update_death_save(
+        self, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        return await self.toggle_death_save(character, payload.save_type, payload.action)
+
+
+    async def update_spell_slot(
+        self, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        return await self.adjust_spell_slot(character, payload.level, payload.delta)
+
+    async def update_temp_hp(
+        self, character_id: UUID, user_id: UUID, is_dm: bool, delta: int | None, absolute: int | None
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        hp = data["vitality"]["hit_points"]
+        current_temp = int(hp.get("temp") or 0)
+
+        if absolute is not None:
+            hp["temp"] = max(0, absolute)
+        elif delta is not None:
+            hp["temp"] = max(0, current_temp + delta)
+
+        return await self._repo.save_sheet_data(character, data)
+
+
+    async def update_max_hp(
+        self, character_id: UUID, user_id: UUID, is_dm: bool, value: int
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        hp = data["vitality"]["hit_points"]
+        hp["max"] = max(1, value)
+        # Clamp current HP to new max
+        hp["current"] = min(int(hp.get("current", 0)), hp["max"])
+        return await self._repo.save_sheet_data(character, data)
+
+    async def toggle_shield(
+        self, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        data["shield_equipped"] = not bool(data.get("shield_equipped", False))
+        return await self._repo.save_sheet_data(character, data)
