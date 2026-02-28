@@ -73,171 +73,156 @@
         {% endif %}
       </div>
 
-      {# HP Controls #}
+      {# HP Controls - Mobile Friendly Layout #}
       {% if can_edit %}
-      <div class="hp-controls">
-        <input
-          type="number"
-          id="hp-input-{{ character.id }}"
-          value="0"
-          min="0"
-          class="hp-input"
-        />
-        <button
-          onclick="
-            const healVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
-            htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
-              target: '#vitals-section',
-              swap: 'outerHTML',
-              values: { delta: healVal }
-            });"
-          class="btn-heal"
-        >
-          Heal
-        </button>
-        <button
-          onclick="
-            const dmgVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
-            htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
-              target: '#vitals-section',
-              swap: 'outerHTML',
-              values: { delta: -dmgVal }
-            });"
-          class="btn-damage"
-        >
-          Dmg
-        </button>
-      </div>
+      <div class="hp-controls-container">
+        {# Heal/Damage Controls #}
+        <div class="hp-control-group">
+          <span class="hp-control-label">Adjust HP</span>
+          <div class="hp-adjust-controls">
+            <input
+              type="number"
+              id="hp-input-{{ character.id }}"
+              value="0"
+              min="0"
+              class="hp-input"
+              placeholder="0"
+            />
+            <button
+              onclick="
+                const healVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
+                htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
+                  target: '#vitals-section',
+                  swap: 'outerHTML',
+                  values: { delta: healVal }
+                });"
+              class="btn-heal"
+            >
+              Heal
+            </button>
+            <button
+              onclick="
+                const dmgVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
+                htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
+                  target: '#vitals-section',
+                  swap: 'outerHTML',
+                  values: { delta: -dmgVal }
+                });"
+              class="btn-damage"
+            >
+              Dmg
+            </button>
+          </div>
+        </div>
 
-      {# Temp + Max HP #}
-      <div class="hp-controls">
-        <form
-          hx-post="/characters/{{ character.id }}/vitals/temp-hp"
-          hx-target="#vitals-section"
-          hx-swap="outerHTML"
-          class="hp-form-group"
-        >
-          <span class="hp-form-label">Tmp</span>
-          <input
-            type="number"
-            name="value"
-            value="{{ hp.temp or 0 }}"
-            min="0"
-            class="hp-form-input"
-          />
-          <button type="submit" class="hp-form-submit">Set</button>
-        </form>
+        {# Temp HP #}
+        <div class="hp-control-group">
+          <form
+            hx-post="/characters/{{ character.id }}/vitals/temp-hp"
+            hx-target="#vitals-section"
+            hx-swap="outerHTML"
+            class="hp-form-group"
+          >
+            <span class="hp-control-label">Temp HP</span>
+            <div class="hp-form-controls">
+              <input
+                type="number"
+                name="value"
+                value="{{ hp.temp or 0 }}"
+                min="0"
+                class="hp-form-input"
+              />
+              <button type="submit" class="hp-form-submit">Set</button>
+            </div>
+          </form>
+        </div>
 
+        {# Max HP (DM only) #}
         {% if current_user and current_user.is_dm %}
-        <form
-          hx-post="/characters/{{ character.id }}/vitals/max-hp"
-          hx-target="#vitals-section"
-          hx-swap="outerHTML"
-          class="hp-form-group"
-        >
-          <span class="hp-form-label hp-form-label--max">Max</span>
-          <input
-            type="number"
-            name="value"
-            value="{{ hp.max }}"
-            min="1"
-            class="hp-form-input hp-form-input--max"
-          />
-          <button type="submit" class="hp-form-submit">Set</button>
-        </form>
+        <div class="hp-control-group">
+          <form
+            hx-post="/characters/{{ character.id }}/vitals/max-hp"
+            hx-target="#vitals-section"
+            hx-swap="outerHTML"
+            class="hp-form-group"
+          >
+            <span class="hp-control-label hp-control-label--max">Max HP</span>
+            <div class="hp-form-controls">
+              <input
+                type="number"
+                name="value"
+                value="{{ hp.max }}"
+                min="1"
+                class="hp-form-input hp-form-input--max"
+              />
+              <button type="submit" class="hp-form-submit">Set</button>
+            </div>
+          </form>
+        </div>
         {% endif %}
       </div>
       {% endif %}
 
-      <div class="vitals-divider"></div>
+    </div>
+  </div>
 
-      {# Death Saves #}
-      <div class="death-saves-section">
-        <span class="death-saves-label">Saves</span>
-        {% for save_type, color in [("successes", "success"), ("failures", "failure")] %}
-        {% set count = ds[save_type] %}
-        <div class="death-saves-group">
-          {% for i in range(1, 4) %}
-          {% if can_edit %}
-          <button
-            hx-post="/characters/{{ character.id }}/vitals/death-save"
-            hx-vals='{"save_type": "{{ save_type }}", "action": "{{ "remove" if i <= count else "add" }}"}'
-            hx-target="#vitals-section"
-            hx-swap="outerHTML"
-            class="death-save-dot
-              {% if i <= count %}death-save-dot--{{ save_type }}
-              {% else %}death-save-dot--empty{% endif %}"
-          >
-          </button>
-          {% else %}
-          <div class="death-save-dot
-            {% if i <= count %}death-save-dot--{{ save_type }}
-            {% else %}death-save-dot--empty{% endif %}">
+  {# ── Spell Slots Block ─────────────────────────────────────────── #}
+  {% set slots = sheet.spell_slots | default({}) %}
+  {% set has_slots = namespace(found=false) %}
+  {% for lvl in range(1, 10) %}
+    {% set key = "level_" ~ lvl %}
+    {% if (slots.get(key, {}).total | default(0)) > 0 %}
+      {% set has_slots.found = true %}
+    {% endif %}
+  {% endfor %}
+
+  {% if has_slots.found %}
+  <div class="spell-slots-container">
+    <div class="spell-slots-header">
+      <span class="spell-slots-title">Spell Slots</span>
+    </div>
+    <div class="spell-slots-content">
+      {% for lvl in range(1, 10) %}
+      {% set key = "level_" ~ lvl %}
+      {% set slot = slots.get(key, {}) %}
+      {% if (slot.total | default(0)) > 0 %}
+      <div class="spell-slot-row">
+        <span class="spell-slot-level-label">Level {{ lvl }}</span>
+        <div class="spell-slot-dots">
+          {% for i in range(1, slot.total + 1) %}
+          <div class="spell-slot-dot
+            {% if i > slot.expended %}spell-slot-dot--available
+            {% else %}spell-slot-dot--expended{% endif %}">
           </div>
-          {% endif %}
           {% endfor %}
         </div>
-        {% if not loop.last %}
-        <span class="death-saves-divider">|</span>
-        {% endif %}
-        {% endfor %}
-      </div>
-
-      {# Spell Slots #}
-      {% set slots = sheet.spell_slots | default({}) %}
-      {% set has_slots = namespace(found=false) %}
-      {% for lvl in range(1, 10) %}
-        {% set key = "level_" ~ lvl %}
-        {% if (slots.get(key, {}).total | default(0)) > 0 %}
-          {% set has_slots.found = true %}
-        {% endif %}
-      {% endfor %}
-
-      {% if has_slots.found %}
-      <div class="vitals-divider"></div>
-      <div class="spell-slots-section">
-        <span class="spell-slots-label">Slots</span>
-        {% for lvl in range(1, 10) %}
-        {% set key = "level_" ~ lvl %}
-        {% set slot = slots.get(key, {}) %}
-        {% if (slot.total | default(0)) > 0 %}
-        <div class="spell-slot-group">
-          <span class="spell-slot-level">{{ lvl }}</span>
-          <div class="spell-slot-dots">
-            {% for i in range(1, slot.total + 1) %}
-            <div class="spell-slot-dot
-              {% if i > slot.expended %}spell-slot-dot--available
-              {% else %}spell-slot-dot--expended{% endif %}">
-            </div>
-            {% endfor %}
-          </div>
-          {% if can_edit %}
+        {% if can_edit %}
+        <div class="spell-slot-controls">
           <button
             hx-post="/characters/{{ character.id }}/vitals/spell-slot"
             hx-vals='{"level": {{ lvl }}, "delta": 1}'
             hx-target="#vitals-section"
             hx-swap="outerHTML"
-            class="spell-slot-toggle"
+            class="spell-slot-btn spell-slot-btn--use"
           >
-            −
+            Use
           </button>
           <button
             hx-post="/characters/{{ character.id }}/vitals/spell-slot"
             hx-vals='{"level": {{ lvl }}, "delta": -1}'
             hx-target="#vitals-section"
             hx-swap="outerHTML"
-            class="spell-slot-toggle"
+            class="spell-slot-btn spell-slot-btn--restore"
           >
-            +
+            Restore
           </button>
-          {% endif %}
         </div>
         {% endif %}
-        {% endfor %}
       </div>
       {% endif %}
-
+      {% endfor %}
     </div>
   </div>
+  {% endif %}
 
 </div>

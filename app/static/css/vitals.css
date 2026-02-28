@@ -108,10 +108,18 @@
 
 .hp-bar-content {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.5rem 1.5rem;
+  flex-direction: column;
+  gap: 0.75rem;
   padding: 0.75rem 1rem;
+}
+
+@media (min-width: 1024px) {
+  .hp-bar-content {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+  }
 }
 
 /* ── HP Display ───────────────────────────────────────────────── */
@@ -165,23 +173,83 @@
   margin-left: 0.25rem;
 }
 
-/* ── HP Controls ──────────────────────────────────────────────── */
-.hp-controls {
+/* ── HP Controls Container ────────────────────────────────────── */
+.hp-controls-container {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .hp-controls-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hp-controls-container {
+    gap: 1rem;
+  }
+}
+
+/* ── HP Control Group ─────────────────────────────────────────── */
+.hp-control-group {
+  display: flex;
+  flex-direction: column;
   gap: 0.375rem;
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .hp-control-group {
+    flex: 0 1 auto;
+    min-width: fit-content;
+  }
+}
+
+.hp-control-label {
+  font-size: 0.625rem;
+  color: #60a5fa; /* blue-400 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.hp-control-label--max {
+  color: #6b7280; /* gray-500 */
+}
+
+/* ── HP Adjust Controls ───────────────────────────────────────── */
+.hp-adjust-controls {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .hp-input {
-  width: 3.5rem;
+  flex: 1;
+  min-width: 0;
+  max-width: 5rem;
   text-align: center;
-  padding: 0.125rem 0.25rem;
+  padding: 0.5rem 0.5rem;
   background-color: #1f2937; /* gray-800 */
   border: 1px solid #374151; /* gray-700 */
   color: #ffffff;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  font-size: 1rem;
   transition: border-color 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+@media (min-width: 640px) {
+  .hp-input {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+  }
 }
 
 .hp-input:focus {
@@ -189,15 +257,35 @@
   border-color: #6366f1; /* indigo-500 */
 }
 
+.hp-input::-webkit-outer-spin-button,
+.hp-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .btn-heal,
 .btn-damage {
-  padding: 0.125rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border-radius: 0.25rem;
+  flex: 1;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.375rem;
   transition: all 0.2s;
   border: none;
   cursor: pointer;
+  min-height: 44px; /* iOS minimum touch target */
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+@media (min-width: 640px) {
+  .btn-heal,
+  .btn-damage {
+    flex: 0 1 auto;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.75rem;
+    min-height: auto;
+  }
 }
 
 .btn-heal {
@@ -209,6 +297,10 @@
   background-color: #166534; /* green-800 */
 }
 
+.btn-heal:active {
+  background-color: #14532d; /* green-900 */
+}
+
 .btn-damage {
   background-color: rgba(239, 68, 68, 0.5); /* red-900/50 */
   color: #fca5a5; /* red-300 */
@@ -218,33 +310,50 @@
   background-color: #7f1d1d; /* red-800 */
 }
 
+.btn-damage:active {
+  background-color: #450a0a; /* red-950 */
+}
+
 /* ── Temp/Max HP Forms ────────────────────────────────────────── */
 .hp-form-group {
   display: flex;
-  align-items: center;
-  gap: 0.25rem;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
 }
 
-.hp-form-label {
-  font-size: 0.75rem;
-  color: #60a5fa; /* blue-400 / gray-500 */
-  text-transform: uppercase;
+@media (min-width: 640px) {
+  .hp-form-group {
+    width: auto;
+  }
 }
 
-.hp-form-label--max {
-  color: #6b7280; /* gray-500 */
+.hp-form-controls {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .hp-form-input {
-  width: 2.5rem;
+  flex: 1;
+  min-width: 0;
+  max-width: 5rem;
   text-align: center;
-  padding: 0.125rem 0.25rem;
+  padding: 0.5rem 0.5rem;
   background-color: #1f2937; /* gray-800 */
   border: 1px solid #374151; /* gray-700 */
   color: #ffffff;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 1rem;
   transition: border-color 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+@media (min-width: 640px) {
+  .hp-form-input {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+  }
 }
 
 .hp-form-input:focus {
@@ -256,163 +365,181 @@
   border-color: #6366f1; /* indigo-500 */
 }
 
+.hp-form-input::-webkit-outer-spin-button,
+.hp-form-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .hp-form-submit {
-  padding: 0.125rem 0.375rem;
+  flex: 1;
+  padding: 0.5rem 1rem;
   background-color: #374151; /* gray-700 */
   color: #d1d5db; /* gray-300 */
   border: none;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 44px; /* iOS minimum touch target */
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+@media (min-width: 640px) {
+  .hp-form-submit {
+    flex: 0 1 auto;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    min-height: auto;
+  }
 }
 
 .hp-form-submit:hover {
   background-color: #4b5563; /* gray-600 */
 }
 
-/* ── Divider ──────────────────────────────────────────────────── */
-.vitals-divider {
-  display: none;
-  width: 1px;
-  height: 1.5rem;
+.hp-form-submit:active {
+  background-color: #6b7280; /* gray-500 */
+}
+
+/* ── Spell Slots Container ────────────────────────────────────── */
+.spell-slots-container {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #1f2937; /* gray-800 */
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.spell-slots-header {
   background-color: #1f2937; /* gray-800 */
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #374151; /* gray-700 */
 }
 
-@media (min-width: 1024px) {
-  .vitals-divider {
-    display: block;
-  }
+.spell-slots-title {
+  font-size: 0.75rem;
+  color: #9ca3af; /* gray-400 */
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
 }
 
-/* ── Death Saves ──────────────────────────────────────────────── */
-.death-saves-section {
+.spell-slots-content {
+  padding: 0.75rem 1rem;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.75rem;
 }
 
-.death-saves-label {
-  font-size: 0.75rem;
-  color: #6b7280; /* gray-500 */
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.death-saves-group {
+.spell-slot-row {
   display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.death-save-dot {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 9999px;
-  border: 2px solid;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.death-save-dot--success {
-  background-color: #22c55e; /* green-500 */
-  border-color: #22c55e;
-}
-
-.death-save-dot--success:hover {
-  opacity: 0.8;
-}
-
-.death-save-dot--failure {
-  background-color: #ef4444; /* red-500 */
-  border-color: #ef4444;
-}
-
-.death-save-dot--failure:hover {
-  opacity: 0.8;
-}
-
-.death-save-dot--empty {
-  border-color: #4b5563; /* gray-600 */
-  background-color: transparent;
-}
-
-.death-save-dot--empty:hover {
-  border-color: #8b5cf6; /* purple ish */
-}
-
-.death-saves-divider {
-  color: #374151; /* gray-700 */
-  font-size: 0.75rem;
-}
-
-/* ── Spell Slots ──────────────────────────────────────────────── */
-.spell-slots-section {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.spell-slots-label {
-  font-size: 0.75rem;
-  color: #6b7280; /* gray-500 */
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.spell-slot-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  padding: 0.5rem;
   background-color: #1f2937; /* gray-800 */
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
 }
 
-.spell-slot-level {
-  font-size: 0.75rem;
-  color: #6b7280; /* gray-500 */
+@media (min-width: 640px) {
+  .spell-slot-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.spell-slot-level-label {
+  font-size: 0.875rem;
+  color: #d1d5db; /* gray-300 */
+  font-weight: 500;
+  min-width: 5rem;
 }
 
 .spell-slot-dots {
   display: flex;
-  gap: 0.125rem;
-  margin: 0 0.25rem;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 .spell-slot-dot {
-  width: 0.625rem;
-  height: 0.625rem;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 9999px;
-  border: 1px solid;
+  border: 2px solid;
+  transition: all 0.2s;
+}
+
+@media (min-width: 640px) {
+  .spell-slot-dot {
+    width: 1rem;
+    height: 1rem;
+  }
 }
 
 .spell-slot-dot--available {
   border-color: #a78bfa; /* purple-400 */
-  background-color: rgba(167, 139, 250, 0.5); /* purple-500/50 */
+  background-color: #7c3aed; /* purple-600 */
+  box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
 }
 
 .spell-slot-dot--expended {
   border-color: #4b5563; /* gray-600 */
-  background-color: #1f2937; /* gray-800 */
+  background-color: transparent;
 }
 
-.spell-slot-toggle {
+.spell-slot-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.spell-slot-btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
   font-size: 0.75rem;
-  color: #6b7280; /* gray-500 */
-  transition: color 0.2s;
-  background: none;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
   border: none;
   cursor: pointer;
-  padding: 0;
-  line-height: 1;
+  min-height: 44px; /* iOS minimum touch target */
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
-.spell-slot-toggle:hover:first-of-type {
-  color: #f87171; /* red-400 */
+@media (min-width: 640px) {
+  .spell-slot-btn {
+    flex: 0 1 auto;
+    padding: 0.375rem 0.75rem;
+    min-height: auto;
+  }
 }
 
-.spell-slot-toggle:hover:last-of-type {
-  color: #c084fc; /* purple-400 */
+.spell-slot-btn--use {
+  background-color: rgba(239, 68, 68, 0.5); /* red-900/50 */
+  color: #fca5a5; /* red-300 */
+}
+
+.spell-slot-btn--use:hover {
+  background-color: #7f1d1d; /* red-800 */
+}
+
+.spell-slot-btn--use:active {
+  background-color: #450a0a; /* red-950 */
+}
+
+.spell-slot-btn--restore {
+  background-color: rgba(139, 92, 246, 0.5); /* purple-900/50 */
+  color: #c4b5fd; /* purple-300 */
+}
+
+.spell-slot-btn--restore:hover {
+  background-color: #5b21b6; /* purple-800 */
+}
+
+.spell-slot-btn--restore:active {
+  background-color: #3b0764; /* purple-950 */
 }
