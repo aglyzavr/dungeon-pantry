@@ -419,10 +419,51 @@ class CharacterService:
             "gp": get_int("coins_gp", 0),
             "pp": get_int("coins_pp", 0)
         }
+
+        # Spells (submitted as JSON from the edit form)
+        spells_raw = str(get_form("spells_json", "")).strip()
+        if spells_raw:
+            try:
+                submitted_spells = json.loads(spells_raw)
+            except (json.JSONDecodeError, TypeError):
+                submitted_spells = None
+
+            if isinstance(submitted_spells, list):
+                normalized_spells = []
+                for spell in submitted_spells:
+                    if not isinstance(spell, dict):
+                        continue
+
+                    name = str(spell.get("name", "")).strip()
+                    if not name:
+                        continue
+
+                    raw_level = str(spell.get("level", "0")).strip()
+                    level = int(raw_level) if raw_level.isdigit() else (raw_level.lower() or "0")
+
+                    crrm = spell.get("crrm") if isinstance(spell.get("crrm"), dict) else {}
+                    normalized_spells.append(
+                        {
+                            "name": name,
+                            "level": level,
+                            "attack_save": str(spell.get("attack_save", "")).strip(),
+                            "casting_time": str(spell.get("casting_time", "")).strip(),
+                            "range": str(spell.get("range", "")).strip(),
+                            "components": str(spell.get("components", "")).strip(),
+                            "duration": str(spell.get("duration", "")).strip(),
+                            "notes": str(spell.get("notes", "")).strip(),
+                            "crrm": {
+                                "concentration": bool(crrm.get("concentration", False)),
+                                "ritual": bool(crrm.get("ritual", False)),
+                            },
+                        }
+                    )
+
+                sheet["cantrips_and_prepared_spells"] = normalized_spells
         
         # Preserve existing complex structures (spells, weapons, etc.)
         # These would need more sophisticated form handling
-        for key in ["weapons_damage_cantrips", "cantrips_and_prepared_spells", "spell_slots", "spellcasting_ability"]:
+        for key in ["weapons_damage_cantrips", "spell_slots", "spellcasting_ability"]:
             if key in character.sheet_data:
                 sheet[key] = character.sheet_data[key]
         

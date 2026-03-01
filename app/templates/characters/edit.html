@@ -19,7 +19,40 @@
   <div class="error-message">{{ error }}</div>
   {% endif %}
 
-  <div x-data="{ activeTab: 'identity' }">
+  <div x-data="{
+      activeTab: 'identity',
+      spellEntries: {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
+      normalizeSpell(spell) {
+        const source = spell || {};
+        const meta = source.crrm || {};
+        return {
+          name: source.name || '',
+          level: String(source.level ?? '0'),
+          attack_save: source.attack_save || '',
+          casting_time: source.casting_time || '',
+          range: source.range || '',
+          components: source.components || '',
+          duration: source.duration || '',
+          notes: source.notes || '',
+          crrm: {
+            concentration: Boolean(meta.concentration),
+            ritual: Boolean(meta.ritual),
+          },
+        };
+      },
+      addSpell() {
+        this.spellEntries.push(this.normalizeSpell({}));
+      },
+      removeSpell(index) {
+        this.spellEntries.splice(index, 1);
+      },
+      init() {
+        if (!Array.isArray(this.spellEntries)) {
+          this.spellEntries = [];
+        }
+        this.spellEntries = this.spellEntries.map((spell) => this.normalizeSpell(spell));
+      }
+    }" x-init="init()">
     <div class="tab-navigation">
       <button type="button" class="tab-btn" @click="activeTab = 'identity'" :class="{ 'active': activeTab === 'identity' }">
         Identity
@@ -36,6 +69,9 @@
       <button type="button" class="tab-btn" @click="activeTab = 'features'" :class="{ 'active': activeTab === 'features' }">
         Features & Traits
       </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'spells'" :class="{ 'active': activeTab === 'spells' }">
+        Spells
+      </button>
       <button type="button" class="tab-btn" @click="activeTab = 'equipment'" :class="{ 'active': activeTab === 'equipment' }">
         Equipment
       </button>
@@ -45,6 +81,7 @@
     </div>
 
     <form id="edit-form" method="post" action="/characters/{{ character.id }}/edit">
+    <input type="hidden" name="spells_json" :value="JSON.stringify(spellEntries)">
     
     {# ── TAB: IDENTITY ────────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'identity'" x-cloak>
@@ -354,6 +391,82 @@
         <div class="form-group">
           <textarea id="feats" name="feats">{{ sheet.feats or '' }}</textarea>
         </div>
+      </div>
+    </div>
+
+    {# ── TAB: SPELLS ─────────────────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'spells'" x-cloak>
+      <div class="form-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
+          <h2 class="form-section-title" style="margin: 0;">Spells</h2>
+          <button type="button" class="btn-sm btn-sm--secondary" @click="addSpell()">Add Spell</button>
+        </div>
+
+        <template x-if="spellEntries.length === 0">
+          <p style="margin: 0; opacity: 0.8;">No spells added yet.</p>
+        </template>
+
+        <template x-for="(spell, index) in spellEntries" :key="index">
+          <div class="form-section" style="padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.75rem;">
+              <h3 style="margin: 0; font-size: 1rem;">Spell <span x-text="index + 1"></span></h3>
+              <button type="button" class="btn-sm btn-sm--secondary" @click="removeSpell(index)">Remove</button>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Spell Name</label>
+                <input type="text" x-model="spell.name" placeholder="e.g. Fireball">
+              </div>
+              <div class="form-group">
+                <label>Level (0-9)</label>
+                <input type="number" min="0" max="9" x-model="spell.level">
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>Attack / Save</label>
+                <input type="text" x-model="spell.attack_save" placeholder="DEX save / spell attack">
+              </div>
+              <div class="form-group">
+                <label>Casting Time</label>
+                <input type="text" x-model="spell.casting_time" placeholder="1 action">
+              </div>
+              <div class="form-group">
+                <label>Range</label>
+                <input type="text" x-model="spell.range" placeholder="60 ft">
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Components</label>
+                <input type="text" x-model="spell.components" placeholder="V, S, M">
+              </div>
+              <div class="form-group">
+                <label>Duration</label>
+                <input type="text" x-model="spell.duration" placeholder="Instantaneous">
+              </div>
+            </div>
+
+            <div class="form-grid-2" style="margin-top: 0.25rem;">
+              <div class="checkbox-group">
+                <input type="checkbox" :id="'spell_concentration_' + index" x-model="spell.crrm.concentration">
+                <label :for="'spell_concentration_' + index">Concentration</label>
+              </div>
+              <div class="checkbox-group">
+                <input type="checkbox" :id="'spell_ritual_' + index" x-model="spell.crrm.ritual">
+                <label :for="'spell_ritual_' + index">Ritual</label>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 0.75rem;">
+              <label>Notes</label>
+              <textarea x-model="spell.notes" placeholder="Optional spell notes"></textarea>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
 
