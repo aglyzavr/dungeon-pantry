@@ -40,12 +40,18 @@ class CharacterService:
         requesting_user_id: UUID,  # ← was str
         is_dm: bool,
     ) -> Character:
+        """Get a character for viewing. Any logged-in user can view any character."""
         character = await self._repo.get_by_id(character_id)
         if character is None:
             raise CharacterNotFound(f"Character {character_id} not found")
-        if not is_dm and character.owner_id != requesting_user_id:  # ← UUID == UUID
-            raise CharacterPermissionError("You do not have access to this character")
         return character
+
+    def _check_write_permission(self, character: Character, user_id: UUID, is_dm: bool) -> None:
+        """Check if user has permission to modify a character.
+        Only DMs and the character owner can modify.
+        """
+        if not is_dm and character.owner_id != user_id:
+            raise CharacterPermissionError("You do not have permission to modify this character")
 
     async def create_from_json_string(self, raw_json: str, owner_id: UUID) -> Character:
         try:
@@ -108,6 +114,7 @@ class CharacterService:
         self, character_id: UUID, user_id: UUID, is_dm: bool
     ) -> Character:
         character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
         return await self._toggle_inspiration(character)
 
 
@@ -196,6 +203,7 @@ class CharacterService:
         self, character_id: UUID, user_id: UUID, is_dm: bool, payload
     ) -> Character:
         character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
         return await self.adjust_hp(character, payload.delta, payload.value)
 
 
@@ -203,6 +211,7 @@ class CharacterService:
         self, character_id: UUID, user_id: UUID, is_dm: bool, payload
     ) -> Character:
         character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
         return await self.toggle_death_save(character, payload.save_type, payload.action)
 
 
@@ -210,12 +219,14 @@ class CharacterService:
         self, character_id: UUID, user_id: UUID, is_dm: bool, payload
     ) -> Character:
         character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
         return await self.adjust_spell_slot(character, payload.level, payload.delta)
 
     async def update_temp_hp(
         self, character_id: UUID, user_id: UUID, is_dm: bool, delta: int | None, absolute: int | None
     ) -> Character:
         character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
         data = copy.deepcopy(character.sheet_data)
         hp = data["vitality"]["hit_points"]
         current_temp = int(hp.get("temp") or 0)
@@ -232,6 +243,7 @@ class CharacterService:
         self, character_id: UUID, user_id: UUID, is_dm: bool, value: int
     ) -> Character:
         character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
         data = copy.deepcopy(character.sheet_data)
         hp = data["vitality"]["hit_points"]
         hp["max"] = max(1, value)
@@ -243,6 +255,7 @@ class CharacterService:
         self, character_id: UUID, user_id: UUID, is_dm: bool
     ) -> Character:
         character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
         data = copy.deepcopy(character.sheet_data)
         data["shield_equipped"] = not bool(data.get("shield_equipped", False))
         return await self._repo.save_sheet_data(character, data)

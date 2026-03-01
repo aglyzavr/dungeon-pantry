@@ -126,8 +126,6 @@ async def character_sheet(
         )
     except CharacterNotFound:
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
-    except CharacterPermissionError:
-        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 
     if current_user.is_dm:
         await db.refresh(character, ["share_links"])
@@ -185,8 +183,6 @@ async def edit_character_form(
         )
     except CharacterNotFound:
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
-    except CharacterPermissionError:
-        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 
     # Check if user can edit (DM or character owner)
     can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
@@ -212,7 +208,7 @@ async def edit_character_submit(
         character = await service.get_character(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
-    except (CharacterNotFound, CharacterPermissionError):
+    except CharacterNotFound:
         return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 
     # Check if user can edit
@@ -503,7 +499,12 @@ async def portrait_upload_form(
         character = await service.get_character(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
-    except (CharacterNotFound, CharacterPermissionError):
+    except CharacterNotFound:
+        return HTMLResponse("Forbidden", status_code=403)
+    
+    # Check if user can edit this character
+    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    if not can_edit:
         return HTMLResponse("Forbidden", status_code=403)
 
     return templates.TemplateResponse("characters/_portrait_upload_modal.html", {
@@ -525,7 +526,12 @@ async def upload_portrait(
         character = await service.get_character(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
-    except (CharacterNotFound, CharacterPermissionError):
+    except CharacterNotFound:
+        return HTMLResponse("Forbidden", status_code=403)
+    
+    # Check if user can edit this character
+    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    if not can_edit:
         return HTMLResponse("Forbidden", status_code=403)
 
     # Validate file extension
@@ -581,7 +587,7 @@ async def get_portrait(
         character = await service.get_character(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
-    except (CharacterNotFound, CharacterPermissionError):
+    except CharacterNotFound:
         return Response("Not Found", status_code=404)
 
     # Return portrait from database
