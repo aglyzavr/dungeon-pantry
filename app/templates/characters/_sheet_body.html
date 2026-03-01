@@ -14,7 +14,7 @@
 
     {# ── Tab System ─────────────────────────────────────────────── #}
     <div id="sheet-tabs" 
-         x-data="{ tab: sessionStorage.getItem('sheetCurrentTab') || 'stats', spellFilter: 'all' }" 
+         x-data="{ tab: sessionStorage.getItem('sheetCurrentTab') || 'stats' }" 
          x-init="$watch('tab', value => sessionStorage.setItem('sheetCurrentTab', value))"
          @switchtab.window="tab = $event.detail.tab">
 
@@ -360,47 +360,31 @@
             </div>
             {% endif %}
 
-            {% if sheet.cantrips_and_prepared_spells | length > 0 %}
+            {# Separate Cantrips (level 0) from Spells (level 1-9) #}
+            {% set cantrips = [] %}
+            {% set leveled_spells = [] %}
+            {% for spell in sheet.cantrips_and_prepared_spells %}
+                {% set lvl = spell.level | string %}
+                {% if lvl == "0" or lvl == "cantrip" %}
+                    {% set _ = cantrips.append(spell) %}
+                {% else %}
+                    {% set _ = leveled_spells.append(spell) %}
+                {% endif %}
+            {% endfor %}
+
+            {# ── SPELLS SECTION (Requires Spell Slots) ── #}
+            {% if leveled_spells | length > 0 %}
             <div class="spells-list-container">
-
-                {# Spell Filter Tabs #}
-                <div class="spell-filter-tabs">
-                    <button
-                      @click="spellFilter = 'all'"
-                      :class="spellFilter === 'all' ? 'spell-filter-tab--all' : 'spell-filter-tab--inactive'"
-                      class="spell-filter-tab"
-                    >
-                        {{ _("All") }}
-                    </button>
-                    {% set levels_seen = namespace(vals=[]) %}
-                    {% for spell in sheet.cantrips_and_prepared_spells %}
-                    {% set lvl = spell.level | string %}
-                    {% if lvl not in levels_seen.vals %}
-                    {% set levels_seen.vals = levels_seen.vals + [lvl] %}
-                    <button
-                      @click="spellFilter = '{{ lvl }}'"
-                      :class="spellFilter === '{{ lvl }}' ? 'spell-filter-tab--all' : 'spell-filter-tab--inactive'"
-                      class="spell-filter-tab"
-                    >
-                        {{ _("Cantrips") if lvl == "0" or lvl == "cantrip" else _("Level") ~ " " ~ lvl }}
-                    </button>
-                    {% endif %}
-                    {% endfor %}
+                <div class="spellcasting-info">
+                    <div class="stats-panel-title">{{ _("Spells") }} <span style="font-size: 0.85em; color: #888;">{{ _("(require spell slots)") }}</span></div>
                 </div>
-
-                {# Spell List #}
                 <div class="spell-list">
-                    {% for spell in sheet.cantrips_and_prepared_spells %}
+                    {% for spell in leveled_spells %}
                     {% set lvl = spell.level | string %}
-                    <div
-                      x-show="spellFilter === 'all' || spellFilter === '{{ lvl }}'"
-                      class="spell-item"
-                    >
+                    <div class="spell-item">
                         <div class="spell-header">
                             <span class="spell-name">{{ spell.name }}</span>
-                            <span class="spell-tag">
-                                {{ _("Cantrip") if lvl == "0" or lvl == "cantrip" else _("Lv.") ~ lvl }}
-                            </span>
+                            <span class="spell-tag">{{ _("Lv.") ~ lvl }}</span>
                             {% if spell.crrm %}
                                 {% if spell.crrm.concentration %}
                                 <span class="spell-tag spell-tag--concentration">C</span>
@@ -431,7 +415,54 @@
                     {% endfor %}
                 </div>
             </div>
-            {% else %}
+            {% endif %}
+
+            {# ── CANTRIPS SECTION ── #}
+            {% if cantrips | length > 0 %}
+            <div class="spells-list-container">
+                <div class="spellcasting-info">
+                    <div class="stats-panel-title">{{ _("Cantrips") }} <span style="font-size: 0.85em; color: #888;">{{ _("(cast at will)") }}</span></div>
+                </div>
+                <div class="spell-list">
+                    {% for spell in cantrips %}
+                    <div class="spell-item">
+                        <div class="spell-header">
+                            <span class="spell-name">{{ spell.name }}</span>
+                            <span class="spell-tag">{{ _("Cantrip") }}</span>
+                            {% if spell.crrm %}
+                                {% if spell.crrm.concentration %}
+                                <span class="spell-tag spell-tag--concentration">C</span>
+                                {% endif %}
+                                {% if spell.crrm.ritual %}
+                                <span class="spell-tag spell-tag--ritual">R</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
+                        <div class="spell-details">
+                            {% if spell.attack_save %}
+                            <span class="spell-detail-item">
+                                <span class="spell-detail-icon">⚔️</span>
+                                <span class="spell-attack-save">{{ spell.attack_save }}</span>
+                            </span>
+                            {% endif %}
+                            {% if spell.casting_time %}<span class="spell-detail-item"><span class="spell-detail-icon">⏱</span> {{ spell.casting_time }}</span>{% endif %}
+                            {% if spell.range %}<span class="spell-detail-item"><span class="spell-detail-icon">📏</span> {{ spell.range }}</span>{% endif %}
+                            {% if spell.components %}<span class="spell-detail-item"><span class="spell-detail-icon">✋</span> {{ spell.components }}</span>{% endif %}
+                            {% if spell.duration %}<span class="spell-detail-item"><span class="spell-detail-icon">⏳</span> {{ spell.duration }}</span>{% endif %}
+                        </div>
+
+                        {% if spell.notes %}
+                        <p class="spell-notes">{{ spell.notes }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {# Empty State #}
+            {% if cantrips | length == 0 and leveled_spells | length == 0 %}
             <div class="spells-empty-state">
                 <div class="spells-empty-icon">✨</div>
                 <p class="spells-empty-message">{{ _("No spells prepared") }}</p>
@@ -920,46 +951,34 @@
     </div>
     {% endif %}
 
-    {% if sheet.cantrips_and_prepared_spells | length > 0 %}
-    <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-        <!-- Spell level sub-tab filter -->
-        <div class="flex gap-1 overflow-x-auto p-2 border-b border-gray-800 scrollbar-none">
-            <button @click="spellFilter = 'all'" :class="spellFilter === 'all'
-            ? 'bg-indigo-600 text-white'
-            : 'text-gray-400 hover:text-white bg-gray-800'" class="px-3 py-1.5 rounded-lg text-xs font-medium
-                 transition-colors whitespace-nowrap">
-                All
-            </button>
-            {% set levels_seen = namespace(vals=[]) %}
-            {% for spell in sheet.cantrips_and_prepared_spells %}
-            {% set lvl = spell.level | string %}
-            {% if lvl not in levels_seen.vals %}
-            {% set levels_seen.vals = levels_seen.vals + [lvl] %}
-            <button @click="spellFilter = '{{ lvl }}'" :class="spellFilter === '{{ lvl }}'
-                ? 'bg-indigo-600 text-white'
-                : 'text-gray-400 hover:text-white bg-gray-800'" class="px-3 py-1.5 rounded-lg text-xs font-medium
-                     transition-colors whitespace-nowrap">
-                {{ "Cantrips" if lvl == "0" or lvl == "cantrip"
-                else "Level " ~ lvl }}
-            </button>
-            {% endif %}
-            {% endfor %}
-        </div>
+    {# Separate Cantrips (level 0) from Spells (level 1-9) #}
+    {% set cantrips = [] %}
+    {% set leveled_spells = [] %}
+    {% for spell in sheet.cantrips_and_prepared_spells %}
+        {% set lvl = spell.level | string %}
+        {% if lvl == "0" or lvl == "cantrip" %}
+            {% set _ = cantrips.append(spell) %}
+        {% else %}
+            {% set _ = leveled_spells.append(spell) %}
+        {% endif %}
+    {% endfor %}
 
-        <!-- Spell rows -->
+    {# ── CANTRIPS SECTION ── #}
+    {% if cantrips | length > 0 %}
+    <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Cantrips <span class="text-gray-600 normal-case font-normal">(cast at will)</span>
+            </h3>
+        </div>
         <div class="divide-y divide-gray-800 max-h-96 overflow-y-auto">
-            {% for spell in sheet.cantrips_and_prepared_spells %}
-            {% set lvl = spell.level | string %}
-            <div x-show="spellFilter === 'all' || spellFilter === '{{ lvl }}'"
-                class="px-4 py-3 hover:bg-gray-800/40 transition-colors">
+            {% for spell in cantrips %}
+            <div class="px-4 py-3 hover:bg-gray-800/40 transition-colors">
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex-1 min-w-0">
-                        <!-- Spell header with tags -->
                         <div class="flex items-center gap-2 flex-wrap mb-2">
                             <span class="font-medium text-white text-sm">{{ spell.name }}</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-900/50 text-indigo-300">
-                                {{ "Cantrip" if lvl == "0" or lvl == "cantrip" else "Lv." ~ lvl }}
-                            </span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-900/50 text-indigo-300">Cantrip</span>
                             {% if spell.crrm %}
                             {% if spell.crrm.concentration %}
                             <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-900/40 text-yellow-300">C</span>
@@ -969,8 +988,6 @@
                             {% endif %}
                             {% endif %}
                         </div>
-                        
-                        <!-- Casting details -->
                         <div class="flex flex-wrap gap-4 mb-2 text-xs text-gray-400">
                             {% if spell.attack_save %}
                             <span class="font-semibold text-gray-300">⚔️ {{ spell.attack_save }}</span>
@@ -980,8 +997,6 @@
                             {% if spell.components %}<span>✋ {{ spell.components }}</span>{% endif %}
                             {% if spell.duration %}<span>⏳ {{ spell.duration }}</span>{% endif %}
                         </div>
-                        
-                        <!-- Notes -->
                         {% if spell.notes %}
                         <p class="text-xs text-gray-500 mt-2 leading-relaxed line-clamp-3">{{ spell.notes }}</p>
                         {% endif %}
@@ -991,7 +1006,56 @@
             {% endfor %}
         </div>
     </div>
-    {% else %}
+    {% endif %}
+
+    {# ── SPELLS SECTION (Requires Spell Slots) ── #}
+    {% if leveled_spells | length > 0 %}
+    <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Spells <span class="text-gray-600 normal-case font-normal">(require spell slots)</span>
+            </h3>
+        </div>
+        <div class="divide-y divide-gray-800 max-h-96 overflow-y-auto">
+            {% for spell in leveled_spells %}
+            {% set lvl = spell.level | string %}
+            <div class="px-4 py-3 hover:bg-gray-800/40 transition-colors">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap mb-2">
+                            <span class="font-medium text-white text-sm">{{ spell.name }}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-900/50 text-indigo-300">Lv. {{ lvl }}</span>
+                            {% if spell.crrm %}
+                            {% if spell.crrm.concentration %}
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-yellow-900/40 text-yellow-300">C</span>
+                            {% endif %}
+                            {% if spell.crrm.ritual %}
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-purple-900/40 text-purple-300">R</span>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="flex flex-wrap gap-4 mb-2 text-xs text-gray-400">
+                            {% if spell.attack_save %}
+                            <span class="font-semibold text-gray-300">⚔️ {{ spell.attack_save }}</span>
+                            {% endif %}
+                            {% if spell.casting_time %}<span>⏱ {{ spell.casting_time }}</span>{% endif %}
+                            {% if spell.range %}<span>📏 {{ spell.range }}</span>{% endif %}
+                            {% if spell.components %}<span>✋ {{ spell.components }}</span>{% endif %}
+                            {% if spell.duration %}<span>⏳ {{ spell.duration }}</span>{% endif %}
+                        </div>
+                        {% if spell.notes %}
+                        <p class="text-xs text-gray-500 mt-2 leading-relaxed line-clamp-3">{{ spell.notes }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {# Empty State #}
+    {% if cantrips | length == 0 and leveled_spells | length == 0 %}
     <div class="text-center py-16 text-gray-600">
         <div class="text-4xl mb-3">✨</div>
         <p class="text-gray-500">No spells prepared</p>
