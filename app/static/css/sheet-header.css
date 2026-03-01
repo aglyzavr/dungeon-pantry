@@ -77,7 +77,7 @@
 }
 
 .btn-inspiration--inactive {
-  border-color: var(--color-border-light);
+  border-color: var(--color-form-border);
   color: var(--color-text-muted);
 }
 
