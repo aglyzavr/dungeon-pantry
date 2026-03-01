@@ -61,8 +61,8 @@
     {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
     <div class="character-card">
       <div class="sheet-header-avatar-icon">
-        {% if character.portrait_path %}
-        <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+        {% if character.portrait_data %}
+        <img src="/characters/{{ character.id }}/portrait" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
         {% else %}
         🧙
         {% endif %}
@@ -132,8 +132,8 @@
       {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
       <div class="character-card character-card--unavailable">
         <div class="sheet-header-avatar-icon">
-          {% if character.portrait_path %}
-          <img src="{{ character.portrait_path }}" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
+          {% if character.portrait_data %}
+          <img src="/characters/{{ character.id }}/portrait" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
           {% else %}
           🧙
           {% endif %}

@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, DateTime, ForeignKey, Table
+from sqlalchemy import Column, DateTime, ForeignKey, LargeBinary, Table
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -39,7 +39,13 @@ class Character(Base):
     )
     sheet_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
     portrait_path: Mapped[str | None] = mapped_column(
-        nullable=True,  # path to uploaded portrait image
+        nullable=True,  # DEPRECATED: legacy field, use portrait_data instead
+    )
+    portrait_data: Mapped[bytes | None] = mapped_column(
+        LargeBinary, nullable=True  # image data stored in database
+    )
+    portrait_mime_type: Mapped[str | None] = mapped_column(
+        nullable=True  # e.g., "image/png", "image/jpeg"
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -246,12 +246,14 @@ class CharacterService:
         data = copy.deepcopy(character.sheet_data)
         data["shield_equipped"] = not bool(data.get("shield_equipped", False))
         return await self._repo.save_sheet_data(character, data)
-    async def update_portrait(self, character_id: UUID, portrait_path: str) -> Character:
-        """Update character portrait path"""
+    async def update_portrait(self, character_id: UUID, portrait_data: bytes, mime_type: str) -> Character:
+        """Update character portrait data stored in database"""
         character = await self._repo.get_by_id(character_id)
         if character is None:
             raise CharacterNotFound(f"Character {character_id} not found")
-        character.portrait_path = portrait_path
+        character.portrait_data = portrait_data
+        character.portrait_mime_type = mime_type
+        character.portrait_path = None  # Clear legacy field
         await self._repo._db.flush()
         return character
 

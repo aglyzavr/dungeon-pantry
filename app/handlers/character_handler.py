@@ -4,7 +4,7 @@ from uuid import UUID
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.player_service import PlayerService, PlayerNotFound
@@ -480,14 +480,15 @@ async def toggle_shield(
 
 # ── Portrait Upload ───────────────────────────────────────────────────────
 
-PORTRAIT_DIR = Path("app/static/portraits")
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
+ALLOWED_MIME_TYPES = {"image/jpeg", "image/png"}
 MAX_PORTRAIT_SIZE = 5_242_880  # 5MB
 
-
-def _ensure_portrait_dir():
-    """Create portraits directory if it doesn't exist"""
-    PORTRAIT_DIR.mkdir(parents=True, exist_ok=True)
+MIME_TYPE_MAP = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+}
 
 
 @router.get("/{character_id}/portrait/upload", response_class=HTMLResponse)
@@ -519,7 +520,7 @@ async def upload_portrait(
     current_user: UserSession = Depends(require_login),
     service: CharacterService = Depends(_service),
 ):
-    """Handle portrait image upload"""
+    """Handle portrait image upload and store in database"""
     try:
         character = await service.get_character(
             character_id, UUID(current_user.user_id), current_user.is_dm
@@ -553,20 +554,11 @@ async def upload_portrait(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
-    # Create portraits directory
-    _ensure_portrait_dir()
+    # Get MIME type
+    mime_type = MIME_TYPE_MAP.get(file_ext, "image/jpeg")
 
-    # Generate filename with character ID to ensure uniqueness
-    filename = f"{character_id}{file_ext}"
-    filepath = PORTRAIT_DIR / filename
-    relative_path = f"/static/portraits/{filename}"
-
-    # Write file
-    with open(filepath, "wb") as f:
-        f.write(contents)
-
-    # Update character portrait path in database
-    updated_character = await service.update_portrait(character_id, relative_path)
+    # Save portrait data to database
+    updated_character = await service.update_portrait(character_id, contents, mime_type)
 
     # Return updated sheet header which will replace the old one
     return templates.TemplateResponse("characters/_sheet_header.html", {
@@ -576,4 +568,29 @@ async def upload_portrait(
         "sheet": updated_character.sheet_data,
         "can_edit": current_user.is_dm or str(updated_character.owner_id) == current_user.user_id,
     })
+
+
+@router.get("/{character_id}/portrait", response_class=Response)
+async def get_portrait(
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    """Retrieve portrait image from database"""
+    try:
+        character = await service.get_character(
+            character_id, UUID(current_user.user_id), current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return Response("Not Found", status_code=404)
+
+    # Return portrait from database
+    if character.portrait_data:
+        return Response(
+            content=character.portrait_data,
+            media_type=character.portrait_mime_type or "image/jpeg",
+        )
+    else:
+        # No portrait uploaded
+        return Response("No portrait found", status_code=404)
 
