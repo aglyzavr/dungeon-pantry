@@ -1,0 +1,385 @@
+# English translations for DnD Campaign Manager.
+# Copyright (C) 2026
+# This file is distributed under the same license as the DnD Campaign Manager project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-01 12:00+0000\n"
+"PO-Revision-Date: 2026-03-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: en <>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Manual 1.0\n"
+
+# Navigation
+msgid "Characters"
+msgstr "Characters"
+
+msgid "Players"
+msgstr "Players"
+
+msgid "Campaigns"
+msgstr "Campaigns"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Settings"
+msgstr "Settings"
+
+# Common actions
+msgid "Save"
+msgstr "Save"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Add"
+msgstr "Add"
+
+msgid "Upload"
+msgstr "Upload"
+
+msgid "Create"
+msgstr "Create"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Back"
+msgstr "Back"
+
+# Character related
+msgid "Character Name"
+msgstr "Character Name"
+
+msgid "Character Level"
+msgstr "Character Level"
+
+msgid "Character Class"
+msgstr "Character Class"
+
+msgid "Hit Points"
+msgstr "Hit Points"
+
+msgid "Armor Class"
+msgstr "Armor Class"
+
+msgid "Upload Character"
+msgstr "Upload Character"
+
+msgid "Edit Character"
+msgstr "Edit Character"
+
+msgid "Character Sheet"
+msgstr "Character Sheet"
+
+# Campaign related
+msgid "Campaign Name"
+msgstr "Campaign Name"
+
+msgid "Campaign Description"
+msgstr "Campaign Description"
+
+msgid "Create Campaign"
+msgstr "Create Campaign"
+
+msgid "Add Characters"
+msgstr "Add Characters"
+
+# Player related
+msgid "Player Name"
+msgstr "Player Name"
+
+msgid "Add Player"
+msgstr "Add Player"
+
+# Settings
+msgid "Language"
+msgstr "Language"
+
+msgid "English"
+msgstr "English"
+
+msgid "Russian"
+msgstr "Russian"
+
+msgid "Change Language"
+msgstr "Change Language"
+
+# Auth
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Login"
+msgstr "Login"
+
+# Character Sheet - Tabs
+msgid "Stats"
+msgstr "Stats"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Spells"
+msgstr "Spells"
+
+msgid "Inventory"
+msgstr "Inventory"
+
+msgid "Bio"
+msgstr "Bio"
+
+# Character Sheet - Stats Tab
+msgid "Ability Scores"
+msgstr "Ability Scores"
+
+msgid "Senses"
+msgstr "Senses"
+
+msgid "Proficiencies & Training"
+msgstr "Proficiencies & Training"
+
+msgid "Passive Perception"
+msgstr "Passive Perception"
+
+msgid "Passive Investigation"
+msgstr "Passive Investigation"
+
+msgid "Passive Insight"
+msgstr "Passive Insight"
+
+msgid "Armor"
+msgstr "Armor"
+
+msgid "Weapons"
+msgstr "Weapons"
+
+msgid "Tools"
+msgstr "Tools"
+
+msgid "Languages"
+msgstr "Languages"
+
+msgid "Saving Throw"
+msgstr "Saving Throw"
+
+msgid "No associated skills"
+msgstr "No associated skills"
+
+# Skills
+msgid "Athletics"
+msgstr "Athletics"
+
+msgid "Acrobatics"
+msgstr "Acrobatics"
+
+msgid "Sleight of Hand"
+msgstr "Sleight of Hand"
+
+msgid "Stealth"
+msgstr "Stealth"
+
+msgid "Arcana"
+msgstr "Arcana"
+
+msgid "History"
+msgstr "History"
+
+msgid "Investigation"
+msgstr "Investigation"
+
+msgid "Nature"
+msgstr "Nature"
+
+msgid "Religion"
+msgstr "Religion"
+
+msgid "Animal Handling"
+msgstr "Animal Handling"
+
+msgid "Insight"
+msgstr "Insight"
+
+msgid "Medicine"
+msgstr "Medicine"
+
+msgid "Perception"
+msgstr "Perception"
+
+msgid "Survival"
+msgstr "Survival"
+
+msgid "Deception"
+msgstr "Deception"
+
+msgid "Intimidation"
+msgstr "Intimidation"
+
+msgid "Performance"
+msgstr "Performance"
+
+msgid "Persuasion"
+msgstr "Persuasion"
+
+# Character Sheet - Actions Tab
+msgid "Attacks & Cantrips"
+msgstr "Attacks & Cantrips"
+
+msgid "Class Features"
+msgstr "Class Features"
+
+msgid "Species Traits"
+msgstr "Species Traits"
+
+msgid "Feats"
+msgstr "Feats"
+
+# Character Sheet - Spells Tab
+msgid "Spell Slots"
+msgstr "Spell Slots"
+
+msgid "Use"
+msgstr "Use"
+
+msgid "Restore"
+msgstr "Restore"
+
+msgid "Spellcasting"
+msgstr "Spellcasting"
+
+msgid "Ability"
+msgstr "Ability"
+
+msgid "Spell Save DC"
+msgstr "Spell Save DC"
+
+msgid "Attack Bonus"
+msgstr "Attack Bonus"
+
+msgid "All"
+msgstr "All"
+
+msgid "Cantrips"
+msgstr "Cantrips"
+
+msgid "Level"
+msgstr "Level"
+
+msgid "Cantrip"
+msgstr "Cantrip"
+
+msgid "Lv."
+msgstr "Lv."
+
+msgid "No spells prepared"
+msgstr "No spells prepared"
+
+# Character Sheet - Inventory Tab
+msgid "Equipment"
+msgstr "Equipment"
+
+msgid "Magic Items & Attunement"
+msgstr "Magic Items & Attunement"
+
+msgid "⚡ Attuned"
+msgstr "⚡ Attuned"
+
+msgid "Not attuned"
+msgstr "Not attuned"
+
+msgid "Currency"
+msgstr "Currency"
+
+msgid "Copper"
+msgstr "Copper"
+
+msgid "Silver"
+msgstr "Silver"
+
+msgid "Electrum"
+msgstr "Electrum"
+
+msgid "Gold"
+msgstr "Gold"
+
+msgid "Platinum"
+msgstr "Platinum"
+
+# Character Sheet - Vitals
+msgid "AC"
+msgstr "AC"
+
+msgid "+2 shield"
+msgstr "+2 shield"
+
+msgid "equip"
+msgstr "equip"
+
+msgid "Initiative"
+msgstr "Initiative"
+
+msgid "Speed"
+msgstr "Speed"
+
+msgid "Prof."
+msgstr "Prof."
+
+msgid "HP"
+msgstr "HP"
+
+msgid "Adjust HP"
+msgstr "Adjust HP"
+
+msgid "Heal"
+msgstr "Heal"
+
+msgid "Dmg"
+msgstr "Dmg"
+
+msgid "Temp HP"
+msgstr "Temp HP"
+
+msgid "Set"
+msgstr "Set"
+
+msgid "Max HP"
+msgstr "Max HP"
+
+msgid "Death Saves"
+msgstr "Death Saves"
+
+msgid "Successes"
+msgstr "Successes"
+
+msgid "Failures"
+msgstr "Failures"
+
+# Error pages
+msgid "Unable to Display Character"
+msgstr "Unable to Display Character"
+
+msgid "There was an error loading this character sheet. This might be due to corrupted data or a temporary issue."
+msgstr "There was an error loading this character sheet. This might be due to corrupted data or a temporary issue."
+
+msgid "Back to Characters"
+msgstr "Back to Characters"
+
+
+msgid "Sign In"
+msgstr "Sign In"

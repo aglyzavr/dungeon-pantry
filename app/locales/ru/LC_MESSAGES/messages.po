@@ -1,0 +1,383 @@
+# Russian translations for DnD Campaign Manager.
+# Copyright (C) 2026
+# This file is distributed under the same license as the DnD Campaign Manager project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-01 12:00+0000\n"
+"PO-Revision-Date: 2026-03-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language: ru\n"
+"Language-Team: ru <>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Manual 1.0\n"
+
+# Navigation
+msgid "Characters"
+msgstr "Персонажи"
+
+msgid "Players"
+msgstr "Игроки"
+
+msgid "Campaigns"
+msgstr "Кампании"
+
+msgid "Logout"
+msgstr "Выйти"
+
+msgid "Settings"
+msgstr "Настройки"
+
+# Common actions
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Edit"
+msgstr "Изменить"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "Upload"
+msgstr "Загрузить"
+
+msgid "Create"
+msgstr "Создать"
+
+msgid "Update"
+msgstr "Обновить"
+
+msgid "Back"
+msgstr "Назад"
+
+# Character related
+msgid "Character Name"
+msgstr "Имя персонажа"
+
+msgid "Character Level"
+msgstr "Уровень персонажа"
+
+msgid "Character Class"
+msgstr "Класс персонажа"
+
+msgid "Hit Points"
+msgstr "Очки здоровья"
+
+msgid "Armor Class"
+msgstr "Класс брони"
+
+msgid "Upload Character"
+msgstr "Загрузить персонажа"
+
+msgid "Edit Character"
+msgstr "Изменить персонажа"
+
+msgid "Character Sheet"
+msgstr "Лист персонажа"
+
+# Campaign related
+msgid "Campaign Name"
+msgstr "Название кампании"
+
+msgid "Campaign Description"
+msgstr "Описание кампании"
+
+msgid "Create Campaign"
+msgstr "Создать кампанию"
+
+msgid "Add Characters"
+msgstr "Добавить персонажей"
+
+# Player related
+msgid "Player Name"
+msgstr "Имя игрока"
+
+msgid "Add Player"
+msgstr "Добавить игрока"
+
+# Settings
+msgid "Language"
+msgstr "Язык"
+
+msgid "English"
+msgstr "English"
+
+msgid "Russian"
+msgstr "Русский"
+
+msgid "Change Language"
+msgstr "Изменить язык"
+
+# Auth
+msgid "Username"
+msgstr "Имя пользователя"
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Login"
+msgstr "Войти"
+
+msgid "Sign In"
+msgstr "Войти"
+# Character Sheet - Tabs
+msgid "Stats"
+msgstr "Статистика"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Spells"
+msgstr "Заклинания"
+
+msgid "Inventory"
+msgstr "Инвентарь"
+
+msgid "Bio"
+msgstr "Биография"
+
+# Character Sheet - Stats Tab
+msgid "Ability Scores"
+msgstr "Характеристики"
+
+msgid "Senses"
+msgstr "Чувства"
+
+msgid "Proficiencies & Training"
+msgstr "Навыки и обучение"
+
+msgid "Passive Perception"
+msgstr "Пассивное восприятие"
+
+msgid "Passive Investigation"
+msgstr "Пассивное расследование"
+
+msgid "Passive Insight"
+msgstr "Пассивная интуиция"
+
+msgid "Armor"
+msgstr "Броня"
+
+msgid "Weapons"
+msgstr "Оружие"
+
+msgid "Tools"
+msgstr "Инструменты"
+
+msgid "Languages"
+msgstr "Языки"
+
+msgid "Saving Throw"
+msgstr "Спас-бросок"
+
+msgid "No associated skills"
+msgstr "Нет связанных навыков"
+
+# Skills
+msgid "Athletics"
+msgstr "Атлетика"
+
+msgid "Acrobatics"
+msgstr "Акробатика"
+
+msgid "Sleight of Hand"
+msgstr "Ловкость рук"
+
+msgid "Stealth"
+msgstr "Скрытность"
+
+msgid "Arcana"
+msgstr "Магия"
+
+msgid "History"
+msgstr "История"
+
+msgid "Investigation"
+msgstr "Расследование"
+
+msgid "Nature"
+msgstr "Природа"
+
+msgid "Religion"
+msgstr "Религия"
+
+msgid "Animal Handling"
+msgstr "Обращение с животными"
+
+msgid "Insight"
+msgstr "Интуиция"
+
+msgid "Medicine"
+msgstr "Медицина"
+
+msgid "Perception"
+msgstr "Восприятие"
+
+msgid "Survival"
+msgstr "Выживание"
+
+msgid "Deception"
+msgstr "Обман"
+
+msgid "Intimidation"
+msgstr "Запугивание"
+
+msgid "Performance"
+msgstr "Выступление"
+
+msgid "Persuasion"
+msgstr "Убеждение"
+
+# Character Sheet - Actions Tab
+msgid "Attacks & Cantrips"
+msgstr "Атаки и трики"
+
+msgid "Class Features"
+msgstr "Способности класса"
+
+msgid "Species Traits"
+msgstr "Черты расы"
+
+msgid "Feats"
+msgstr "Подвиги"
+
+# Character Sheet - Spells Tab
+msgid "Spell Slots"
+msgstr "Ячейки заклинаний"
+
+msgid "Use"
+msgstr "Использовать"
+
+msgid "Restore"
+msgstr "Восстановить"
+
+msgid "Spellcasting"
+msgstr "Сотворение заклинаний"
+
+msgid "Ability"
+msgstr "Характеристика"
+
+msgid "Spell Save DC"
+msgstr "Сл. спас. для заклинаний"
+
+msgid "Attack Bonus"
+msgstr "Бонус атаки"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Cantrips"
+msgstr "Трики"
+
+msgid "Level"
+msgstr "Уровень"
+
+msgid "Cantrip"
+msgstr "Трик"
+
+msgid "Lv."
+msgstr "Ур."
+
+msgid "No spells prepared"
+msgstr "Нет подготовленных заклинаний"
+
+# Character Sheet - Inventory Tab
+msgid "Equipment"
+msgstr "Снаряжение"
+
+msgid "Magic Items & Attunement"
+msgstr "Магические предметы и связь"
+
+msgid "⚡ Attuned"
+msgstr "⚡ Связан"
+
+msgid "Not attuned"
+msgstr "Не связан"
+
+msgid "Currency"
+msgstr "Валюта"
+
+msgid "Copper"
+msgstr "Медь"
+
+msgid "Silver"
+msgstr "Серебро"
+
+msgid "Electrum"
+msgstr "Электр"
+
+msgid "Gold"
+msgstr "Золото"
+
+msgid "Platinum"
+msgstr "Платина"
+
+# Character Sheet - Vitals
+msgid "AC"
+msgstr "КБ"
+
+msgid "+2 shield"
+msgstr "+2 щит"
+
+msgid "equip"
+msgstr "экипировать"
+
+msgid "Initiative"
+msgstr "Инициатива"
+
+msgid "Speed"
+msgstr "Скорость"
+
+msgid "Prof."
+msgstr "Бонус"
+
+msgid "HP"
+msgstr "ОЗ"
+
+msgid "Adjust HP"
+msgstr "Изменить ОЗ"
+
+msgid "Heal"
+msgstr "Исцелить"
+
+msgid "Dmg"
+msgstr "Урон"
+
+msgid "Temp HP"
+msgstr "Временные ОЗ"
+
+msgid "Set"
+msgstr "Установить"
+
+msgid "Max HP"
+msgstr "Макс ОЗ"
+
+msgid "Death Saves"
+msgstr "Спасы от смерти"
+
+msgid "Successes"
+msgstr "Успехи"
+
+msgid "Failures"
+msgstr "Провалы"
+
+# Error pages
+msgid "Unable to Display Character"
+msgstr "Не удалось отобразить персонажа"
+
+msgid "There was an error loading this character sheet. This might be due to corrupted data or a temporary issue."
+msgstr "Произошла ошибка при загрузке листа персонажа. Это может быть вызвано повреждением данных или временной проблемой."
+
+msgid "Back to Characters"
+msgstr "Вернуться к персонажам"

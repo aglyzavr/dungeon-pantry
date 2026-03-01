@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block title %}Character Error — DnD Manager{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/shared.css" />
+<style>
+  .error-container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 40px 30px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+
+  .error-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+
+  .error-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #d32f2f;
+    margin-bottom: 15px;
+  }
+
+  .error-message {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+
+  .error-details {
+    background: white;
+    border-left: 4px solid #d32f2f;
+    padding: 15px;
+    margin: 20px 0;
+    text-align: left;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #333;
+    overflow-x: auto;
+    word-break: break-word;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .btn-error {
+    padding: 10px 24px;
+    border-radius: 4px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary-error {
+    background: #1976d2;
+    color: white;
+  }
+
+  .btn-primary-error:hover {
+    background: #1565c0;
+  }
+
+  .btn-secondary-error {
+    background: white;
+    color: #1976d2;
+    border: 1px solid #1976d2;
+  }
+
+  .btn-secondary-error:hover {
+    background: #f5f5f5;
+  }
+</style>
+
+<div class="error-container">
+  <div class="error-icon">❌</div>
+  
+  <div class="error-title">{{ _("Unable to Display Character") }}</div>
+  
+  <div class="error-message">
+    {{ _("There was an error loading this character sheet. This might be due to corrupted data or a temporary issue.") }}
+  </div>
+
+  {% if error %}
+  <div class="error-details">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <div class="error-actions">
+    <a href="/characters" class="btn-error btn-primary-error">
+      ← {{ _("Back to Characters") }}
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -21,12 +21,13 @@
     <a href="/" class="navbar-brand">⚔️ DnD Manager</a>
     <div class="navbar-menu">
       {% if current_user.is_dm %}
-        <a href="/characters" class="navbar-link">Characters</a>
-        <a href="/players" class="navbar-link">Players</a>
-        <a href="/campaigns" class="navbar-link">Campaigns</a>
+        <a href="/characters" class="navbar-link">{{ _("Characters") if _ is defined else "Characters" }}</a>
+        <a href="/players" class="navbar-link">{{ _("Players") if _ is defined else "Players" }}</a>
+        <a href="/campaigns" class="navbar-link">{{ _("Campaigns") if _ is defined else "Campaigns" }}</a>
       {% else %}
-        <a href="/campaigns" class="navbar-link">Campaigns</a>
+        <a href="/campaigns" class="navbar-link">{{ _("Campaigns") if _ is defined else "Campaigns" }}</a>
       {% endif %}
+      <a href="/settings" class="navbar-link">{{ _("Settings") if _ is defined else "Settings" }}</a>
 
       <span class="navbar-user">
         {{ current_user.username }}
@@ -37,7 +38,7 @@
 
       <form method="POST" action="/logout">
         <button type="submit" class="navbar-logout">
-          Logout
+          {{ _("Logout") if _ is defined else "Logout" }}
         </button>
       </form>
     </div>

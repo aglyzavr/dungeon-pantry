@@ -23,3 +23,4 @@ class UserSession(BaseModel):
     # earlier design and referenced a non‑existent ``role`` field; it has been
     # removed.
     is_dm: bool = False
+    language: str = "en"

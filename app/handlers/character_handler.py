@@ -7,9 +7,9 @@ from fastapi import APIRouter, Depends, File, Form, Request, UploadFile, status
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.player_service import PlayerService, PlayerNotFound
 
 from app.database import get_db
+from app.i18n import render_template
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.character import HPUpdate, DeathSaveUpdate, SpellSlotUpdate, validate_mandatory_fields
@@ -18,6 +18,7 @@ from app.services.character_service import (
     CharacterPermissionError,
     CharacterService,
 )
+from app.services.player_service import PlayerService
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
 templates = Jinja2Templates(directory="app/templates")
@@ -25,6 +26,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 def _service(db: AsyncSession = Depends(get_db)) -> CharacterService:
     return CharacterService(db)
+
 
 def _player_service(db: AsyncSession = Depends(get_db)) -> PlayerService:
     return PlayerService(db)
@@ -39,11 +41,16 @@ async def character_list(
     service: CharacterService = Depends(_service),
 ):
     characters = await service.list_all()
-    return templates.TemplateResponse("characters/list.html", {
-        "request": request,
-        "current_user": current_user,
-        "characters": characters,
-    })
+    return render_template(
+        templates,
+        "characters/list.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "characters": characters,
+        },
+        language=current_user.language,
+    )
 
 
 # ── Upload form ───────────────────────────────────────────────────────────
@@ -53,11 +60,16 @@ async def upload_form(
     request: Request,
     current_user: UserSession = Depends(require_dm),
 ):
-    return templates.TemplateResponse("characters/upload.html", {
-        "request": request,
-        "current_user": current_user,
-        "error": None,
-    })
+    return render_template(
+        templates,
+        "characters/upload.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "error": None,
+        },
+        language=current_user.language,
+    )
 
 
 @router.post("/upload", response_class=HTMLResponse)
@@ -70,36 +82,48 @@ async def upload_character(
     # File size guard — 1MB max
     contents = await file.read(1_048_577)
     if len(contents) > 1_048_576:
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "characters/upload.html",
-            {"request": request, "current_user": current_user,
-             "error": "File too large. Maximum size is 1MB."},
+            {
+                "request": request,
+                "current_user": current_user,
+                "error": "File too large. Maximum size is 1MB.",
+            },
+            language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
     try:
         data = json.loads(contents.decode("utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError):
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "characters/upload.html",
-            {"request": request, "current_user": current_user,
-             "error": "Invalid JSON file. Please upload a valid character sheet."},
+            {
+                "request": request,
+                "current_user": current_user,
+                "error": "Invalid JSON file. Please upload a valid character sheet.",
+            },
+            language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
     errors = validate_mandatory_fields(data)
     if errors:
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "characters/upload.html",
-            {"request": request, "current_user": current_user,
-             "error": "Validation failed: " + "; ".join(errors)},
+            {
+                "request": request,
+                "current_user": current_user,
+                "error": "Validation failed: " + "; ".join(errors),
+            },
+            language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
-    # create the character after normalization/validation; if the DB write
-    # succeeds we'll simply redirect.  Any template errors will be caught later
-    # when the user views the sheet (and our character_sheet handler now
-    # displays a helpful message).
+    # Create the character after validation
     character = await service.create(
         sheet_data=data,
         owner_id=UUID(current_user.user_id),
@@ -108,6 +132,7 @@ async def upload_character(
         url=f"/characters/{character.id}",
         status_code=status.HTTP_303_SEE_OTHER,
     )
+
 
 # ── Sheet view ────────────────────────────────────────────────────────────
 
@@ -133,25 +158,34 @@ async def character_sheet(
     # Load players for assignment dropdown (DM only)
     players = await player_service.list_players() if current_user.is_dm else []
 
-    # produce the template; construction of TemplateResponse already renders
-    # the Jinja template, so wrap instantiation in try/except to catch any
-    # rendering issues.
     try:
-        resp = templates.TemplateResponse("characters/sheet.html", {
-            "request": request,
-            "current_user": current_user,
-            "character": character,
-            "sheet": character.sheet_data,
-            "players": players,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-        })
+        resp = render_template(
+            templates,
+            "characters/sheet.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "character": character,
+                "sheet": character.sheet_data,
+                "players": players,
+                "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            },
+            language=current_user.language,
+        )
         return resp
     except Exception as e:
-        return templates.TemplateResponse("characters/upload.html", {
-            "request": request,
-            "current_user": current_user,
-            "errors": [f"Unable to display character: {e}"]
-        }, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return render_template(
+            templates,
+            "characters/error.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "error": str(e),
+            },
+            language=current_user.language,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
 
 # ── Delete ────────────────────────────────────────────────────────────────
 
@@ -189,12 +223,17 @@ async def edit_character_form(
     if not can_edit:
         return RedirectResponse(url=f"/characters/{character_id}", status_code=status.HTTP_303_SEE_OTHER)
 
-    return templates.TemplateResponse("characters/edit.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-    })
+    return render_template(
+        templates,
+        "characters/edit.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+        },
+        language=current_user.language,
+    )
 
 
 @router.post("/{character_id}/edit", response_class=HTMLResponse)
@@ -218,13 +257,13 @@ async def edit_character_submit(
 
     form = await request.form()
     
-    # Build the updated sheet data from form
     try:
         updated_sheet = await service.build_sheet_from_form(character, form)
         errors = validate_mandatory_fields(updated_sheet)
         
         if errors:
-            return templates.TemplateResponse(
+            return render_template(
+                templates,
                 "characters/edit.html",
                 {
                     "request": request,
@@ -233,6 +272,7 @@ async def edit_character_submit(
                     "sheet": character.sheet_data,
                     "error": "Validation failed: " + "; ".join(errors),
                 },
+                language=current_user.language,
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         
@@ -242,7 +282,8 @@ async def edit_character_submit(
             status_code=status.HTTP_303_SEE_OTHER,
         )
     except Exception as e:
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "characters/edit.html",
             {
                 "request": request,
@@ -251,6 +292,7 @@ async def edit_character_submit(
                 "sheet": character.sheet_data,
                 "error": f"Error updating character: {str(e)}",
             },
+            language=current_user.language,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -277,13 +319,18 @@ async def update_hp(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_vitals.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-    })
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
 
 
 # ── Vitals: Death saves ───────────────────────────────────────────────────
@@ -308,13 +355,18 @@ async def update_death_save(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_vitals.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-    })
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
 
 
 # ── Vitals: Inspiration ───────────────────────────────────────────────────
@@ -333,13 +385,18 @@ async def toggle_inspiration(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_sheet_header.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-    })
+    return render_template(
+        templates,
+        "characters/_sheet_header.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
 
 
 # ── Vitals: Spell slots ───────────────────────────────────────────────────
@@ -364,34 +421,19 @@ async def update_spell_slot(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_sheet_body.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-    })
-
-# ── Assign owner (DM only) ────────────────────────────────────────────────
-
-@router.post("/{character_id}/assign", response_class=HTMLResponse)
-async def assign_character_owner(
-    character_id: UUID,
-    player_id: str = Form(""),
-    current_user: UserSession = Depends(require_dm),
-    service: CharacterService = Depends(_service),
-):
-    parsed_player_id = UUID(player_id) if player_id else None
-
-    try:
-        await service.assign_owner(character_id, parsed_player_id)
-    except CharacterNotFound:
-        pass
-
-    return RedirectResponse(
-        url=f"/characters/{character_id}",
-        status_code=status.HTTP_303_SEE_OTHER,
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
     )
+
 
 # ── Vitals: Temp HP ───────────────────────────────────────────────────────
 
@@ -413,13 +455,18 @@ async def update_temp_hp(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_vitals.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-    })
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
 
 
 # ── Vitals: Max HP (DM only) ──────────────────────────────────────────────
@@ -441,13 +488,19 @@ async def update_max_hp(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_vitals.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "can_edit": True,
-    })
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": True,
+        },
+        language=current_user.language,
+    )
+
 
 # ── Vitals: Shield ────────────────────────────────────────────────────────
 
@@ -465,13 +518,40 @@ async def toggle_shield(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
-    return templates.TemplateResponse("characters/_vitals.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": character,
-        "sheet": character.sheet_data,
-        "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
-    })
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
+
+
+# ── Assign owner (DM only) ────────────────────────────────────────────────
+
+@router.post("/{character_id}/assign", response_class=HTMLResponse)
+async def assign_character_owner(
+    character_id: UUID,
+    player_id: str = Form(""),
+    current_user: UserSession = Depends(require_dm),
+    service: CharacterService = Depends(_service),
+):
+    parsed_player_id = UUID(player_id) if player_id else None
+
+    try:
+        await service.assign_owner(character_id, parsed_player_id)
+    except CharacterNotFound:
+        pass
+
+    return RedirectResponse(
+        url=f"/characters/{character_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 
 # ── Portrait Upload ───────────────────────────────────────────────────────
@@ -502,15 +582,20 @@ async def portrait_upload_form(
     except CharacterNotFound:
         return HTMLResponse("Forbidden", status_code=403)
     
-    # Check if user can edit this character
+    # Check if user can edit
     can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
     if not can_edit:
         return HTMLResponse("Forbidden", status_code=403)
-
-    return templates.TemplateResponse("characters/_portrait_upload_modal.html", {
-        "request": request,
-        "character": character,
-    })
+    
+    return render_template(
+        templates,
+        "characters/_portrait_upload_modal.html",
+        {
+            "request": request,
+            "character": character,
+        },
+        language=current_user.language,
+    )
 
 
 @router.post("/{character_id}/portrait/upload", response_class=HTMLResponse)
@@ -537,26 +622,30 @@ async def upload_portrait(
     # Validate file extension
     file_ext = Path(file.filename).suffix.lower()
     if file_ext not in ALLOWED_EXTENSIONS:
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "characters/_portrait_upload_modal.html",
             {
                 "request": request,
                 "character": character,
                 "error": "Only JPEG and PNG files are allowed.",
             },
+            language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
     # Read and validate file size
     contents = await file.read(MAX_PORTRAIT_SIZE + 1)
     if len(contents) > MAX_PORTRAIT_SIZE:
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "characters/_portrait_upload_modal.html",
             {
                 "request": request,
                 "character": character,
                 "error": "File too large. Maximum size is 5MB.",
             },
+            language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
@@ -564,16 +653,32 @@ async def upload_portrait(
     mime_type = MIME_TYPE_MAP.get(file_ext, "image/jpeg")
 
     # Save portrait data to database
-    updated_character = await service.update_portrait(character_id, contents, mime_type)
-
-    # Return updated sheet header which will replace the old one
-    return templates.TemplateResponse("characters/_sheet_header.html", {
-        "request": request,
-        "current_user": current_user,
-        "character": updated_character,
-        "sheet": updated_character.sheet_data,
-        "can_edit": current_user.is_dm or str(updated_character.owner_id) == current_user.user_id,
-    })
+    try:
+        updated_character = await service.update_portrait(character_id, contents, mime_type)
+        return render_template(
+            templates,
+            "characters/_sheet_header.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "character": updated_character,
+                "sheet": updated_character.sheet_data,
+                "can_edit": current_user.is_dm or str(updated_character.owner_id) == current_user.user_id,
+            },
+            language=current_user.language,
+        )
+    except Exception as e:
+        return render_template(
+            templates,
+            "characters/_portrait_upload_modal.html",
+            {
+                "request": request,
+                "character": character,
+                "error": f"Error uploading portrait: {str(e)}",
+            },
+            language=current_user.language,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @router.get("/{character_id}/portrait", response_class=Response)

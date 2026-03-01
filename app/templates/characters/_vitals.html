@@ -18,24 +18,24 @@
       hx-swap="outerHTML"
       class="btn-ac {% if shield %}btn-ac--active{% else %}btn-ac--inactive{% endif %}"
     >
-      <div class="vitals-stat-label">AC {{ '🛡️' if shield else '' }}</div>
+      <div class="vitals-stat-label">{{ _("AC") }} {{ '🛡️' if shield else '' }}</div>
       <div class="vitals-stat-value">{{ total_ac }}</div>
       <div class="btn-ac-status {% if shield %}btn-ac-status--active{% else %}btn-ac-status--inactive{% endif %}">
-        {{ "+2 shield" if shield else "equip" }}
+        {{ _("+2 shield") if shield else _("equip") }}
       </div>
     </button>
     {% else %}
     <div class="vitals-stat-box" style="border-color: transparent;">
-      <div class="vitals-stat-label">AC {{ '🛡️' if shield else '' }}</div>
+      <div class="vitals-stat-label">{{ _("AC") }} {{ '🛡️' if shield else '' }}</div>
       <div class="vitals-stat-value">{{ total_ac }}</div>
     </div>
     {% endif %}
 
     {# Initiative, Speed, Prof. Bonus #}
     {% for label, value in [
-      ("Initiative", sheet.initiative),
-      ("Speed",      sheet.speed),
-      ("Prof.",      "+" ~ sheet.proficiency_bonus)
+      (_("Initiative"), sheet.initiative),
+      (_("Speed"),      sheet.speed),
+      (_("Prof."),      "+" ~ sheet.proficiency_bonus)
     ] %}
     <div class="vitals-stat-box" style="border-color: transparent;">
       <div class="vitals-stat-label">{{ label }}</div>
@@ -59,7 +59,7 @@
 
       {# HP Numbers #}
       <div class="hp-display">
-        <span class="hp-label">HP</span>
+        <span class="hp-label">{{ _("HP") }}</span>
         <span class="hp-current
           {% if hp_pct > 50 %}hp-current--healthy
           {% elif hp_pct > 25 %}hp-current--injured
@@ -78,7 +78,7 @@
       <div class="hp-controls-container">
         {# Heal/Damage Controls #}
         <div class="hp-control-group">
-          <span class="hp-control-label">Adjust HP</span>
+          <span class="hp-control-label">{{ _("Adjust HP") }}</span>
           <div class="hp-adjust-controls">
             <input
               type="number"
@@ -98,7 +98,7 @@
                 });"
               class="btn-heal"
             >
-              Heal
+              {{ _("Heal") }}
             </button>
             <button
               onclick="
@@ -110,7 +110,7 @@
                 });"
               class="btn-damage"
             >
-              Dmg
+              {{ _("Dmg") }}
             </button>
           </div>
         </div>
@@ -123,7 +123,7 @@
             hx-swap="outerHTML"
             class="hp-form-group"
           >
-            <span class="hp-control-label">Temp HP</span>
+            <span class="hp-control-label">{{ _("Temp HP") }}</span>
             <div class="hp-form-controls">
               <input
                 type="number"
@@ -132,7 +132,7 @@
                 min="0"
                 class="hp-form-input"
               />
-              <button type="submit" class="hp-form-submit">Set</button>
+              <button type="submit" class="hp-form-submit">{{ _("Set") }}</button>
             </div>
           </form>
         </div>
@@ -146,7 +146,7 @@
             hx-swap="outerHTML"
             class="hp-form-group"
           >
-            <span class="hp-control-label hp-control-label--max">Max HP</span>
+            <span class="hp-control-label hp-control-label--max">{{ _("Max HP") }}</span>
             <div class="hp-form-controls">
               <input
                 type="number"

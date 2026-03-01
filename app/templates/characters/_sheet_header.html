@@ -76,13 +76,13 @@
     {# ── Death Saves Footer ─────────────────────────────────────── #}
     {% set ds = sheet.vitality.death_saves %}
     <div class="sheet-header-footer">
-        <div class="death-saves-title">Death Saves</div>
+        <div class="death-saves-title">{{ _("Death Saves") }}</div>
         <div class="death-saves-separator"></div>
         <div class="death-saves-container">
             {% for save_type, icon in [("successes", "✓"), ("failures", "✗")] %}
             {% set count = ds[save_type] %}
             <div class="death-saves-row">
-                <span class="death-saves-label">{{ save_type | title }}</span>
+                <span class="death-saves-label">{% if save_type == "successes" %}{{ _("Successes") }}{% else %}{{ _("Failures") }}{% endif %}</span>
                 <div class="death-saves-dots">
                     {% for i in range(1, 4) %}
                     {% if can_edit %}

@@ -18,11 +18,11 @@
         {# ── Desktop Tab Bar ────────────────────────────────────── #}
         <div class="sheet-tab-bar">
             {% for t, label, icon in [
-            ('stats', 'Stats', '🎲'),
-            ('actions', 'Actions', '⚔️'),
-            ('spells', 'Spells', '✨'),
-            ('inventory', 'Inventory', '🎒'),
-            ('bio', 'Bio', '📖')
+            ('stats', _("Stats"), '🎲'),
+            ('actions', _("Actions"), '⚔️'),
+            ('spells', _("Spells"), '✨'),
+            ('inventory', _("Inventory"), '🎒'),
+            ('bio', _("Bio"), '📖')
             ] %}
             <button
               @click="tab = '{{ t }}'"
@@ -44,7 +44,7 @@
 
                     {# Ability Scores #}
                     <div class="stats-panel">
-                        <div class="stats-panel-title">Ability Scores</div>
+                        <div class="stats-panel-title">{{ _("Ability Scores") }}</div>
                         <div class="ability-scores-grid">
                             {% for label, short, ability in [
                             ("Strength", "STR", sheet.strength),
@@ -69,7 +69,7 @@
 
                     {# Senses #}
                     <div class="stats-panel">
-                        <div class="stats-panel-title">Senses</div>
+                        <div class="stats-panel-title">{{ _("Senses") }}</div>
                         <div class="senses-section">
                             {% for label, val in [
                             ("Passive Perception", sheet.passive_perception),
@@ -87,7 +87,7 @@
                     {# Proficiencies & Training #}
                     {% set prof = sheet.equipment_training_proficiencies %}
                     <div class="stats-panel">
-                        <div class="stats-panel-title">Proficiencies & Training</div>
+                        <div class="stats-panel-title">{{ _("Proficiencies & Training") }}</div>
                         <div class="proficiencies-section">
                             {% for label, items in [
                             ("Armor", prof.armor_training),
@@ -205,7 +205,7 @@
                         </div>
                         {% else %}
                         <div class="ability-card-no-skills">
-                            No associated skills
+                            {{ _("No associated skills") }}
                         </div>
                         {% endif %}
 
@@ -222,7 +222,7 @@
             {% if sheet.weapons_damage_cantrips %}
             <div class="actions-section">
                 <div class="actions-section-header">
-                    <h3 class="actions-section-title">Attacks & Cantrips</h3>
+                    <h3 class="actions-section-title">{{ _("Attacks & Cantrips") }}</h3>
                 </div>
                 <div class="attacks-table-wrapper">
                     <table class="attacks-table">
@@ -253,21 +253,21 @@
 
             {% if sheet.class_features %}
             <div class="content-section">
-                <h3 class="content-section-title">Class Features</h3>
+                <h3 class="content-section-title">{{ _("Class Features") }}</h3>
                 <p class="content-section-text">{{ sheet.class_features }}</p>
             </div>
             {% endif %}
 
             {% if sheet.species_traits %}
             <div class="content-section">
-                <h3 class="content-section-title">Species Traits</h3>
+                <h3 class="content-section-title">{{ _("Species Traits") }}</h3>
                 <p class="content-section-text">{{ sheet.species_traits }}</p>
             </div>
             {% endif %}
 
             {% if sheet.feats %}
             <div class="content-section">
-                <h3 class="content-section-title">Feats</h3>
+                <h3 class="content-section-title">{{ _("Feats") }}</h3>
                 <p class="content-section-text">{{ sheet.feats }}</p>
             </div>
             {% endif %}
@@ -290,7 +290,7 @@
             {% if has_slots.found %}
             <div class="spell-slots-container">
               <div class="spell-slots-header">
-                <span class="spell-slots-title">Spell Slots</span>
+                <span class="spell-slots-title">{{ _("Spell Slots") }}</span>
               </div>
               <div class="spell-slots-content">
                 {% for lvl in range(1, 10) %}
@@ -316,7 +316,7 @@
                       hx-swap="outerHTML"
                       class="spell-slot-btn spell-slot-btn--use"
                     >
-                      Use
+                      {{ _("Use") }}
                     </button>
                     <button
                       hx-post="/characters/{{ character.id }}/vitals/spell-slot"
@@ -325,7 +325,7 @@
                       hx-swap="outerHTML"
                       class="spell-slot-btn spell-slot-btn--restore"
                     >
-                      Restore
+                      {{ _("Restore") }}
                     </button>
                   </div>
                   {% endif %}
@@ -339,12 +339,12 @@
             {% set sc = sheet.spellcasting_ability %}
             {% if sc.ability %}
             <div class="spellcasting-info">
-                <div class="stats-panel-title">Spellcasting</div>
+                <div class="stats-panel-title">{{ _("Spellcasting") }}</div>
                 <div class="spellcasting-grid">
                     {% for label, val in [
-                    ("Ability", sc.ability),
-                    ("Spell Save DC", sc.spell_save_dc),
-                    ("Attack Bonus", "+" ~ sc.spell_attack_bonus)
+                    (_("Ability"), sc.ability),
+                    (_("Spell Save DC"), sc.spell_save_dc),
+                    (_("Attack Bonus"), "+" ~ sc.spell_attack_bonus)
                     ] %}
                     <div class="spellcasting-stat">
                         <div class="spellcasting-stat-label">{{ label }}</div>
@@ -365,7 +365,7 @@
                       :class="spellFilter === 'all' ? 'spell-filter-tab--all' : 'spell-filter-tab--inactive'"
                       class="spell-filter-tab"
                     >
-                        All
+                        {{ _("All") }}
                     </button>
                     {% set levels_seen = namespace(vals=[]) %}
                     {% for spell in sheet.cantrips_and_prepared_spells %}
@@ -377,7 +377,7 @@
                       :class="spellFilter === '{{ lvl }}' ? 'spell-filter-tab--all' : 'spell-filter-tab--inactive'"
                       class="spell-filter-tab"
                     >
-                        {{ "Cantrips" if lvl == "0" or lvl == "cantrip" else "Level " ~ lvl }}
+                        {{ _("Cantrips") if lvl == "0" or lvl == "cantrip" else _("Level") ~ " " ~ lvl }}
                     </button>
                     {% endif %}
                     {% endfor %}
@@ -394,7 +394,7 @@
                         <div class="spell-header">
                             <span class="spell-name">{{ spell.name }}</span>
                             <span class="spell-tag">
-                                {{ "Cantrip" if lvl == "0" or lvl == "cantrip" else "Lv." ~ lvl }}
+                                {{ _("Cantrip") if lvl == "0" or lvl == "cantrip" else _("Lv.") ~ lvl }}
                             </span>
                             {% if spell.crrm %}
                                 {% if spell.crrm.concentration %}
@@ -429,7 +429,7 @@
             {% else %}
             <div class="spells-empty-state">
                 <div class="spells-empty-icon">✨</div>
-                <p class="spells-empty-message">No spells prepared</p>
+                <p class="spells-empty-message">{{ _("No spells prepared") }}</p>
             </div>
             {% endif %}
         </div>
@@ -439,7 +439,7 @@
 
             {% if sheet.equipment.equipment_list %}
             <div class="content-section">
-                <h3 class="content-section-title">Equipment</h3>
+                <h3 class="content-section-title">{{ _("Equipment") }}</h3>
                 <ul class="inventory-grid">
                     {% for item in sheet.equipment.equipment_list %}
                     {% if item %}
@@ -456,14 +456,14 @@
             {% set magic = sheet.equipment.magic_item_attunement | selectattr("name") | list %}
             {% if magic %}
             <div class="content-section">
-                <h3 class="content-section-title">Magic Items & Attunement</h3>
+                <h3 class="content-section-title">{{ _("Magic Items & Attunement") }}</h3>
                 <div class="magic-items-list">
                     {% for item in magic %}
                     {% if item.name %}
                     <div class="magic-item">
                         <span class="magic-item-name">{{ item.name }}</span>
                         <span class="magic-item-status {% if item.is_attuned %}magic-item-status--attuned{% else %}magic-item-status--not-attuned{% endif %}">
-                            {{ "⚡ Attuned" if item.is_attuned else "Not attuned" }}
+                            {{ _("⚡ Attuned") if item.is_attuned else _("Not attuned") }}
                         </span>
                     </div>
                     {% endif %}
@@ -475,14 +475,14 @@
             {% set c = sheet.coins | default({'cp':0,'sp':0,'ep':0,'gp':0,'pp':0}) %}
             {% if c.cp or c.sp or c.ep or c.gp or c.pp %}
             <div class="content-section">
-                <h3 class="content-section-title">Currency</h3>
+                <h3 class="content-section-title">{{ _("Currency") }}</h3>
                 <div class="currency-grid">
                     {% for label, val, class_suffix in [
-                    ("Copper", c.cp, "copper"),
-                    ("Silver", c.sp, "silver"),
-                    ("Electrum", c.ep, "electrum"),
-                    ("Gold", c.gp, "gold"),
-                    ("Platinum", c.pp, "platinum")
+                    (_("Copper"), c.cp, "copper"),
+                    (_("Silver"), c.sp, "silver"),
+                    (_("Electrum"), c.ep, "electrum"),
+                    (_("Gold"), c.gp, "gold"),
+                    (_("Platinum"), c.pp, "platinum")
                     ] %}
                     <div class="currency-box currency-box--{{ class_suffix }}">
                         <div class="currency-value currency-value--{{ class_suffix }}">{{ val }}</div>
