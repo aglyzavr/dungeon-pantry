@@ -100,13 +100,19 @@
         </div>
     </div>
 
-    {# ── Edit Button ────────────────────────────────────────────── #}
-    {% if can_edit %}
+    {# ── Edit Button & Campaign Navigation ─────────────────────── #}
     <div class="sheet-header-edit-section">
+        {% if campaigns %}
+        {% set campaign = campaigns[0] %}
+        <a href="/campaigns/{{ campaign.id }}" class="btn-campaign-back" title="Back to campaign">
+            ← {{ campaign.name }}
+        </a>
+        {% endif %}
+        {% if can_edit %}
         <a href="/characters/{{ character.id }}/edit" class="btn-edit-icon" title="Edit character">
             ✏️
         </a>
+        {% endif %}
     </div>
-    {% endif %}
 
 </div>

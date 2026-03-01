@@ -153,7 +153,9 @@ async def character_sheet(
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
 
     if current_user.is_dm:
-        await db.refresh(character, ["share_links"])
+        await db.refresh(character, ["share_links", "campaigns"])
+    else:
+        await db.refresh(character, ["campaigns"])
 
     # Load players for assignment dropdown (DM only)
     players = await player_service.list_players() if current_user.is_dm else []
@@ -168,6 +170,7 @@ async def character_sheet(
                 "character": character,
                 "sheet": character.sheet_data,
                 "players": players,
+                "campaigns": character.campaigns,
                 "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
             },
             language=current_user.language,
