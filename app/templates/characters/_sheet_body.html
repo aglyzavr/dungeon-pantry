@@ -280,6 +280,25 @@
         {# ── TAB: SPELLS ────────────────────────────────────────── #}
         <div x-show="tab === 'spells'" x-cloak class="spells-tab-content">
 
+            {% set sc = sheet.spellcasting_ability %}
+            {% if sc.ability %}
+            <div class="spellcasting-info">
+                <div class="stats-panel-title">{{ _("Spellcasting") }}</div>
+                <div class="spellcasting-grid">
+                    {% for label, val in [
+                    (_("Ability"), sc.ability),
+                    (_("Spell Save DC"), sc.spell_save_dc),
+                    (_("Attack Bonus"), "+" ~ sc.spell_attack_bonus)
+                    ] %}
+                    <div class="spellcasting-stat">
+                        <div class="spellcasting-stat-label">{{ label }}</div>
+                        <div class="spellcasting-stat-value">{{ val }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             {# ── Spell Slots Block ─────────────────────────────────────────── #}
             {% set slots = sheet.spell_slots | default({}) %}
             {% set has_slots = namespace(found=false) %}
@@ -338,25 +357,6 @@
                 {% endif %}
                 {% endfor %}
               </div>
-            </div>
-            {% endif %}
-
-            {% set sc = sheet.spellcasting_ability %}
-            {% if sc.ability %}
-            <div class="spellcasting-info">
-                <div class="stats-panel-title">{{ _("Spellcasting") }}</div>
-                <div class="spellcasting-grid">
-                    {% for label, val in [
-                    (_("Ability"), sc.ability),
-                    (_("Spell Save DC"), sc.spell_save_dc),
-                    (_("Attack Bonus"), "+" ~ sc.spell_attack_bonus)
-                    ] %}
-                    <div class="spellcasting-stat">
-                        <div class="spellcasting-stat-label">{{ label }}</div>
-                        <div class="spellcasting-stat-value">{{ val }}</div>
-                    </div>
-                    {% endfor %}
-                </div>
             </div>
             {% endif %}
 
