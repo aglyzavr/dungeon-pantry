@@ -13,7 +13,10 @@
     </div>
 
     {# ── Tab System ─────────────────────────────────────────────── #}
-    <div id="sheet-tabs" x-data="{ tab: 'stats', spellFilter: 'all' }" @switchtab.window="tab = $event.detail.tab">
+    <div id="sheet-tabs" 
+         x-data="{ tab: sessionStorage.getItem('sheetCurrentTab') || 'stats', spellFilter: 'all' }" 
+         x-init="$watch('tab', value => sessionStorage.setItem('sheetCurrentTab', value))"
+         @switchtab.window="tab = $event.detail.tab">
 
         {# ── Desktop Tab Bar ────────────────────────────────────── #}
         <div class="sheet-tab-bar">
@@ -310,6 +313,7 @@
                   {% if can_edit %}
                   <div class="spell-slot-controls">
                     <button
+                      @click="sessionStorage.setItem('sheetCurrentTab', tab)"
                       hx-post="/characters/{{ character.id }}/vitals/spell-slot"
                       hx-vals='{"level": {{ lvl }}, "delta": 1}'
                       hx-target="#sheet-body"
@@ -319,6 +323,7 @@
                       {{ _("Use") }}
                     </button>
                     <button
+                      @click="sessionStorage.setItem('sheetCurrentTab', tab)"
                       hx-post="/characters/{{ character.id }}/vitals/spell-slot"
                       hx-vals='{"level": {{ lvl }}, "delta": -1}'
                       hx-target="#sheet-body"
