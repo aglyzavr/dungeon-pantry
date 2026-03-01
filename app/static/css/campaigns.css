@@ -19,19 +19,19 @@
 .page-title {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 .page-subtitle {
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
   margin-top: 0.25rem;
 }
 
 /* Primary Button */
 .btn-primary {
   padding: 0.5rem 1rem;
-  background-color: #4f46e5;
-  color: #ffffff;
+  background-color: var(--color-button-bg);
+  color: var(--color-text-primary);
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: 0.5rem;
@@ -43,7 +43,7 @@
 }
 
 .btn-primary:hover {
-  background-color: #4338ca;
+  background-color: var(--color-button-hover);
 }
 
 /* Error Alert */
@@ -51,9 +51,9 @@
   margin-bottom: 1.5rem;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-  background-color: rgba(127, 29, 29, 0.5);
-  border: 1px solid #b91c1c;
-  color: #fca5a5;
+  background-color: var(--color-message-error);
+  border: 1px solid var(--color-message-error-border);
+  color: var(--color-message-error-text);
   font-size: 0.875rem;
 }
 
@@ -72,16 +72,17 @@
 
 /* Campaign Card */
 .campaign-card {
-  background-color: #111827;
-  border: 1px solid #1f2937;
+  background-color: var(--color-form-bg);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
   position: relative;
 }
 
 .campaign-card:hover {
-  border-color: #4338ca;
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .campaign-card-header {
@@ -99,7 +100,7 @@
 .campaign-card-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary);
   text-decoration: none;
   display: block;
   overflow: hidden;
@@ -110,11 +111,11 @@
 }
 
 .campaign-card-title:hover {
-  color: #818cf8;
+  color: var(--color-accent);
 }
 
 .campaign-card-description {
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
   font-size: 0.875rem;
   margin-top: 0.25rem;
   display: -webkit-box;
@@ -124,7 +125,7 @@
 }
 
 .campaign-card-description.empty {
-  color: #4b5563;
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
@@ -153,41 +154,41 @@
 }
 
 .btn-sm--secondary {
-  background-color: #1f2937;
-  color: #d1d5db;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
 }
 
 .btn-sm--secondary:hover {
-  background-color: #374151;
+  background-color: var(--color-bg-light);
 }
 
 .btn-sm--danger {
-  background-color: rgba(127, 29, 29, 0.5);
-  color: #fca5a5;
+  background-color: var(--color-message-error);
+  color: var(--color-message-error-text);
 }
 
 .btn-sm--danger:hover {
-  background-color: #7f1d1d;
+  background-color: var(--color-message-error-border);
 }
 
 /* Campaign Card Footer */
 .campaign-card-footer {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #1f2937;
+  border-top: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .campaign-card-link {
-  color: #818cf8;
+  color: var(--color-accent);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .campaign-card-link:hover {
-  color: #a5b4fc;
+  color: var(--color-accent-hover);
 }

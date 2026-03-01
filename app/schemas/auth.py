@@ -24,3 +24,4 @@ class UserSession(BaseModel):
     # removed.
     is_dm: bool = False
     language: str = "en"
+    theme: str = "light"

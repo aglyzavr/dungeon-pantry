@@ -119,6 +119,15 @@ msgstr "Русский"
 msgid "Change Language"
 msgstr "Изменить язык"
 
+msgid "Theme"
+msgstr "Тема оформления"
+
+msgid "Light Theme"
+msgstr "Светлая тема"
+
+msgid "Dark Theme"
+msgstr "Тёмная тема"
+
 # Auth
 msgid "Username"
 msgstr "Имя пользователя"

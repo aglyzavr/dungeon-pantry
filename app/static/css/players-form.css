@@ -19,18 +19,18 @@
 .form-page-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #818cf8;
+  color: var(--color-accent);
 }
 
 .form-back-link {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .form-back-link:hover {
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 /* Form Element */
@@ -50,25 +50,25 @@ form {
 .form-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
 }
 
 .form-label-required {
-  color: #f87171;
+  color: var(--color-message-error-text);
   aria-hidden: true;
 }
 
 .form-label-optional {
-  color: #6b7280;
+  color: var(--color-text-muted);
   font-weight: 400;
   font-size: 0.875rem;
 }
 
 /* Form Input Regular */
 .form-input {
-  background-color: #111827;
-  border: 1px solid #374151;
-  color: #f3f4f6;
+  background-color: var(--color-form-bg);
+  border: 1px solid var(--color-form-border);
+  color: var(--color-form-text);
   font-size: 0.875rem;
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
@@ -77,31 +77,31 @@ form {
 }
 
 .form-input::placeholder {
-  color: #6b7280;
+  color: var(--color-form-placeholder);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 1px #6366f1;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
 }
 
 /* Form Input Disabled */
 .form-input:disabled {
-  background-color: #111827;
-  border-color: #374151;
-  color: #6b7280;
+  background-color: var(--color-form-bg);
+  border-color: var(--color-form-border);
+  color: var(--color-text-tertiary);
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* Form Input Error */
 .form-input--error {
-  border-color: #b91c1c;
+  border-color: var(--color-message-error-border);
 }
 
 .form-input--error:focus {
-  box-shadow: 0 0 0 1px #b91c1c;
+  box-shadow: 0 0 0 1px var(--color-message-error-border);
 }
 
 /* Form Field with Icon/Toggle */
@@ -118,8 +118,8 @@ form {
 .btn-toggle-password {
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
-  border: 1px solid #374151;
-  color: #9ca3af;
+  border: 1px solid var(--color-form-border);
+  color: var(--color-text-tertiary);
   background-color: transparent;
   cursor: pointer;
   transition: all 0.2s;
@@ -127,20 +127,20 @@ form {
 }
 
 .btn-toggle-password:hover {
-  background-color: #1f2937;
-  color: #ffffff;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
 }
 
 /* Form Hint / Help Text */
 .form-hint {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 /* Form Error Message */
 .form-error {
   font-size: 0.75rem;
-  color: #f87171;
+  color: var(--color-message-error-text);
 }
 
 /* Form with Tooltip */

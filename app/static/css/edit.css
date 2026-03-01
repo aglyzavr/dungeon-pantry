@@ -16,13 +16,13 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 2px solid #1f2937;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .edit-title {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 .edit-actions {
@@ -35,10 +35,10 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 2rem;
-  border-bottom: 2px solid #1f2937;
+  border-bottom: 2px solid var(--color-border);
   overflow-x: auto;
   scrollbar-width: thin;
-  scrollbar-color: #374151 #111827;
+  scrollbar-color: var(--color-bg-light) var(--color-bg-primary);
 }
 
 .tab-navigation::-webkit-scrollbar {
@@ -46,11 +46,11 @@
 }
 
 .tab-navigation::-webkit-scrollbar-track {
-  background: #111827;
+  background: var(--color-bg-primary);
 }
 
 .tab-navigation::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: var(--color-bg-light);
   border-radius: 3px;
 }
 
@@ -62,20 +62,20 @@
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
   transition: all 0.2s;
   white-space: nowrap;
   font-family: inherit;
 }
 
 .tab-btn:hover {
-  color: #ffffff;
-  background: #1f2937;
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
 }
 
 .tab-btn.active {
-  color: #818cf8;
-  border-bottom-color: #818cf8;
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }
 
 /* Tab Content */
@@ -101,8 +101,8 @@
 
 /* Form Sections */
 .form-section {
-  background: #111827;
-  border: 1px solid #1f2937;
+  background: var(--color-form-bg);
+  border: 1px solid var(--color-border);
   padding: 1.5rem;
   border-radius: 0.75rem;
   margin-bottom: 1.5rem;
@@ -112,9 +112,9 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1.25rem;
-  color: #ffffff;
+  color: var(--color-text-primary);
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #1f2937;
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* Form Grids */
@@ -176,7 +176,7 @@
 .form-group label {
   font-weight: 500;
   font-size: 0.875rem;
-  color: #d1d5db;
+  color: var(--color-text-secondary);
 }
 
 .form-group input[type="text"],
@@ -184,12 +184,12 @@
 .form-group textarea,
 .form-group select {
   padding: 0.625rem 0.75rem;
-  background: #1f2937;
-  border: 1px solid #374151;
+  background: var(--color-form-bg);
+  border: 1px solid var(--color-form-border);
   border-radius: 0.5rem;
   font-size: 0.95rem;
   font-family: inherit;
-  color: #ffffff;
+  color: var(--color-form-text);
   transition: border-color 0.2s, background-color 0.2s;
 }
 

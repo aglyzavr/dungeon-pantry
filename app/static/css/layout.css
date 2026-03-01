@@ -4,8 +4,8 @@
 
 /* Navbar */
 .navbar {
-  background-color: #111827;
-  border-bottom: 1px solid #1f2937;
+  background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
   padding: 0.75rem 1.5rem;
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@
 .navbar-brand {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #818cf8;
+  color: var(--color-accent);
   letter-spacing: 0.05em;
   text-decoration: none;
 }
@@ -31,17 +31,17 @@
 }
 
 .navbar-link {
-  color: #d1d5db;
+  color: var(--color-text-secondary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .navbar-link:hover {
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
 .navbar-user {
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
 }
 
 .navbar-role {
@@ -52,17 +52,17 @@
 }
 
 .navbar-role--dm {
-  background-color: #312e81;
-  color: #c7d2fe;
+  background-color: var(--color-role-dm-bg);
+  color: var(--color-role-dm-text);
 }
 
 .navbar-role--player {
-  background-color: #374151;
-  color: #d1d5db;
+  background-color: var(--color-role-player-bg);
+  color: var(--color-role-player-text);
 }
 
 .navbar-logout {
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
   border: none;
   background: none;
   cursor: pointer;
@@ -70,7 +70,7 @@
 }
 
 .navbar-logout:hover {
-  color: #f87171;
+  color: var(--color-message-error-text);
 }
 
 /* Flash Messages Container */
@@ -91,27 +91,27 @@
 }
 
 .message--success {
-  background-color: #1f2817;
-  border: 1px solid #4b5563;
-  color: #86efac;
+  background-color: var(--color-message-success);
+  border: 1px solid var(--color-message-success-border);
+  color: var(--color-message-success-text);
 }
 
 .message--error {
-  background-color: #7f1d1d;
-  border: 1px solid #b91c1c;
-  color: #fca5a5;
+  background-color: var(--color-message-error);
+  border: 1px solid var(--color-message-error-border);
+  color: var(--color-message-error-text);
 }
 
 .message--warning {
-  background-color: #713f12;
-  border: 1px solid #f59e0b;
-  color: #fde047;
+  background-color: var(--color-message-warning);
+  border: 1px solid var(--color-message-warning-border);
+  color: var(--color-message-warning-text);
 }
 
 .message--info {
-  background-color: #1e3a8a;
-  border: 1px solid #1e40af;
-  color: #93c5fd;
+  background-color: var(--color-message-info);
+  border: 1px solid var(--color-message-info-border);
+  color: var(--color-message-info-text);
 }
 
 .message-close {
@@ -138,9 +138,9 @@ main.with-padding {
 
 /* Footer */
 .footer {
-  border-top: 1px solid #1f2937;
+  border-top: 1px solid var(--color-border);
   padding: 0.75rem 1.5rem;
   text-align: center;
   font-size: 0.75rem;
-  color: #4b5563;
+  color: var(--color-text-tertiary);
 }

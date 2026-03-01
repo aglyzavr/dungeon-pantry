@@ -51,8 +51,8 @@
 .sheet-tab-bar {
   display: none;
   gap: 0.25rem;
-  background-color: #111827; /* gray-900 */
-  border: 1px solid #1f2937; /* gray-800 */
+  background-color: var(--color-form-bg);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   padding: 0.25rem;
   margin-bottom: 1rem;
@@ -80,18 +80,18 @@
 }
 
 .sheet-tab-button--active {
-  background-color: #4f46e5; /* indigo-600 */
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-form-text);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .sheet-tab-button--inactive {
-  color: #9ca3af; /* gray-400 */
+  color: var(--color-text-tertiary);
 }
 
 .sheet-tab-button--inactive:hover {
-  color: #ffffff;
-  background-color: #1f2937; /* gray-800 */
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
 }
 
 .sheet-tab-icon {
@@ -125,8 +125,8 @@
 }
 
 .stats-panel {
-  background-color: #111827; /* gray-900 */
-  border: 1px solid #1f2937; /* gray-800 */
+  background-color: var(--color-form-bg);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   padding: 1rem;
 }
@@ -134,7 +134,7 @@
 .stats-panel-title {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280; /* gray-500 */
+  color: var(--color-text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.75rem;
@@ -148,35 +148,35 @@
 }
 
 .ability-score-card {
-  background-color: #1f2937; /* gray-800 */
+  background-color: var(--color-bg-secondary);
   border-radius: 0.75rem;
   padding: 0.5rem;
   text-align: center;
-  border: 1px solid #374151; /* gray-700 */
+  border: 1px solid var(--color-border);
 }
 
 .ability-score-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280; /* gray-500 */
+  color: var(--color-text-tertiary);
 }
 
 .ability-score-modifier {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
   line-height: 1;
   margin: 0.25rem 0;
 }
 
 .ability-score-value {
   font-size: 0.75rem;
-  background-color: #111827; /* gray-900 */
+  background-color: var(--color-form-bg);
   border-radius: 0.25rem;
   padding: 0.125rem;
   font-family: monospace;
-  color: #d1d5db; /* gray-300 */
-  border: 1px solid #374151; /* gray-700 */
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
 }
 
 /* ── Senses Section ──────────────────────────────────────────────– */
@@ -190,7 +190,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background-color: #1f2937; /* gray-800 */
+  background-color: var(--color-bg-secondary);
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
 }
@@ -198,14 +198,14 @@
 .sense-value {
   font-size: 1rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
   width: 2rem;
   text-align: center;
 }
 
 .sense-label {
   font-size: 0.75rem;
-  color: #9ca3af; /* gray-400 */
+  color: var(--color-text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

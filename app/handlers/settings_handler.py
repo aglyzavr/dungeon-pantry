@@ -73,3 +73,42 @@ async def change_language(
     )
     
     return response
+
+
+@router.post("/theme", response_class=HTMLResponse)
+async def change_theme(
+    request: Request,
+    theme: str = Form(...),
+    current_user: UserSession = Depends(require_login),
+    db: AsyncSession = Depends(get_db),
+):
+    """Change user's theme preference."""
+    # Validate theme
+    if theme not in ("light", "dark"):
+        return RedirectResponse(url="/settings", status_code=303)
+    
+    # Update user in database
+    user_repo = UserRepository(db)
+    user = await user_repo.get_by_id(UUID(current_user.user_id))
+    if not user:
+        return RedirectResponse(url="/auth/login", status_code=303)
+    
+    user.theme = theme
+    await db.commit()
+    
+    # Create new session token with updated theme
+    new_token = create_session_token(user)
+    settings = get_settings()
+    
+    # Redirect back to settings with new cookie
+    response = RedirectResponse(url="/settings", status_code=303)
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=new_token,
+        max_age=int(timedelta(days=settings.session_duration_days).total_seconds()),
+        httponly=True,
+        samesite="lax",
+        secure=False,  # Match auth_handler setting
+    )
+    
+    return response

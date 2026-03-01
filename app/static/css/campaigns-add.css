@@ -11,29 +11,29 @@
 .page-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin-bottom: 1.5rem;
 }
 
 .page-title-highlight {
-  color: #818cf8;
+  color: var(--color-accent);
 }
 
 /* Breadcrumb Navigation */
 .breadcrumb {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-tertiary);
   margin-bottom: 1.5rem;
 }
 
 .breadcrumb-link {
-  color: #6b7280;
+  color: var(--color-text-tertiary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .breadcrumb-link:hover {
-  color: #d1d5db;
+  color: var(--color-text-secondary);
 }
 
 .breadcrumb-separator {
@@ -41,28 +41,15 @@
 }
 
 .breadcrumb-current {
-  color: #d1d5db;
-}
-
-/* Characters Grid */
-.characters-grid {
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-}
-
-@media (min-width: 640px) {
-  .characters-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  color: var(--color-text-secondary);
 }
 
 /* Character Button (Clickable Card) */
 .character-button {
   width: 100%;
   text-align: left;
-  background-color: #111827;
-  border: 1px solid #1f2937;
+  background-color: var(--color-form-bg);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   padding: 1rem;
   cursor: pointer;
@@ -71,7 +58,8 @@
 }
 
 .character-button:hover {
-  border-color: #6366f1;
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .character-button-content {
@@ -86,22 +74,22 @@
 
 .character-name {
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary);
   transition: color 0.2s;
 }
 
 .character-button:hover .character-name {
-  color: #a5b4fc;
+  color: var(--color-accent-hover);
 }
 
 .character-details {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
   margin-top: 0.25rem;
 }
 
 .character-action {
-  color: #818cf8;
+  color: var(--color-accent);
   font-size: 0.875rem;
   opacity: 0;
   transition: opacity 0.2s;
@@ -116,13 +104,13 @@
   display: inline-block;
   margin-top: 1.5rem;
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .back-link:hover {
-  color: #d1d5db;
+  color: var(--color-text-secondary);
 }
 
 /* Empty State in Grid */

@@ -29,6 +29,7 @@ def create_session_token(user: User) -> str:
         "username": user.username,
         "is_dm": user.is_dm,
         "language": user.language,
+        "theme": user.theme,
         "exp": datetime.now(timezone.utc) + timedelta(days=7),
     }
     return jwt.encode(payload, settings.session_secret_key, algorithm="HS256")  # ← fix
@@ -43,6 +44,7 @@ def decode_session_token(token: str) -> UserSession | None:
             username=payload["username"],
             is_dm=payload.get("is_dm", False),
             language=payload.get("language", "en"),
+            theme=payload.get("theme", "light"),
         )
     except jwt.PyJWTError:
         return None

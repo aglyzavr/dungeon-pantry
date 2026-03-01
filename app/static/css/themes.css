@@ -1,0 +1,1002 @@
+/* ========================================
+   THEMES.CSS - Light and Dark Theme Variables
+   ======================================== */
+
+/* Root - Default to Dark Theme */
+:root {
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1f2937;
+  --color-bg-tertiary: #2d3748;
+  --color-bg-light: #374151;
+  
+  --color-text-primary: #f3f4f6;
+  --color-text-secondary: #d1d5db;
+  --color-text-tertiary: #9ca3af;
+  --color-text-muted: #6b7280;
+  
+  --color-border: #1f2937;
+  --color-border-light: #374151;
+  
+  --color-accent: #818cf8;
+  --color-accent-hover: #a5b4fc;
+  --color-accent-hover-bg: rgba(129, 140, 248, 0.1);
+  --color-accent-hover-shadow: rgba(129, 140, 248, 0.2);
+  --color-button-bg: #1e40af;
+  --color-button-hover: #1e3a8a;
+  
+  --color-message-success: #1f2817;
+  --color-message-success-border: #4b5563;
+  --color-message-success-text: #86efac;
+  
+  --color-message-error: #7f1d1d;
+  --color-message-error-border: #dc2626;
+  --color-message-error-text: #f87171;
+  
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  
+  --color-message-warning: #78350f;
+  --color-message-warning-border: #d97706;
+  --color-message-warning-text: #fbbf24;
+  
+  --color-warning-bg: rgba(217, 119, 6, 0.1);
+  --color-warning-border: #fbbf24;
+  --color-warning-text: #fbbf24;
+  
+  --color-message-info: #082f49;
+  --color-message-info-border: #0284c7;
+  --color-message-info-text: #38bdf8;
+  
+  --color-role-dm-bg: #312e81;
+  --color-role-dm-text: #c7d2fe;
+  --color-role-player-bg: #374151;
+  --color-role-player-text: #d1d5db;
+  
+  --color-card-bg: #1f2937;
+  --color-card-hover: #2d3748;
+  
+  --color-form-bg: #374151;
+  --color-form-border: #4b5563;
+  --color-form-text: #f3f4f6;
+  --color-form-placeholder: #9ca3af;
+}
+
+/* Light Theme - Fully Inverted Dark Theme */
+[data-theme="light"] {
+  --color-bg-primary: #eee7d8;
+  --color-bg-secondary: #e0d8c7;
+  --color-bg-tertiary: #d2c8b7;
+  --color-bg-light: #c8baae;
+  
+  --color-text-primary: #0c0b09;
+  --color-text-secondary: #2e2a24;
+  --color-text-tertiary: #945c7f;
+  --color-text-muted: #948d7f;
+  
+  --color-border: #e0d8c7;
+  --color-border-light: #c8baae;
+  
+  --color-accent: #7e730f;
+  --color-accent-hover: #e1bf30;
+  --color-accent-hover-bg: rgba(126, 115, 15, 0.1);
+  --color-accent-hover-shadow: rgba(126, 115, 15, 0.2);
+  --color-button-bg: #e1bf30;
+  --color-button-hover: #e1c575;
+  
+  --color-message-success: #e0d7e8;
+  --color-message-success-border: #b4a09c;
+  --color-message-success-text: #791a2b;
+  
+  --color-message-error: #80e2e2;
+  --color-message-error-border: #035a5a;
+  --color-message-error-text: #0e8e8e;
+  
+  --color-success: #dd3aab;
+  --color-error: #10bbbb;
+  
+  --color-message-warning: #8770f0;
+  --color-message-warning-border: #2689f8;
+  --color-message-warning-text: #db9d08;
+  
+  --color-warning-bg: rgba(38, 137, 248, 0.1);
+  --color-warning-border: #0480db;
+  --color-warning-text: #0480db;
+  
+  --color-message-info: #3f00b0;
+  --color-message-info-border: #fd7b38;
+  --color-message-info-text: #c7420d;
+  
+  --color-role-dm-bg: #ce7f7e;
+  --color-role-dm-text: #e1bf30;
+  --color-role-player-bg: #c8baae;
+  --color-role-player-text: #e0d8c7;
+  
+  --color-card-bg: #f5f5f5;
+  --color-card-hover: #e0d8c7;
+  
+  --color-form-bg: #f5f5f5;
+  --color-form-border: #d2c8b7;
+  --color-form-text: #0c0b09;
+  --color-form-placeholder: #948d7f;
+}
+
+/* Light Theme Card Styling */
+[data-theme="light"] .campaign-card,
+[data-theme="light"] .character-card {
+  background-color: #f5f5f5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.08);
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .campaign-card:hover,
+[data-theme="light"] .character-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: #7e730f;
+}
+
+[data-theme="light"] .campaign-card-title {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .campaign-card-title:hover {
+  color: #7e730f;
+}
+
+[data-theme="light"] .campaign-card-description {
+  color: #945c7f;
+}
+
+[data-theme="light"] .campaign-card-description.empty {
+  color: #948d7f;
+}
+
+[data-theme="light"] .campaign-card-footer {
+  border-top-color: #d2c8b7;
+  color: #948d7f;
+}
+
+[data-theme="light"] .campaign-card-link {
+  color: #7e730f;
+}
+
+[data-theme="light"] .campaign-card-link:hover {
+  color: #e1bf30;
+}
+
+[data-theme="light"] .character-card--unavailable {
+  background-color: #e0d8c7;
+  border-color: #d2c8b7;
+  opacity: 0.7;
+}
+
+[data-theme="light"] .character-card--unavailable:hover {
+  border-color: #7e730f;
+  opacity: 0.85;
+}
+
+[data-theme="light"] .form-card,
+[data-theme="light"] .form-section {
+  background-color: #f5f5f5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  border-color: #d2c8b7;
+}
+
+/* Light Theme Character Card Elements */
+[data-theme="light"] .character-name {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .character-owner {
+  color: #948d7f;
+}
+
+[data-theme="light"] .character-details {
+  color: #945c7f;
+}
+
+[data-theme="light"] .sheet-header-avatar-icon {
+  background-color: #e0d8c7;
+  border-color: #d2c8b7;
+}
+
+/* Light Theme Navbar */
+[data-theme="light"] .navbar {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Light Theme Buttons */
+[data-theme="light"] .btn-primary {
+  background-color: #e1bf30;
+  color: #0c0b09;
+}
+
+[data-theme="light"] .btn-primary:hover {
+  background-color: #e1c575;
+}
+
+[data-theme="light"] .btn-sm--secondary {
+  background-color: #e0d8c7;
+  border: 1px solid #d2c8b7;
+  color: #0c0b09;
+}
+
+[data-theme="light"] .btn-sm--secondary:hover {
+  background-color: #d2c8b7;
+}
+
+[data-theme="light"] .btn-sm--danger {
+  background-color: #80e2e2;
+  color: #0e8e8e;
+  border: 1px solid #035a5a;
+}
+
+[data-theme="light"] .btn-sm--danger:hover {
+  background-color: #035a5a;
+  color: #ffffff;
+}
+
+/* Light Theme HP Bar */
+[data-theme="light"] .hp-bar-container {
+  background-color: #d2c8b7;
+  border: 1px solid #c8baae;
+}
+
+[data-theme="light"] .hp-label {
+  color: #948d7f;
+}
+
+/* Light Theme Section Headers */
+[data-theme="light"] .section-title {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .section-count {
+  color: #948d7f;
+}
+
+[data-theme="light"] .detail-title,
+[data-theme="light"] .page-title {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .detail-description,
+[data-theme="light"] .page-subtitle {
+  color: #945c7f;
+}
+
+/* Light Theme Breadcrumb */
+[data-theme="light"] .breadcrumb-link {
+  color: #945c7f;
+}
+
+[data-theme="light"] .breadcrumb-link:hover {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .breadcrumb-current {
+  color: #2e2a24;
+}
+
+/* Light Theme Table */
+[data-theme="light"] .table-row:hover {
+  background-color: #e0d8c7;
+}
+
+/* Light Theme Form Section */
+[data-theme="light"] .form-section {
+  background-color: #f5f5f5;
+}
+
+/* Light Theme Tabs */
+[data-theme="light"] .tab-navigation {
+  border-bottom-color: #d2c8b7;
+  scrollbar-color: #c8baae #eee7d8;
+}
+
+[data-theme="light"] .tab-navigation::-webkit-scrollbar-track {
+  background: #eee7d8;
+}
+
+[data-theme="light"] .tab-navigation::-webkit-scrollbar-thumb {
+  background: #c8baae;
+}
+
+[data-theme="light"] .tab-btn {
+  color: #945c7f;
+}
+
+[data-theme="light"] .tab-btn:hover {
+  color: #0c0b09;
+  background: #e0d8c7;
+}
+
+[data-theme="light"] .tab-btn.active {
+  color: #7e730f;
+  border-bottom-color: #7e730f;
+}
+
+/* Light Theme Sheet Tabs */
+[data-theme="light"] .sheet-tab-bar {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .sheet-tab-button--active {
+  background-color: #e1bf30;
+  color: #0c0b09;
+}
+
+[data-theme="light"] .sheet-tab-button--inactive {
+  color: #945c7f;
+}
+
+[data-theme="light"] .sheet-tab-button--inactive:hover {
+  color: #0c0b09;
+  background-color: #e0d8c7;
+}
+
+/* Light Theme Stats Panels */
+[data-theme="light"] .stats-panel {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .stats-panel-title {
+  color: #945c7f;
+}
+
+/* Light Theme Ability Scores */
+[data-theme="light"] .ability-score-card {
+  background-color: #e0d8c7;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .ability-score-label {
+  color: #945c7f;
+}
+
+[data-theme="light"] .ability-score-modifier {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .ability-score-value {
+  background-color: #f5f5f5;
+  color: #2e2a24;
+  border-color: #d2c8b7;
+}
+
+/* Light Theme Senses */
+[data-theme="light"] .sense-item {
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .sense-value {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .sense-label {
+  color: #945c7f;
+}
+
+/* Light Theme Proficiencies */
+[data-theme="light"] .proficiency-label {
+  color: #948d7f;
+}
+
+[data-theme="light"] .proficiency-items {
+  color: #2e2a24;
+}
+
+/* Light Theme Ability Cards */
+[data-theme="light"] .ability-card {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .ability-card-header {
+  background-color: rgba(224, 216, 199, 0.6);
+  border-bottom-color: #d2c8b7;
+}
+
+[data-theme="light"] .ability-card-modifier-value {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .ability-card-score-box {
+  background-color: #f5f5f5;
+  border-color: #c8baae;
+}
+
+[data-theme="light"] .ability-card-score-label {
+  color: #948d7f;
+}
+
+[data-theme="light"] .ability-card-score-value {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .ability-card-name {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .ability-card-save-row {
+  border-bottom-color: rgba(210, 200, 183, 0.6);
+  background-color: rgba(224, 216, 199, 0.2);
+}
+
+[data-theme="light"] .ability-card-save-icon--proficient {
+  color: #7e730f;
+}
+
+[data-theme="light"] .ability-card-save-icon--unproficient {
+  color: #948d7f;
+}
+
+[data-theme="light"] .ability-card-save-label-text {
+  color: #948d7f;
+}
+
+[data-theme="light"] .ability-card-save-value--positive {
+  color: #dd3aab;
+}
+
+[data-theme="light"] .ability-card-save-value--negative {
+  color: #0e8e8e;
+}
+
+[data-theme="light"] .ability-card-save-value--neutral {
+  color: #945c7f;
+}
+
+/* Light Theme Skills */
+[data-theme="light"] .ability-card-skills {
+  border-top-color: rgba(210, 200, 183, 0.4);
+}
+
+[data-theme="light"] .ability-card-skill-row {
+  border-bottom-color: rgba(210, 200, 183, 0.4);
+}
+
+[data-theme="light"] .ability-card-skill-row:hover {
+  background-color: rgba(224, 216, 199, 0.3);
+}
+
+[data-theme="light"] .ability-card-skill-icon--expertise {
+  color: #db9d08;
+}
+
+[data-theme="light"] .ability-card-skill-icon--proficient {
+  color: #7e730f;
+}
+
+[data-theme="light"] .ability-card-skill-icon--unproficient {
+  color: #948d7f;
+}
+
+[data-theme="light"] .ability-card-skill-name--proficient {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .ability-card-skill-name--unproficient {
+  color: #945c7f;
+}
+
+[data-theme="light"] .ability-card-skill-bonus--positive {
+  color: #dd3aab;
+}
+
+[data-theme="light"] .ability-card-skill-bonus--negative {
+  color: #0e8e8e;
+}
+
+[data-theme="light"] .ability-card-skill-bonus--neutral {
+  color: #945c7f;
+}
+
+[data-theme="light"] .ability-card-no-skills {
+  color: #948d7f;
+}
+
+/* Light Theme Actions Section */
+[data-theme="light"] .actions-section {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .actions-section-header {
+  border-bottom-color: #d2c8b7;
+  background-color: rgba(224, 216, 199, 0.5);
+}
+
+[data-theme="light"] .actions-section-title {
+  color: #948d7f;
+}
+
+/* Light Theme Attacks Table */
+[data-theme="light"] .attacks-table-head {
+  color: #948d7f;
+  background-color: rgba(224, 216, 199, 0.3);
+}
+
+[data-theme="light"] .attacks-table-body {
+  border-top-color: #d2c8b7;
+}
+
+[data-theme="light"] .attacks-table-row {
+  border-bottom-color: #d2c8b7;
+}
+
+[data-theme="light"] .attacks-table-row:hover {
+  background-color: rgba(224, 216, 199, 0.4);
+}
+
+[data-theme="light"] .attacks-table-name {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .attacks-table-bonus {
+  color: #7e730f;
+}
+
+[data-theme="light"] .attacks-table-damage {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .attacks-table-notes {
+  color: #948d7f;
+}
+
+/* Light Theme Content Sections */
+[data-theme="light"] .content-section {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .content-section-title {
+  color: #948d7f;
+}
+
+[data-theme="light"] .content-section-text {
+  color: #2e2a24;
+}
+
+/* Light Theme Spellcasting */
+[data-theme="light"] .spellcasting-info {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .spellcasting-stat {
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .spellcasting-stat-label {
+  color: #948d7f;
+}
+
+[data-theme="light"] .spellcasting-stat-value {
+  color: #0c0b09;
+}
+
+/* Light Theme Spells List */
+[data-theme="light"] .spells-list-container {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .spell-filter-tabs {
+  border-bottom-color: #d2c8b7;
+}
+
+[data-theme="light"] .spell-filter-tab--all {
+  background-color: #e1bf30;
+  color: #0c0b09;
+}
+
+[data-theme="light"] .spell-filter-tab--inactive {
+  color: #945c7f;
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .spell-filter-tab--inactive:hover {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .spell-list {
+  border-top-color: #d2c8b7;
+}
+
+[data-theme="light"] .spell-item {
+  border-bottom-color: #d2c8b7;
+}
+
+[data-theme="light"] .spell-item:hover {
+  background-color: rgba(224, 216, 199, 0.4);
+}
+
+[data-theme="light"] .spell-name {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .spell-tag {
+  background-color: rgba(225, 191, 48, 0.5);
+  color: #7e730f;
+}
+
+[data-theme="light"] .spell-tag--concentration {
+  background-color: rgba(219, 157, 8, 0.4);
+  color: #db9d08;
+}
+
+[data-theme="light"] .spell-tag--ritual {
+  background-color: rgba(148, 92, 127, 0.4);
+  color: #945c7f;
+}
+
+[data-theme="light"] .spell-details {
+  color: #945c7f;
+}
+
+[data-theme="light"] .spell-attack-save {
+  color: #7e730f;
+}
+
+[data-theme="light"] .spell-description {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .spell-notes {
+  color: #948d7f;
+}
+
+[data-theme="light"] .spells-empty-state {
+  color: #948d7f;
+}
+
+[data-theme="light"] .spells-empty-message {
+  color: #948d7f;
+}
+
+/* Light Theme Inventory */
+[data-theme="light"] .inventory-bullet {
+  color: #948d7f;
+}
+
+[data-theme="light"] .inventory-item-text {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .magic-item {
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .magic-item-name {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .magic-item-status--attuned {
+  color: #db9d08;
+}
+
+[data-theme="light"] .magic-item-status--not-attuned {
+  color: #948d7f;
+}
+
+[data-theme="light"] .currency-box {
+  border-color: #c8baae;
+}
+
+[data-theme="light"] .currency-value--copper {
+  color: #c1590a;
+}
+
+[data-theme="light"] .currency-value--silver {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .currency-value--electrum {
+  color: #7e730f;
+}
+
+[data-theme="light"] .currency-value--gold {
+  color: #db9d08;
+}
+
+[data-theme="light"] .currency-value--platinum {
+  color: #945c7f;
+}
+
+[data-theme="light"] .currency-box--copper {
+  background-color: rgba(193, 89, 10, 0.3);
+}
+
+[data-theme="light"] .currency-box--silver {
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .currency-box--electrum {
+  background-color: rgba(126, 115, 15, 0.3);
+}
+
+[data-theme="light"] .currency-box--gold {
+  background-color: rgba(219, 157, 8, 0.3);
+}
+
+[data-theme="light"] .currency-box--platinum {
+  background-color: rgba(148, 92, 127, 0.3);
+}
+
+[data-theme="light"] .currency-label {
+  color: #948d7f;
+}
+
+/* Light Theme Bio Cards */
+[data-theme="light"] .bio-card {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .bio-card-title {
+  color: #948d7f;
+}
+
+[data-theme="light"] .bio-card-text {
+  color: #2e2a24;
+}
+
+/* Light Theme Bio Long Cards (Appearance, Personality, Backstory) */
+[data-theme="light"] .bio-long-card {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .bio-long-card-title {
+  color: #948d7f;
+}
+
+[data-theme="light"] .bio-long-card-text {
+  color: #2e2a24;
+}
+
+/* Light Theme Form Elements */
+[data-theme="light"] .form-group input[type="text"]:focus,
+[data-theme="light"] .form-group input[type="number"]:focus,
+[data-theme="light"] .form-group textarea:focus,
+[data-theme="light"] .form-group select:focus {
+  border-color: #7e730f;
+  background: #ffffff;
+}
+
+[data-theme="light"] .form-group input[type="checkbox"] {
+  accent-color: #e1bf30;
+}
+
+[data-theme="light"] .form-section-title {
+  color: #0c0b09;
+  border-bottom-color: #d2c8b7;
+}
+
+[data-theme="light"] .form-group label {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .error-message {
+  background: #80e2e2;
+  border-color: #035a5a;
+  color: #0e8e8e;
+}
+
+[data-theme="light"] .btn-sm--primary {
+  background-color: #e1bf30;
+  color: #0c0b09;
+}
+
+[data-theme="light"] .btn-sm--primary:hover {
+  background-color: #e1c575;
+}
+
+[data-theme="light"] .edit-header {
+  border-bottom-color: #d2c8b7;
+}
+
+[data-theme="light"] .edit-title {
+  color: #0c0b09;
+}
+
+/* Light Theme Vitals Section */
+[data-theme="light"] .vitals-stat-box {
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .vitals-stat-label {
+  color: #948d7f;
+}
+
+[data-theme="light"] .vitals-stat-value {
+  color: #0c0b09;
+}
+
+[data-theme="light"] .btn-ac {
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .btn-ac--inactive:hover {
+  border-color: #c8baae;
+}
+
+[data-theme="light"] .btn-ac--active {
+  border-color: #7e730f;
+}
+
+[data-theme="light"] .btn-ac-status--inactive {
+  color: #948d7f;
+}
+
+[data-theme="light"] .btn-ac-status--active {
+  color: #7e730f;
+}
+
+[data-theme="light"] .hp-bar-container {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .hp-bar-fill--healthy {
+  background-color: #dd3aab;
+}
+
+[data-theme="light"] .hp-bar-fill--injured {
+  background-color: #db9d08;
+}
+
+[data-theme="light"] .hp-bar-fill--critical {
+  background-color: #10bbbb;
+}
+
+[data-theme="light"] .hp-label {
+  color: #948d7f;
+}
+
+[data-theme="light"] .hp-current--healthy {
+  color: #dd3aab;
+}
+
+[data-theme="light"] .hp-current--injured {
+  color: #db9d08;
+}
+
+[data-theme="light"] .hp-current--critical {
+  color: #10bbbb;
+}
+
+[data-theme="light"] .hp-divider {
+  color: #948d7f;
+}
+
+[data-theme="light"] .hp-max {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .hp-temp {
+  background-color: rgba(126, 115, 15, 0.5);
+  color: #7e730f;
+}
+
+[data-theme="light"] .hp-control-label {
+  color: #7e730f;
+}
+
+[data-theme="light"] .hp-control-label--max {
+  color: #948d7f;
+}
+
+[data-theme="light"] .hp-input,
+[data-theme="light"] .hp-form-input {
+  background-color: #e0d8c7;
+  border-color: #c8baae;
+  color: #0c0b09;
+}
+
+[data-theme="light"] .hp-input:focus,
+[data-theme="light"] .hp-form-input:focus {
+  border-color: #7e730f;
+}
+
+[data-theme="light"] .btn-heal {
+  background-color: rgba(221, 58, 171, 0.5);
+  color: #dd3aab;
+}
+
+[data-theme="light"] .btn-heal:hover {
+  background-color: rgba(221, 58, 171, 0.7);
+}
+
+[data-theme="light"] .btn-heal:active {
+  background-color: rgba(221, 58, 171, 0.9);
+}
+
+[data-theme="light"] .btn-damage {
+  background-color: rgba(16, 187, 187, 0.5);
+  color: #10bbbb;
+}
+
+[data-theme="light"] .btn-damage:hover {
+  background-color: rgba(16, 187, 187, 0.7);
+}
+
+[data-theme="light"] .btn-damage:active {
+  background-color: rgba(16, 187, 187, 0.9);
+}
+
+/* Light Theme Spell Slots */
+[data-theme="light"] .spell-slots-container {
+  background-color: #f5f5f5;
+  border-color: #d2c8b7;
+}
+
+[data-theme="light"] .spell-slots-header {
+  background-color: #e0d8c7;
+  border-bottom-color: #c8baae;
+}
+
+[data-theme="light"] .spell-slots-title {
+  color: #945c7f;
+}
+
+[data-theme="light"] .spell-slot-row {
+  background-color: #e0d8c7;
+}
+
+[data-theme="light"] .spell-slot-level-label {
+  color: #2e2a24;
+}
+
+[data-theme="light"] .spell-slot-dot--available {
+  border-color: #945c7f;
+  background-color: #7e730f;
+  box-shadow: 0 0 8px rgba(148, 92, 127, 0.4);
+}
+
+[data-theme="light"] .spell-slot-dot--expended {
+  border-color: #948d7f;
+  background-color: transparent;
+}
+
+[data-theme="light"] .spell-slot-btn--use {
+  background-color: rgba(16, 187, 187, 0.5);
+  color: #10bbbb;
+}
+
+[data-theme="light"] .spell-slot-btn--use:hover {
+  background-color: rgba(16, 187, 187, 0.7);
+}
+
+[data-theme="light"] .spell-slot-btn--use:active {
+  background-color: rgba(16, 187, 187, 0.9);
+}
+
+[data-theme="light"] .spell-slot-btn--restore {
+  background-color: rgba(148, 92, 127, 0.5);
+  color: #945c7f;
+}
+
+[data-theme="light"] .spell-slot-btn--restore:hover {
+  background-color: rgba(148, 92, 127, 0.7);
+}
+
+[data-theme="light"] .spell-slot-btn--restore:active {
+  background-color: rgba(148, 92, 127, 0.9);
+}
+
+/* Light Theme - HTML element */
+[data-theme="light"] {
+  background-color: #eee7d8;
+  color: #0c0b09;
+}
+
+
+
+/* Dark Theme - HTML element (default) */
+html {
+  background-color: #0f172a;
+}

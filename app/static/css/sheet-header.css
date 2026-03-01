@@ -3,8 +3,8 @@
    ───────────────────────────────────────────────────────────────── */
 
 #sheet-header {
-  background-color: #111827; /* gray-900 */
-  border: 1px solid #1f2937; /* gray-800 */
+  background-color: var(--color-form-bg);
+  border: 1px solid var(--color-border);
   border-radius: 1rem;
   padding: 1rem;
   display: flex;
@@ -33,8 +33,8 @@
   width: 4rem; /* w-16 */
   height: 4rem; /* h-16 */
   border-radius: 0.75rem;
-  background-color: #1f2937; /* gray-800 */
-  border: 1px solid #374151; /* gray-700 */
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,9 +47,9 @@
 }
 
 .sheet-header-avatar-button:hover {
-  border-color: #3b82f6; /* blue-500 */
-  background-color: #1e3a8a; /* blue-900 */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  border-color: var(--color-button-bg);
+  background-color: var(--color-accent-hover-bg);
+  box-shadow: 0 0 0 3px var(--color-accent-hover-shadow);
 }
 
 .portrait-image {
@@ -77,19 +77,19 @@
 }
 
 .btn-inspiration--inactive {
-  border-color: #374151; /* gray-700 */
-  color: #6b7280; /* gray-500 */
+  border-color: var(--color-border-light);
+  color: var(--color-text-muted);
 }
 
 .btn-inspiration--inactive:hover {
-  border-color: #7c2d12;
-  color: #facc15;
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
 }
 
 .btn-inspiration--active {
-  border-color: #eab308; /* yellow-500 */
-  background-color: rgba(234, 179, 8, 0.1); /* yellow-500/10 */
-  color: #fcd34d; /* yellow-300 */
+  border-color: var(--color-warning-border);
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
 }
 
 .btn-inspiration-readonly {
@@ -110,7 +110,7 @@
 .sheet-header-name {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
   line-height: 1.25;
 }
 
@@ -120,8 +120,8 @@
   justify-content: center;
   width: 1.75rem;
   height: 1.75rem;
-  background-color: #1f2937;
-  border: 1px solid #374151;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
   border-radius: 0.5rem;
   font-size: 0.875rem;
   cursor: pointer;
@@ -131,8 +131,8 @@
 }
 
 .btn-edit-icon:hover {
-  background-color: #4f46e5;
-  border-color: #4f46e5;
+  background-color: var(--color-button-bg);
+  border-color: var(--color-button-bg);
   transform: scale(1.05);
 }
 
@@ -148,29 +148,29 @@
   flex-wrap: wrap;
   gap: 0.375rem 0.375rem; /* gap-x-1.5 gap-y-0.5 */
   font-size: 0.875rem;
-  color: #9ca3af; /* gray-400 */
+  color: var(--color-text-tertiary);
 }
 
 .sheet-header-species {
-  color: #9ca3af;
+  color: var(--color-text-tertiary);
 }
 
 .sheet-header-separator {
-  color: #374151; /* gray-700 */
+  color: var(--color-text-tertiary);
 }
 
 .sheet-header-level {
-  color: #facc15; /* yellow-400 */
+  color: var(--color-warning-text);
   font-weight: 600;
 }
 
 .sheet-header-class {
-  color: #a5d6ff; /* indigo-400 */
+  color: var(--color-accent);
   font-weight: 500;
 }
 
 .sheet-header-subclass {
-  color: #6b7280; /* gray-500 */
+  color: var(--color-text-muted);
   font-size: 0.75rem;
 }
 
@@ -182,7 +182,7 @@
 
 .death-saves-title {
   font-size: 0.625rem;
-  color: #9ca3af; /* gray-400 */
+  color: var(--color-text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 600;
@@ -192,7 +192,7 @@
 .death-saves-separator {
   width: 100%;
   height: 1px;
-  background-color: #1f2937; /* gray-800 */
+  background-color: var(--color-border);
   margin-bottom: 0.75rem;
 }
 
@@ -210,7 +210,7 @@
 
 .death-saves-label {
   font-size: 0.75rem;
-  color: #d1d5db; /* gray-300 */
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.025em;
   font-weight: 500;
@@ -251,8 +251,8 @@
 }
 
 .death-save-dot--successes {
-  background-color: #22c55e; /* green-500 */
-  border-color: #22c55e;
+  background-color: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .death-save-dot--successes:hover {
@@ -260,8 +260,8 @@
 }
 
 .death-save-dot--failures {
-  background-color: #ef4444; /* red-500 */
-  border-color: #ef4444;
+  background-color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .death-save-dot--failures:hover {
@@ -269,10 +269,10 @@
 }
 
 .death-save-dot--empty {
-  border-color: #374151; /* gray-700 */
+  border-color: var(--color-text-tertiary);
   background-color: transparent;
 }
 
 .death-save-dot--empty:hover {
-  border-color: #6b7280; /* gray-500 */
+  border-color: var(--color-text-secondary);
 }
