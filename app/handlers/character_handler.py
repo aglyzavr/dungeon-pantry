@@ -344,6 +344,7 @@ async def update_death_save(
     character_id: UUID,
     current_user: UserSession = Depends(require_login),
     service: CharacterService = Depends(_service),
+    db: AsyncSession = Depends(get_db),
 ):
     form = await request.form()
     payload = DeathSaveUpdate(
@@ -358,14 +359,17 @@ async def update_death_save(
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
 
+    await db.refresh(character, ["campaigns"])
+
     return render_template(
         templates,
-        "characters/_vitals.html",
+        "characters/_sheet_header.html",
         {
             "request": request,
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
+            "campaigns": character.campaigns,
             "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
         },
         language=current_user.language,
@@ -380,6 +384,7 @@ async def toggle_inspiration(
     character_id: UUID,
     current_user: UserSession = Depends(require_login),
     service: CharacterService = Depends(_service),
+    db: AsyncSession = Depends(get_db),
 ):
     try:
         character = await service.toggle_inspiration(
@@ -387,6 +392,8 @@ async def toggle_inspiration(
         )
     except (CharacterNotFound, CharacterPermissionError):
         return HTMLResponse("Forbidden", status_code=403)
+
+    await db.refresh(character, ["campaigns"])
 
     return render_template(
         templates,
@@ -396,6 +403,7 @@ async def toggle_inspiration(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
+            "campaigns": character.campaigns,
             "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
         },
         language=current_user.language,
