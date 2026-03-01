@@ -27,6 +27,83 @@ class CharacterValidationError(Exception):
 class CharacterService:
     def __init__(self, db: AsyncSession):
         self._repo = CharacterRepository(db)
+    
+    @staticmethod
+    def _calculate_spell_slots(character_class: str, character_level: int) -> dict:
+        """
+        Calculate spell slots based on character class and level according to D&D 5e rules.
+        Preserves expended slots where possible.
+        
+        Args:
+            character_class: The character's class name
+            character_level: The character's level (1-20)
+            
+        Returns:
+            Dictionary with spell slot levels (level_1 through level_9) containing total and expended counts
+        """
+        # Full caster spell slot progression (Wizard, Sorcerer, Bard, Cleric, Druid)
+        FULL_CASTER_SLOTS = {
+            1:  [2, 0, 0, 0, 0, 0, 0, 0, 0],
+            2:  [3, 0, 0, 0, 0, 0, 0, 0, 0],
+            3:  [4, 2, 0, 0, 0, 0, 0, 0, 0],
+            4:  [4, 3, 0, 0, 0, 0, 0, 0, 0],
+            5:  [4, 3, 2, 0, 0, 0, 0, 0, 0],
+            6:  [4, 3, 3, 0, 0, 0, 0, 0, 0],
+            7:  [4, 3, 3, 1, 0, 0, 0, 0, 0],
+            8:  [4, 3, 3, 2, 0, 0, 0, 0, 0],
+            9:  [4, 3, 3, 3, 1, 0, 0, 0, 0],
+            10: [4, 3, 3, 3, 2, 0, 0, 0, 0],
+            11: [4, 3, 3, 3, 2, 1, 0, 0, 0],
+            12: [4, 3, 3, 3, 2, 1, 0, 0, 0],
+            13: [4, 3, 3, 3, 2, 1, 1, 0, 0],
+            14: [4, 3, 3, 3, 2, 1, 1, 0, 0],
+            15: [4, 3, 3, 3, 2, 1, 1, 1, 0],
+            16: [4, 3, 3, 3, 2, 1, 1, 1, 0],
+            17: [4, 3, 3, 3, 2, 1, 1, 1, 1],
+            18: [4, 3, 3, 3, 3, 1, 1, 1, 1],
+            19: [4, 3, 3, 3, 3, 2, 1, 1, 1],
+            20: [4, 3, 3, 3, 3, 2, 2, 1, 1],
+        }
+        
+        # Class categorization
+        FULL_CASTERS = ['wizard', 'sorcerer', 'bard', 'cleric', 'druid']
+        HALF_CASTERS = ['paladin', 'ranger']
+        THIRD_CASTERS = ['artificer', 'eldritch knight', 'arcane trickster']
+        
+        # Normalize class name for comparison
+        class_lower = character_class.lower().strip()
+        
+        # Determine effective caster level
+        effective_level = 0
+        if any(c in class_lower for c in FULL_CASTERS):
+            effective_level = character_level
+        elif any(c in class_lower for c in HALF_CASTERS):
+            # Half casters start at level 2
+            if character_level >= 2:
+                effective_level = (character_level + 1) // 2
+        elif any(c in class_lower for c in THIRD_CASTERS):
+            # Third casters start at level 3
+            if character_level >= 3:
+                effective_level = (character_level + 2) // 3
+        
+        # Build spell slots dictionary
+        spell_slots = {}
+        if effective_level > 0 and effective_level in FULL_CASTER_SLOTS:
+            slots_array = FULL_CASTER_SLOTS[effective_level]
+            for i, total in enumerate(slots_array, start=1):
+                spell_slots[f"level_{i}"] = {
+                    "total": total,
+                    "expended": 0
+                }
+        else:
+            # Non-caster or level 0 - set all slots to 0
+            for i in range(1, 10):
+                spell_slots[f"level_{i}"] = {
+                    "total": 0,
+                    "expended": 0
+                }
+        
+        return spell_slots
 
     async def list_all(self) -> list[Character]:
         return await self._repo.get_all()
@@ -461,9 +538,25 @@ class CharacterService:
 
                 sheet["cantrips_and_prepared_spells"] = normalized_spells
         
-        # Preserve existing complex structures (spells, weapons, etc.)
-        # These would need more sophisticated form handling
-        for key in ["weapons_damage_cantrips", "spell_slots", "spellcasting_ability"]:
+        # Calculate spell slots based on character level and class
+        character_level = sheet.get("character_level", {}).get("level", 1)
+        character_class = sheet.get("character_identity", {}).get("class", {}).get("name", "")
+        
+        # Get new spell slots based on level and class
+        new_spell_slots = self._calculate_spell_slots(character_class, character_level)
+        
+        # Preserve expended values from existing spell slots
+        old_spell_slots = character.sheet_data.get("spell_slots", {})
+        for level_key, slot_data in new_spell_slots.items():
+            if level_key in old_spell_slots:
+                old_expended = old_spell_slots[level_key].get("expended", 0)
+                # Make sure expended doesn't exceed new total
+                slot_data["expended"] = min(old_expended, slot_data["total"])
+        
+        sheet["spell_slots"] = new_spell_slots
+        
+        # Preserve other existing complex structures (weapons, spellcasting ability, etc.)
+        for key in ["weapons_damage_cantrips", "spellcasting_ability"]:
             if key in character.sheet_data:
                 sheet[key] = character.sheet_data[key]
         
