@@ -45,11 +45,6 @@
                 <h1 class="sheet-header-name">
                     {{ sheet.character_identity.character_name }}
                 </h1>
-                {% if can_edit %}
-                <a href="/characters/{{ character.id }}/edit" class="btn-edit-icon" title="Edit character">
-                    ✏️
-                </a>
-                {% endif %}
             </div>
             <div class="sheet-header-details">
                 <span class="sheet-header-species">{{ sheet.character_identity.species.name }}{% if
@@ -104,5 +99,14 @@
             {% endfor %}
         </div>
     </div>
+
+    {# ── Edit Button ────────────────────────────────────────────── #}
+    {% if can_edit %}
+    <div class="sheet-header-edit-section">
+        <a href="/characters/{{ character.id }}/edit" class="btn-edit-icon" title="Edit character">
+            ✏️
+        </a>
+    </div>
+    {% endif %}
 
 </div>

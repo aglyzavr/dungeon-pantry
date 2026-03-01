@@ -105,6 +105,8 @@
   display: flex;
   align-items: center;
   gap: 0.625rem;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .sheet-header-name {
@@ -112,18 +114,21 @@
   font-weight: 700;
   color: var(--color-text-primary);
   line-height: 1.25;
+  flex: 0 1 auto;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .btn-edit-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-light);
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  border: 2px solid var(--color-border-light);
+  border-radius: 0.75rem;
+  font-size: 1rem;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -133,7 +138,18 @@
 .btn-edit-icon:hover {
   background-color: var(--color-button-bg);
   border-color: var(--color-button-bg);
-  transform: scale(1.05);
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px var(--color-button-bg)33;
+}
+
+/* ── Edit Section ───────────────────────────────────────────── */
+.sheet-header-edit-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
 }
 
 @media (min-width: 1024px) {
