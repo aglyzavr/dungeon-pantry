@@ -150,7 +150,6 @@
                     ] %}
 
                     {% for full_name, short, ability, skills in ability_blocks %}
-                    {% set save_prof = ability.get("saving_throw_proficient", false) %}
                     <div class="ability-card">
 
                         {# Card Header #}
@@ -169,19 +168,6 @@
                             <div class="ability-card-name">
                                 {{ full_name }}
                             </div>
-                        </div>
-
-                        {# Saving Throw #}
-                        <div class="ability-card-save-row">
-                            <div class="ability-card-save-label">
-                                <span class="ability-card-save-icon {% if save_prof %}ability-card-save-icon--proficient{% else %}ability-card-save-icon--unproficient{% endif %}">
-                                    {{ "●" if save_prof else "○" }}
-                                </span>
-                                <span class="ability-card-save-label-text">Saving Throw</span>
-                            </div>
-                            <span class="ability-card-save-value {% if ability.saving_throw > 0 %}ability-card-save-value--positive{% elif ability.saving_throw < 0 %}ability-card-save-value--negative{% else %}ability-card-save-value--neutral{% endif %}">
-                                {{ "+" if ability.saving_throw >= 0 else "" }}{{ ability.saving_throw }}
-                            </span>
                         </div>
 
                         {# Skills #}
@@ -770,7 +756,6 @@
                     ] %}
 
                     {% for full_name, short, ability, skills in ability_blocks %}
-                    {% set save_prof = ability.get("saving_throw_proficient", false) %}
                     <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
 
                         <!-- Ability header -->
@@ -793,24 +778,6 @@
                             <div class="text-sm font-semibold text-gray-300 uppercase tracking-wide">
                                 {{ full_name }}
                             </div>
-                        </div>
-
-                        <!-- Saving throw -->
-                        <div class="flex items-center justify-between px-4 py-2
-                        border-b border-gray-800/60 bg-gray-800/20">
-                            <div class="flex items-center gap-2">
-                                <span class="{{ 'text-indigo-400' if save_prof else 'text-gray-600' }}
-                               text-sm leading-none">
-                                    {{ "●" if save_prof else "○" }}
-                                </span>
-                                <span class="text-xs text-gray-500">Saving Throw</span>
-                            </div>
-                            <span class="text-sm font-semibold
-                {{ 'text-green-400' if ability.saving_throw > 0
-                   else 'text-red-400' if ability.saving_throw < 0
-                   else 'text-gray-400' }}">
-                                {{ "+" if ability.saving_throw >= 0 else "" }}{{ ability.saving_throw }}
-                            </span>
                         </div>
 
                         <!-- Skills -->

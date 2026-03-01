@@ -22,6 +22,7 @@
   <div x-data="{
       activeTab: 'identity',
       spellEntries: {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
+      attackEntries: {{ (sheet.weapons_damage_cantrips or []) | tojson | forceescape }},
       normalizeSpell(spell) {
         const source = spell || {};
         const meta = source.crrm || {};
@@ -40,17 +41,36 @@
           },
         };
       },
+      normalizeAttack(attack) {
+        const source = attack || {};
+        return {
+          name: source.name || '',
+          atk_bonus_or_dc: source.atk_bonus_or_dc || '',
+          damage_and_type: source.damage_and_type || '',
+          notes: source.notes || '',
+        };
+      },
       addSpell() {
         this.spellEntries.push(this.normalizeSpell({}));
       },
       removeSpell(index) {
         this.spellEntries.splice(index, 1);
       },
+      addAttack() {
+        this.attackEntries.push(this.normalizeAttack({}));
+      },
+      removeAttack(index) {
+        this.attackEntries.splice(index, 1);
+      },
       init() {
         if (!Array.isArray(this.spellEntries)) {
           this.spellEntries = [];
         }
         this.spellEntries = this.spellEntries.map((spell) => this.normalizeSpell(spell));
+        if (!Array.isArray(this.attackEntries)) {
+          this.attackEntries = [];
+        }
+        this.attackEntries = this.attackEntries.map((attack) => this.normalizeAttack(attack));
       }
     }" x-init="init()">
     <div class="tab-navigation">
@@ -72,6 +92,9 @@
       <button type="button" class="tab-btn" @click="activeTab = 'spells'" :class="{ 'active': activeTab === 'spells' }">
         Spells
       </button>
+      <button type="button" class="tab-btn" @click="activeTab = 'attacks'" :class="{ 'active': activeTab === 'attacks' }">
+        Attacks & Cantrips
+      </button>
       <button type="button" class="tab-btn" @click="activeTab = 'equipment'" :class="{ 'active': activeTab === 'equipment' }">
         Equipment
       </button>
@@ -82,6 +105,7 @@
 
     <form id="edit-form" method="post" action="/characters/{{ character.id }}/edit">
     <input type="hidden" name="spells_json" :value="JSON.stringify(spellEntries)">
+    <input type="hidden" name="attacks_json" :value="JSON.stringify(attackEntries)">
     
     {# ── TAB: IDENTITY ────────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'identity'" x-cloak>
@@ -464,6 +488,51 @@
             <div class="form-group" style="margin-top: 0.75rem;">
               <label>Notes</label>
               <textarea x-model="spell.notes" placeholder="Optional spell notes"></textarea>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    {# ── TAB: ATTACKS & CANTRIPS ──────────────────────────────────────────────── #}
+    <div class="tab-content" x-show="activeTab === 'attacks'" x-cloak>
+      <div class="form-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
+          <h2 class="form-section-title" style="margin: 0;">Attacks & Cantrips</h2>
+          <button type="button" class="btn-sm btn-sm--secondary" @click="addAttack()">Add Attack</button>
+        </div>
+
+        <template x-if="attackEntries.length === 0">
+          <p style="margin: 0; opacity: 0.8;">No attacks added yet.</p>
+        </template>
+
+        <template x-for="(attack, index) in attackEntries" :key="index">
+          <div class="form-section" style="padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.75rem;">
+              <h3 style="margin: 0; font-size: 1rem;">Attack <span x-text="index + 1"></span></h3>
+              <button type="button" class="btn-sm btn-sm--secondary" @click="removeAttack(index)">Remove</button>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" x-model="attack.name" placeholder="e.g. Longsword, Fire Bolt">
+              </div>
+              <div class="form-group">
+                <label>Attack Bonus / DC</label>
+                <input type="text" x-model="attack.atk_bonus_or_dc" placeholder="e.g. +5, DC 13">
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Damage & Type</label>
+                <input type="text" x-model="attack.damage_and_type" placeholder="e.g. 1d8+3 Slashing, 1d10 Fire">
+              </div>
+              <div class="form-group">
+                <label>Notes</label>
+                <input type="text" x-model="attack.notes" placeholder="e.g. V/S, Versatile">
+              </div>
             </div>
           </div>
         </template>

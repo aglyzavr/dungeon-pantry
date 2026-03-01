@@ -538,6 +538,39 @@ class CharacterService:
 
                 sheet["cantrips_and_prepared_spells"] = normalized_spells
         
+        # Attacks & Cantrips (submitted as JSON from the edit form)
+        attacks_raw = str(get_form("attacks_json", "")).strip()
+        if attacks_raw:
+            try:
+                submitted_attacks = json.loads(attacks_raw)
+            except (json.JSONDecodeError, TypeError):
+                submitted_attacks = []
+
+            if isinstance(submitted_attacks, list):
+                normalized_attacks = []
+                for attack in submitted_attacks:
+                    if not isinstance(attack, dict):
+                        continue
+
+                    name = str(attack.get("name", "")).strip()
+                    if not name:
+                        continue
+
+                    normalized_attacks.append(
+                        {
+                            "name": name,
+                            "atk_bonus_or_dc": str(attack.get("atk_bonus_or_dc", "")).strip(),
+                            "damage_and_type": str(attack.get("damage_and_type", "")).strip(),
+                            "notes": str(attack.get("notes", "")).strip(),
+                        }
+                    )
+
+                sheet["weapons_damage_cantrips"] = normalized_attacks
+        else:
+            # Preserve existing attacks if no attack data was submitted
+            if "weapons_damage_cantrips" in character.sheet_data:
+                sheet["weapons_damage_cantrips"] = character.sheet_data["weapons_damage_cantrips"]
+        
         # Calculate spell slots based on character level and class
         character_level = sheet.get("character_level", {}).get("level", 1)
         character_class = sheet.get("character_identity", {}).get("class", {}).get("name", "")
@@ -555,8 +588,9 @@ class CharacterService:
         
         sheet["spell_slots"] = new_spell_slots
         
-        # Preserve other existing complex structures (weapons, spellcasting ability, etc.)
-        for key in ["weapons_damage_cantrips", "spellcasting_ability"]:
+        # Preserve other existing complex structures (spellcasting ability, etc.)
+        # Note: weapons_damage_cantrips is now handled via the attacks_json form field
+        for key in ["spellcasting_ability"]:
             if key in character.sheet_data:
                 sheet[key] = character.sheet_data[key]
         
