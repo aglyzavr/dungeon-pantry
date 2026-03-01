@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="{% block meta_description %}D&D Campaign Manager{% endblock %}" />
   <style>[x-cloak] { display: none !important; }</style>
-  <title>{% block title %}DnD Manager{% endblock %}</title>
+  <title>{% block title %}Campaign Manager{% endblock %}</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -19,7 +19,7 @@
   {# ── Navbar ───────────────────────────────────────────────────── #}
   {% if current_user %}
   <nav class="navbar">
-    <a href="/" class="navbar-brand">⚔️ DnD Manager</a>
+    <a href="/" class="navbar-brand">⚔️ Campaign Manager</a>
     <div class="navbar-menu">
       {% if current_user.is_dm %}
         <a href="/characters" class="navbar-link">{{ _("Characters") if _ is defined else "Characters" }}</a>
@@ -70,7 +70,7 @@
 
   {# ── Footer ───────────────────────────────────────────────────── #}
   <footer class="footer">
-    &copy; {{ now.year if now is defined else 2026 }} DnD Manager &mdash; Roll for initiative.
+    &copy; {{ now.year if now is defined else 2026 }} Campaign Manager &mdash; Roll for initiative.
   </footer>
 
   {% block extra_scripts %}{% endblock %}
