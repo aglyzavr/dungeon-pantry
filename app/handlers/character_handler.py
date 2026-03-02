@@ -551,6 +551,70 @@ async def toggle_shield(
     )
 
 
+# ── Vitals: Defenses ──────────────────────────────────────────────────────
+
+@router.post("/{character_id}/vitals/defenses", response_class=HTMLResponse)
+async def update_defenses(
+    request: Request,
+    character_id: UUID,
+    defenses: str = Form(""),
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    try:
+        character = await service.update_defenses(
+            character_id, defenses, UUID(current_user.user_id), current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
+
+
+# ── Vitals: Conditions ────────────────────────────────────────────────────
+
+@router.post("/{character_id}/vitals/conditions", response_class=HTMLResponse)
+async def update_conditions(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    form = await request.form()
+    conditions = form.getlist("conditions")
+
+    try:
+        character = await service.update_conditions(
+            character_id, conditions, UUID(current_user.user_id), current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
+
+
 # ── Assign owner (DM only) ────────────────────────────────────────────────
 
 @router.post("/{character_id}/assign", response_class=HTMLResponse)

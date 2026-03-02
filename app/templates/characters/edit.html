@@ -323,6 +323,16 @@
           </div>
         </div>
       </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Defenses</h2>
+        <div class="form-group">
+          <label for="defenses">Resistances & Immunities</label>
+          <input type="text" id="defenses" name="defenses" 
+                 value="{{ sheet.get('defenses', '') }}"
+                 placeholder="e.g., Fire resistance, Poison immunity">
+        </div>
+      </div>
     </div>
 
     {# ── TAB: SKILLS ──────────────────────────────────────────────────────────── #}

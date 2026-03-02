@@ -102,6 +102,112 @@
                         </div>
                     </div>
 
+                    {# Conditions #}
+                    {% set conditions = sheet.get("conditions", []) %}
+                    {% if conditions or can_edit %}
+                    <div class="stats-panel"
+                         x-data="{ editing: false }"
+                         @htmx:afterSwap="editing = false"
+                    >
+                        <div class="stats-panel-title">{{ _("Conditions") }}</div>
+                        
+                        {# Read-only view #}
+                        <div x-show="!editing">
+                            <div class="conditions-display">
+                                <span class="conditions-text">
+                                    {% if conditions %}
+                                        {{ conditions | join(", ") }}
+                                    {% else %}
+                                        {{ _("No active conditions") }}
+                                    {% endif %}
+                                </span>
+                                {% if can_edit %}
+                                <button @click="editing = true" class="conditions-edit-btn" type="button">
+                                    {{ _("Edit") }}
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# Edit view #}
+                        {% if can_edit %}
+                        <div x-show="editing" x-cloak>
+                            <form
+                                hx-post="/characters/{{ character.id }}/vitals/conditions"
+                                hx-target="#sheet-body"
+                                hx-swap="outerHTML"
+                                class="conditions-form"
+                            >
+                                <div class="conditions-toggles">
+                                    {% set available_conditions = ['Blinded', 'Charmed', 'Deafened', 'Frightened', 'Grappled', 'Incapacitated', 'Invisable', 'Paralyzed', 'Petrified', 'Prone', 'Restrained', 'Stuuned', 'Unconsious'] %}
+                                    {% for condition in available_conditions %}
+                                    <label class="condition-toggle">
+                                        <input 
+                                            type="checkbox" 
+                                            name="conditions" 
+                                            value="{{ condition }}"
+                                            {% if condition in conditions %}checked{% endif %}
+                                        />
+                                        <span>{{ condition }}</span>
+                                    </label>
+                                    {% endfor %}
+                                </div>
+                                <div class="conditions-form-actions">
+                                    <button type="submit" class="conditions-btn conditions-btn--save">{{ _("Save") }}</button>
+                                    <button @click="editing = false" type="button" class="conditions-btn conditions-btn--cancel">{{ _("Cancel") }}</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {# Defenses #}
+                    {% set defenses = sheet.get("defenses", "") %}
+                    {% if defenses or can_edit %}
+                    <div class="stats-panel"
+                         x-data="{ editing: false, defensesText: '{{ defenses | escape }}' }"
+                         @htmx:afterSwap="editing = false"
+                    >
+                        <div class="stats-panel-title">{{ _("Defenses") }}</div>
+                        
+                        {# Read-only view #}
+                        <div x-show="!editing">
+                            <div class="defenses-display">
+                                <span class="defenses-text">{{ defenses if defenses else _("No resistances or immunities") }}</span>
+                                {% if can_edit %}
+                                <button @click="editing = true" class="defenses-edit-btn" type="button">
+                                    {{ _("Edit") }}
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# Edit view #}
+                        {% if can_edit %}
+                        <div x-show="editing" x-cloak>
+                            <form
+                                hx-post="/characters/{{ character.id }}/vitals/defenses"
+                                hx-target="#sheet-body"
+                                hx-swap="outerHTML"
+                                class="defenses-form"
+                            >
+                                <textarea
+                                    name="defenses"
+                                    class="defenses-textarea"
+                                    placeholder="{{ _('e.g., Fire resistance, Poison immunity') }}"
+                                    x-model="defensesText"
+                                >{{ defenses }}</textarea>
+                                <div class="defenses-form-actions">
+                                    <button type="submit" class="defenses-btn defenses-btn--save">{{ _("Save") }}</button>
+                                    <button @click="editing = false" type="button" class="defenses-btn defenses-btn--cancel">{{ _("Cancel") }}</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
                     {# Proficiencies & Training #}
                     {% set prof = sheet.equipment_training_proficiencies %}
                     <div class="stats-panel">

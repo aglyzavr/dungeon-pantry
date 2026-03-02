@@ -336,6 +336,25 @@ class CharacterService:
         data = copy.deepcopy(character.sheet_data)
         data["shield_equipped"] = not bool(data.get("shield_equipped", False))
         return await self._repo.save_sheet_data(character, data)
+
+    async def update_defenses(
+        self, character_id: UUID, defenses: str, user_id: UUID, is_dm: bool
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        data["defenses"] = defenses
+        return await self._repo.save_sheet_data(character, data)
+
+    async def update_conditions(
+        self, character_id: UUID, conditions: list, user_id: UUID, is_dm: bool
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        data["conditions"] = conditions
+        return await self._repo.save_sheet_data(character, data)
+
     async def update_portrait(self, character_id: UUID, portrait_data: bytes, mime_type: str) -> Character:
         """Update character portrait data stored in database"""
         character = await self._repo.get_by_id(character_id)
@@ -467,6 +486,9 @@ class CharacterService:
         
         # Languages
         sheet["languages"] = get_form("languages", "")
+        
+        # Defenses
+        sheet["defenses"] = get_form("defenses", "")
         
         # Features and traits
         sheet["class_features"] = get_form("class_features", "")
