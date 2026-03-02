@@ -70,6 +70,7 @@
     </div>
 
     {# ── Death Saves Footer ─────────────────────────────────────── #}
+    {% if not is_readonly %}
     {% set ds = sheet.vitality.death_saves %}
     <div class="sheet-header-footer">
         <div class="death-saves-title">{{ _("Death Saves") }}</div>
@@ -101,6 +102,7 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
     {# ── Edit Button & Campaign Navigation ─────────────────────── #}
     <div class="sheet-header-edit-section">

@@ -23,7 +23,19 @@
             {% for t, label, icon in [
             ('stats', _("Stats"), '🎲'),
             ('actions', _("Actions"), '⚔️'),
-            ('spells', _("Spells"), '✨'),
+            ('spells', _("Spells"), '✨')
+            ] %}
+            <button
+              @click="tab = '{{ t }}'"
+              :class="tab === '{{ t }}' ? 'sheet-tab-button--active' : 'sheet-tab-button--inactive'"
+              class="sheet-tab-button"
+            >
+                <span class="sheet-tab-icon">{{ icon }}</span>
+                <span class="sheet-tab-label">{{ label }}</span>
+            </button>
+            {% endfor %}
+            {% if not is_readonly %}
+            {% for t, label, icon in [
             ('inventory', _("Inventory"), '🎒'),
             ('bio', _("Bio"), '📖')
             ] %}
@@ -36,6 +48,7 @@
                 <span class="sheet-tab-label">{{ label }}</span>
             </button>
             {% endfor %}
+            {% endif %}
         </div>
 
         {# ── TAB: STATS ─────────────────────────────────────────── #}
@@ -45,7 +58,8 @@
                 {# ── LEFT SIDEBAR ─────────────────────────────────── #}
                 <div class="stats-sidebar">
 
-                    {# Ability Scores #}
+                    {# Ability Scores - Hidden in readonly mode #}
+                    {% if not is_readonly %}
                     <div class="stats-panel">
                         <div class="stats-panel-title">{{ _("Ability Scores") }}</div>
                         <div class="ability-scores-grid">
@@ -69,6 +83,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {% endif %}
 
                     {# Senses #}
                     <div class="stats-panel">
@@ -115,7 +130,8 @@
 
                 </div>
 
-                {# ── RIGHT PANEL: Per-ability cards ─────────────────── #}
+                {# ── RIGHT PANEL: Per-ability cards (skills hidden in readonly) ─────────────────── #}
+                {% if not is_readonly %}
                 <div class="ability-cards">
                     {% set ability_blocks = [
                     ("STRENGTH", "STR", sheet.strength, [
@@ -201,6 +217,7 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% endif %}
 
             </div>
         </div>
@@ -285,7 +302,8 @@
             </div>
             {% endif %}
 
-            {# ── Spell Slots Block ─────────────────────────────────────────── #}
+            {# ── Spell Slots Block (Hidden in readonly) ─────────────────────────────────────────── #}
+            {% if not is_readonly %}
             {% set slots = sheet.spell_slots | default({}) %}
             {% set has_slots = namespace(found=false) %}
             {% for lvl in range(1, 10) %}
@@ -344,6 +362,7 @@
                 {% endfor %}
               </div>
             </div>
+            {% endif %}
             {% endif %}
 
             {# Separate Cantrips (level 0) from Spells (level 1-9) #}
@@ -457,6 +476,7 @@
         </div>
 
         {# ── TAB: INVENTORY ─────────────────────────────────────── #}
+        {% if not is_readonly %}
         <div x-show="tab === 'inventory'" x-cloak class="inventory-tab-content">
 
             {% if sheet.equipment.equipment_list %}
@@ -516,8 +536,10 @@
             {% endif %}
 
         </div>
+        {% endif %}
 
         {# ── TAB: BIO ────────────────────────────────────────────── #}
+        {% if not is_readonly %}
         <div x-show="tab === 'bio'" x-cloak class="bio-tab-content">
 
             {# Short Fields #}
@@ -553,6 +575,7 @@
             {% endfor %}
 
         </div>
+        {% endif %}
 
     </div>{# end sheet-tabs #}
 
@@ -618,6 +641,17 @@
         ('stats', 'Stats', '🎲'),
         ('actions', 'Actions', '⚔️'),
         ('spells', 'Spells', '✨'),
+        ] %}
+        <button
+          @click="$dispatch('switchtab', { tab: '{{ t }}' }); window.scrollTo({ top: 0, behavior: 'smooth' })"
+          class="mobile-nav-button"
+        >
+            <span class="mobile-nav-icon">{{ icon }}</span>
+            <span class="mobile-nav-label">{{ label }}</span>
+        </button>
+        {% endfor %}
+        {% if not is_readonly %}
+        {% for t, label, icon in [
         ('inventory', 'Bag', '🎒'),
         ('bio', 'Bio', '📖')
         ] %}
@@ -629,6 +663,7 @@
             <span class="mobile-nav-label">{{ label }}</span>
         </button>
         {% endfor %}
+        {% endif %}
     </div>
 </nav>
 

@@ -160,6 +160,13 @@ async def character_sheet(
     # Load players for assignment dropdown (DM only)
     players = await player_service.list_players() if current_user.is_dm else []
 
+    # Determine if user can edit and view full details
+    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    is_readonly = not can_edit  # If can't edit, it's read-only mode
+    
+    # Pass full sheet data to template - template conditionals handle visibility
+    # No backend filtering needed, all 'is_readonly' sections are hidden in views
+
     try:
         resp = render_template(
             templates,
@@ -171,7 +178,8 @@ async def character_sheet(
                 "sheet": character.sheet_data,
                 "players": players,
                 "campaigns": character.campaigns,
-                "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+                "can_edit": can_edit,
+                "is_readonly": is_readonly,
             },
             language=current_user.language,
         )
