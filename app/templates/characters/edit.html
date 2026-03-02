@@ -365,12 +365,6 @@
                    {% if skill_data.proficient %}checked{% endif %}>
             <label for="{{ skill_key }}_prof">Proficient</label>
           </div>
-          
-          <div class="checkbox-group">
-            <input type="checkbox" id="{{ skill_key }}_exp" name="{{ skill_key }}_exp" 
-                   {% if skill_data.expertise %}checked{% endif %}>
-            <label for="{{ skill_key }}_exp">Expertise</label>
-          </div>
         </div>
         {% endfor %}
       </div>
