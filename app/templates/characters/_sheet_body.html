@@ -318,13 +318,26 @@
         <div x-show="tab === 'actions'" x-cloak class="actions-tab-content">
 
             {# Bonus Actions Section #}
-            {% if sheet.weapons_damage_cantrips %}
             {% set bonus_actions = [] %}
+            {% if sheet.weapons_damage_cantrips %}
             {% for w in sheet.weapons_damage_cantrips %}
             {% if w.name and w.bonus_action %}
             {% set _ = bonus_actions.append(w) %}
             {% endif %}
             {% endfor %}
+            {% endif %}
+            {% if sheet.cantrips_and_prepared_spells %}
+            {% for spell in sheet.cantrips_and_prepared_spells %}
+            {% if spell.name and spell.bonus_action %}
+            {% set _ = bonus_actions.append({
+                "name": spell.name,
+                "atk_bonus_or_dc": spell.attack_save,
+                "damage_and_type": _("Spell"),
+                "notes": spell.notes or spell.casting_time or spell.range or ""
+            }) %}
+            {% endif %}
+            {% endfor %}
+            {% endif %}
             {% if bonus_actions %}
             <div class="actions-section">
                 <div class="actions-section-header">
@@ -354,7 +367,6 @@
                     </table>
                 </div>
             </div>
-            {% endif %}
             {% endif %}
 
             {# Regular Attacks & Cantrips Section (non-bonus actions) #}
@@ -1078,13 +1090,26 @@
     {% endif %}
 
     {# Bonus Actions Section #}
-    {% if sheet.weapons_damage_cantrips %}
     {% set bonus_actions = [] %}
+    {% if sheet.weapons_damage_cantrips %}
     {% for w in sheet.weapons_damage_cantrips %}
     {% if w.name and w.bonus_action %}
     {% set _ = bonus_actions.append(w) %}
     {% endif %}
     {% endfor %}
+    {% endif %}
+    {% if sheet.cantrips_and_prepared_spells %}
+    {% for spell in sheet.cantrips_and_prepared_spells %}
+    {% if spell.name and spell.bonus_action %}
+    {% set _ = bonus_actions.append({
+        "name": spell.name,
+        "atk_bonus_or_dc": spell.attack_save,
+        "damage_and_type": _("Spell"),
+        "notes": spell.notes or spell.casting_time or spell.range or ""
+    }) %}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
     {% if bonus_actions %}
     <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
         <div class="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
@@ -1115,7 +1140,6 @@
             </table>
         </div>
     </div>
-    {% endif %}
     {% endif %}
 
     <!-- Combat Actions -->

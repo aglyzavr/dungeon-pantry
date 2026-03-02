@@ -551,6 +551,7 @@ class CharacterService:
                             "components": str(spell.get("components", "")).strip(),
                             "duration": str(spell.get("duration", "")).strip(),
                             "notes": str(spell.get("notes", "")).strip(),
+                            "bonus_action": bool(spell.get("bonus_action", False)),
                             "crrm": {
                                 "concentration": bool(crrm.get("concentration", False)),
                                 "ritual": bool(crrm.get("ritual", False)),

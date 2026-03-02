@@ -35,6 +35,7 @@
           components: source.components || '',
           duration: source.duration || '',
           notes: source.notes || '',
+          bonus_action: Boolean(source.bonus_action),
           crrm: {
             concentration: Boolean(meta.concentration),
             ritual: Boolean(meta.ritual),
@@ -479,7 +480,7 @@
               </div>
             </div>
 
-            <div class="form-grid-2" style="margin-top: 0.25rem;">
+            <div class="form-grid-3" style="margin-top: 0.25rem;">
               <div class="checkbox-group">
                 <input type="checkbox" :id="'spell_concentration_' + index" x-model="spell.crrm.concentration">
                 <label :for="'spell_concentration_' + index">Concentration</label>
@@ -487,6 +488,10 @@
               <div class="checkbox-group">
                 <input type="checkbox" :id="'spell_ritual_' + index" x-model="spell.crrm.ritual">
                 <label :for="'spell_ritual_' + index">Ritual</label>
+              </div>
+              <div class="checkbox-group">
+                <input type="checkbox" :id="'spell_bonus_action_' + index" x-model="spell.bonus_action">
+                <label :for="'spell_bonus_action_' + index">Bonus Action</label>
               </div>
             </div>
 
