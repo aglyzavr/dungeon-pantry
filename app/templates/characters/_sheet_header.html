@@ -41,6 +41,9 @@
 
         {# ── Character Info Section ─────────────────────────────────── #}
         <div class="sheet-header-info">
+            <span class="sheet-header-level">
+                Level {{ sheet.character_level.level }}
+            </span>
             <div class="sheet-header-name-row">
                 <h1 class="sheet-header-name">
                     {{ sheet.character_identity.character_name }}
@@ -63,9 +66,6 @@
                 </span>
                 {% endif %}
             </div>
-            <span class="sheet-header-level">
-                Level {{ sheet.character_level.level }}
-            </span>
         </div>
     </div>
 
