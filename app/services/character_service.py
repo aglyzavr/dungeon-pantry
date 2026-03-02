@@ -584,6 +584,7 @@ class CharacterService:
                             "atk_bonus_or_dc": str(attack.get("atk_bonus_or_dc", "")).strip(),
                             "damage_and_type": str(attack.get("damage_and_type", "")).strip(),
                             "notes": str(attack.get("notes", "")).strip(),
+                            "bonus_action": bool(attack.get("bonus_action", False)),
                         }
                     )
 

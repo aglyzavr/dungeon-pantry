@@ -521,6 +521,49 @@
   color: #6b7280; /* gray-500 */
 }
 
+/* ── Combat Actions Grid ───────────────────────────────────────────── */
+.combat-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .combat-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .combat-actions-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.combat-action-item {
+  background-color: #1f2937; /* gray-800 */
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  transition: background-color 0.2s;
+}
+
+.combat-action-item:hover {
+  background-color: rgba(31, 41, 55, 0.7); /* gray-800/70 */
+}
+
+.combat-action-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.combat-action-description {
+  font-size: 0.75rem;
+  color: #9ca3af; /* gray-400 */
+  line-height: 1.5;
+}
+
 /* ── Text Content Sections ────────────────────────────────────────– */
 .content-section {
   background-color: #111827; /* gray-900 */

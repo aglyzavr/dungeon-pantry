@@ -48,6 +48,7 @@
           atk_bonus_or_dc: source.atk_bonus_or_dc || '',
           damage_and_type: source.damage_and_type || '',
           notes: source.notes || '',
+          bonus_action: Boolean(source.bonus_action),
         };
       },
       addSpell() {
@@ -543,6 +544,11 @@
                 <label>Notes</label>
                 <input type="text" x-model="attack.notes" placeholder="e.g. V/S, Versatile">
               </div>
+            </div>
+
+            <div class="checkbox-group" style="margin-top: 0.5rem;">
+              <input type="checkbox" :id="'attack_bonus_action_' + index" x-model="attack.bonus_action">
+              <label :for="'attack_bonus_action_' + index">Bonus Action</label>
             </div>
           </div>
         </template>
