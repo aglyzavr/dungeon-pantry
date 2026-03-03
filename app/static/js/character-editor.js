@@ -60,67 +60,20 @@ const attackSchema = {
 };
 
 /**
- * Character Editor component for Alpine.js
- * Manages spell and attack entry management with data normalization
+ * Character Editor utilities for Alpine.js
+ * Provides normalizer functions for spell and attack entries
  */
 window.CharacterEditor = {
-  createNormalizer,
-
   /**
    * Normalizer function for spell entries
+   * Ensures consistent data structure and type conversion
    */
   normalizeSpell: createNormalizer(spellSchema),
 
   /**
    * Normalizer function for attack entries
+   * Ensures consistent data structure and type conversion
    */
   normalizeAttack: createNormalizer(attackSchema),
-
-  /**
-   * Factory function to create the Alpine.js component data object
-   * @param {Array} spellData - Raw spell data from server
-   * @param {Array} attackData - Raw attack data from server
-   * @returns {Object} Alpine.js component data
-   */
-  getComponent(spellData, attackData) {
-    return {
-      activeTab: 'identity',
-
-      spellEntries: (Array.isArray(spellData) ? spellData : []).map(
-        this.normalizeSpell
-      ),
-
-      attackEntries: (Array.isArray(attackData) ? attackData : []).map(
-        this.normalizeAttack
-      ),
-
-      /**
-       * Add a new spell entry with normalized defaults
-       */
-      addSpell() {
-        this.spellEntries.push(CharacterEditor.normalizeSpell({}));
-      },
-
-      /**
-       * Remove a spell entry by index
-       */
-      removeSpell(index) {
-        this.spellEntries.splice(index, 1);
-      },
-
-      /**
-       * Add a new attack entry with normalized defaults
-       */
-      addAttack() {
-        this.attackEntries.push(CharacterEditor.normalizeAttack({}));
-      },
-
-      /**
-       * Remove an attack entry by index
-       */
-      removeAttack(index) {
-        this.attackEntries.splice(index, 1);
-      },
-    };
-  },
 };
+

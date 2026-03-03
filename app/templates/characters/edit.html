@@ -20,10 +20,29 @@
   <div class="error-message">{{ error }}</div>
   {% endif %}
 
-  <div x-data="CharacterEditor.getComponent(
-    {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
-    {{ (sheet.weapons_damage_cantrips or []) | tojson | forceescape }}
-  )">
+  <div x-data="{
+      activeTab: 'identity',
+      spellEntries: {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
+      attackEntries: {{ (sheet.weapons_damage_cantrips or []) | tojson | forceescape }},
+      addSpell() {
+        this.spellEntries.push(CharacterEditor.normalizeSpell({}));
+      },
+      removeSpell(index) {
+        this.spellEntries.splice(index, 1);
+      },
+      addAttack() {
+        this.attackEntries.push(CharacterEditor.normalizeAttack({}));
+      },
+      removeAttack(index) {
+        this.attackEntries.splice(index, 1);
+      },
+      init() {
+        this.spellEntries = (Array.isArray(this.spellEntries) ? this.spellEntries : [])
+          .map(spell => CharacterEditor.normalizeSpell(spell));
+        this.attackEntries = (Array.isArray(this.attackEntries) ? this.attackEntries : [])
+          .map(attack => CharacterEditor.normalizeAttack(attack));
+      }
+    }" x-init="init()">
     <div class="tab-navigation">
       <button type="button" class="tab-btn" @click="activeTab = 'identity'" :class="{ 'active': activeTab === 'identity' }">
         Identity
