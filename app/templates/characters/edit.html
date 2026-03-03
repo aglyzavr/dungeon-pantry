@@ -3,6 +3,7 @@
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/edit.css" />
+  <script src="/static/js/character-editor.js" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -19,62 +20,10 @@
   <div class="error-message">{{ error }}</div>
   {% endif %}
 
-  <div x-data="{
-      activeTab: 'identity',
-      spellEntries: {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
-      attackEntries: {{ (sheet.weapons_damage_cantrips or []) | tojson | forceescape }},
-      normalizeSpell(spell) {
-        const source = spell || {};
-        const meta = source.crrm || {};
-        return {
-          name: source.name || '',
-          level: String(source.level ?? '0'),
-          attack_save: source.attack_save || '',
-          casting_time: source.casting_time || '',
-          range: source.range || '',
-          components: source.components || '',
-          duration: source.duration || '',
-          notes: source.notes || '',
-          bonus_action: Boolean(source.bonus_action),
-          crrm: {
-            concentration: Boolean(meta.concentration),
-            ritual: Boolean(meta.ritual),
-          },
-        };
-      },
-      normalizeAttack(attack) {
-        const source = attack || {};
-        return {
-          name: source.name || '',
-          atk_bonus_or_dc: source.atk_bonus_or_dc || '',
-          damage_and_type: source.damage_and_type || '',
-          notes: source.notes || '',
-          bonus_action: Boolean(source.bonus_action),
-        };
-      },
-      addSpell() {
-        this.spellEntries.push(this.normalizeSpell({}));
-      },
-      removeSpell(index) {
-        this.spellEntries.splice(index, 1);
-      },
-      addAttack() {
-        this.attackEntries.push(this.normalizeAttack({}));
-      },
-      removeAttack(index) {
-        this.attackEntries.splice(index, 1);
-      },
-      init() {
-        if (!Array.isArray(this.spellEntries)) {
-          this.spellEntries = [];
-        }
-        this.spellEntries = this.spellEntries.map((spell) => this.normalizeSpell(spell));
-        if (!Array.isArray(this.attackEntries)) {
-          this.attackEntries = [];
-        }
-        this.attackEntries = this.attackEntries.map((attack) => this.normalizeAttack(attack));
-      }
-    }" x-init="init()">
+  <div x-data="CharacterEditor.getComponent(
+    {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
+    {{ (sheet.weapons_damage_cantrips or []) | tojson | forceescape }}
+  )">
     <div class="tab-navigation">
       <button type="button" class="tab-btn" @click="activeTab = 'identity'" :class="{ 'active': activeTab === 'identity' }">
         Identity
