@@ -9,9 +9,20 @@
 /* ── Combat Stats Strip ───────────────────────────────────────── */
 .vitals-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(3.5rem, 1fr));
   gap: 0.375rem;
   margin-bottom: 0.75rem;
+}
+
+.vitals-stat-value--small {
+  font-size: 0.875rem;
+}
+
+.vitals-stat-sub {
+  font-size: 0.55rem;
+  color: var(--color-text-muted);
+  line-height: 1;
+  margin-top: 0.125rem;
 }
 
 .vitals-stat-box {
@@ -542,4 +553,34 @@
 
 .spell-slot-btn--restore:active {
   background-color: var(--color-vitals-slot-restore-active);
+}
+
+/* ── Hit Dice ─────────────────────────────────────────────────── */
+.vitals-hit-dice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.vitals-hit-dice-label {
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.vitals-hit-dice-value {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.vitals-hit-dice-spent {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
 }

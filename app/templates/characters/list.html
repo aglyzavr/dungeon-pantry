@@ -61,6 +61,13 @@
           </div>
         </div>
       </div>
+      {% set hd = sheet.vitality.get("hit_dice", {}) %}
+      {% if hd and hd.get("total") %}
+      <div class="hit-dice-info">
+        <span class="hit-dice-label">{{ _("Hit Dice") }}</span>
+        <span class="hit-dice-value">{{ hd.total }}{% if hd.get("spent") and hd.spent != "0" %} <span class="hit-dice-spent">({{ hd.spent }} {{ _("spent") }})</span>{% endif %}</span>
+      </div>
+      {% endif %}
     </div>
     {% endfor %}
   </div>

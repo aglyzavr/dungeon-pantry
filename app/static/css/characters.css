@@ -119,3 +119,28 @@
 .characters-grid .empty-state {
   grid-column: 1 / -1;
 }
+
+/* Hit Dice Info */
+.hit-dice-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.hit-dice-label {
+  font-weight: 500;
+}
+
+.hit-dice-value {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.hit-dice-spent {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
