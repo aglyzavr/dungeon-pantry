@@ -40,6 +40,7 @@
 .campaign-card:hover {
   border-color: var(--color-accent);
   box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
 }
 
 .campaign-card-header {

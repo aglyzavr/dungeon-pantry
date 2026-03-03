@@ -28,6 +28,7 @@
 .character-card:hover {
   border-color: var(--color-accent);
   box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
 }
 
 .character-card-header {
@@ -70,11 +71,12 @@
 
 .btn-sm--primary {
   background-color: var(--color-button-bg);
-  color: var(--color-text-primary);
+  color: white;
 }
 
 .btn-sm--primary:hover {
   background-color: var(--color-button-hover);
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
 }
 
 /* HP Bar */

@@ -26,7 +26,7 @@
 .form-input {
   width: 100%;
   padding: 0.625rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   background-color: var(--color-form-bg);
   border: 1px solid var(--color-form-border);
   color: var(--color-form-text);
@@ -42,7 +42,7 @@
 .form-input:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
 }
 
 /* Common Form Actions */

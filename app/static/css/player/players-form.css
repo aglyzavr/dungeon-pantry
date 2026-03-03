@@ -93,7 +93,7 @@ form {
 /* Password Toggle Button */
 .btn-toggle-password {
   padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  border-radius: 9999px;
   border: 1px solid var(--color-form-border);
   color: var(--color-text-tertiary);
   background-color: transparent;
@@ -172,18 +172,20 @@ form {
 
 .btn-submit {
   background-color: var(--color-button-bg);
-  color: var(--color-text-primary);
+  color: white;
   font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  letter-spacing: 0.025em;
 }
 
 .btn-submit:hover {
   background-color: var(--color-button-hover);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
 }
 
 .btn-submit:disabled {
