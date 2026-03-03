@@ -1,7 +1,7 @@
 <div id="portrait-upload-modal" class="modal-overlay" onclick="event.target === this && closePortraitModal()">
     <div class="modal-container">
         <div class="modal-header">
-            <h2>Upload Character Portrait</h2>
+            <h2>{{ _("Upload Character Portrait") }}</h2>
             <button class="modal-close" onclick="closePortraitModal()" type="button">✕</button>
         </div>
 
@@ -19,7 +19,7 @@
                 class="portrait-upload-form"
             >
                 <div class="form-group">
-                    <label for="portrait-file" class="form-label">Select Image</label>
+                    <label for="portrait-file" class="form-label">{{ _("Select Image") }}</label>
                     <input
                         type="file"
                         id="portrait-file"
@@ -29,7 +29,7 @@
                         class="form-input-file"
                     />
                     <div class="form-help-text">
-                        Supported formats: JPEG, PNG | Maximum size: 5MB
+                        {{ _("Supported formats: JPEG, PNG | Maximum size: 5MB") }}
                     </div>
                 </div>
 
@@ -39,10 +39,10 @@
                         class="btn-secondary"
                         onclick="closePortraitModal()"
                     >
-                        Cancel
+                        {{ _("Cancel") }}
                     </button>
                     <button type="submit" class="btn-primary">
-                        Upload Portrait
+                        {{ _("Upload Portrait") }}
                     </button>
                 </div>
             </form>

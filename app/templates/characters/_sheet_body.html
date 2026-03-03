@@ -93,9 +93,9 @@
                         <div class="stats-panel-title">{{ _("Senses") }}</div>
                         <div class="senses-section">
                             {% for label, val in [
-                            ("Passive Perception", sheet.passive_perception),
-                            ("Passive Investigation", sheet.get("passive_investigation", 10)),
-                            ("Passive Insight", sheet.get("passive_insight", 10))
+                            (_("Passive Perception"), sheet.passive_perception),
+                            (_("Passive Investigation"), sheet.get("passive_investigation", 10)),
+                            (_("Passive Insight"), sheet.get("passive_insight", 10))
                             ] %}
                             <div class="sense-item">
                                 <span class="sense-value">{{ val }}</span>
@@ -135,14 +135,26 @@
                             <form hx-post="/characters/{{ character.id }}/vitals/conditions" hx-target="#sheet-body"
                                 hx-swap="outerHTML" class="conditions-form">
                                 <div class="conditions-toggles">
-                                    {% set available_conditions = ['Blinded', 'Charmed', 'Deafened', 'Frightened',
-                                    'Grappled', 'Incapacitated', 'Invisable', 'Paralyzed', 'Petrified', 'Prone',
-                                    'Restrained', 'Stuuned', 'Unconsious'] %}
-                                    {% for condition in available_conditions %}
+                                    {% set available_conditions = [
+                                    ('Blinded', _('Blinded')),
+                                    ('Charmed', _('Charmed')),
+                                    ('Deafened', _('Deafened')),
+                                    ('Frightened', _('Frightened')),
+                                    ('Grappled', _('Grappled')),
+                                    ('Incapacitated', _('Incapacitated')),
+                                    ('Invisible', _('Invisible')),
+                                    ('Paralyzed', _('Paralyzed')),
+                                    ('Petrified', _('Petrified')),
+                                    ('Prone', _('Prone')),
+                                    ('Restrained', _('Restrained')),
+                                    ('Stunned', _('Stunned')),
+                                    ('Unconscious', _('Unconscious'))
+                                    ] %}
+                                    {% for condition_val, condition_label in available_conditions %}
                                     <label class="condition-toggle">
-                                        <input type="checkbox" name="conditions" value="{{ condition }}" {% if condition
+                                        <input type="checkbox" name="conditions" value="{{ condition_val }}" {% if condition_val
                                             in conditions %}checked{% endif %} />
-                                        <span>{{ condition }}</span>
+                                        <span>{{ condition_label }}</span>
                                     </label>
                                     {% endfor %}
                                 </div>
@@ -204,9 +216,9 @@
                         <div class="stats-panel-title">{{ _("Proficiencies & Training") }}</div>
                         <div class="proficiencies-section">
                             {% for label, items in [
-                            ("Armor", prof.armor_training),
-                            ("Weapons", prof.weapons),
-                            ("Tools", prof.tools)
+                            (_("Armor"), prof.armor_training),
+                            (_("Weapons"), prof.weapons),
+                            (_("Tools"), prof.tools)
                             ] %}
                             {% if items %}
                             <div class="proficiency-group">
@@ -217,7 +229,7 @@
                             {% endfor %}
                             {% if sheet.languages %}
                             <div class="proficiency-group">
-                                <div class="proficiency-label">Languages</div>
+                                <div class="proficiency-label">{{ _("Languages") }}</div>
                                 <p class="proficiency-items">{{ sheet.languages }}</p>
                             </div>
                             {% endif %}
@@ -230,34 +242,34 @@
                 {% if not is_readonly %}
                 <div class="ability-cards">
                     {% set ability_blocks = [
-                    ("STRENGTH", "STR", sheet.strength, [
-                    ("Athletics", sheet.strength.ability_scores.athletics)
+                    (_("Strength"), "STR", sheet.strength, [
+                    (_("Athletics"), sheet.strength.ability_scores.athletics)
                     ]),
-                    ("DEXTERITY", "DEX", sheet.dexterity, [
-                    ("Acrobatics", sheet.dexterity.ability_scores.acrobatics),
-                    ("Sleight of Hand", sheet.dexterity.ability_scores.sleight_of_hand),
-                    ("Stealth", sheet.dexterity.ability_scores.stealth)
+                    (_("Dexterity"), "DEX", sheet.dexterity, [
+                    (_("Acrobatics"), sheet.dexterity.ability_scores.acrobatics),
+                    (_("Sleight of Hand"), sheet.dexterity.ability_scores.sleight_of_hand),
+                    (_("Stealth"), sheet.dexterity.ability_scores.stealth)
                     ]),
-                    ("CONSTITUTION", "CON", sheet.constitution, []),
-                    ("INTELLIGENCE", "INT", sheet.intelligence, [
-                    ("Arcana", sheet.intelligence.ability_scores.arcana),
-                    ("History", sheet.intelligence.ability_scores.history),
-                    ("Investigation", sheet.intelligence.ability_scores.investigation),
-                    ("Nature", sheet.intelligence.ability_scores.nature),
-                    ("Religion", sheet.intelligence.ability_scores.religion)
+                    (_("Constitution"), "CON", sheet.constitution, []),
+                    (_("Intelligence"), "INT", sheet.intelligence, [
+                    (_("Arcana"), sheet.intelligence.ability_scores.arcana),
+                    (_("History"), sheet.intelligence.ability_scores.history),
+                    (_("Investigation"), sheet.intelligence.ability_scores.investigation),
+                    (_("Nature"), sheet.intelligence.ability_scores.nature),
+                    (_("Religion"), sheet.intelligence.ability_scores.religion)
                     ]),
-                    ("WISDOM", "WIS", sheet.wisdom, [
-                    ("Animal Handling", sheet.wisdom.ability_scores.animal_handling),
-                    ("Insight", sheet.wisdom.ability_scores.insight),
-                    ("Medicine", sheet.wisdom.ability_scores.medicine),
-                    ("Perception", sheet.wisdom.ability_scores.perception),
-                    ("Survival", sheet.wisdom.ability_scores.survival)
+                    (_("Wisdom"), "WIS", sheet.wisdom, [
+                    (_("Animal Handling"), sheet.wisdom.ability_scores.animal_handling),
+                    (_("Insight"), sheet.wisdom.ability_scores.insight),
+                    (_("Medicine"), sheet.wisdom.ability_scores.medicine),
+                    (_("Perception"), sheet.wisdom.ability_scores.perception),
+                    (_("Survival"), sheet.wisdom.ability_scores.survival)
                     ]),
-                    ("CHARISMA", "CHA", sheet.charisma, [
-                    ("Deception", sheet.charisma.ability_scores.deception),
-                    ("Intimidation", sheet.charisma.ability_scores.intimidation),
-                    ("Performance", sheet.charisma.ability_scores.performance),
-                    ("Persuasion", sheet.charisma.ability_scores.persuasion)
+                    (_("Charisma"), "CHA", sheet.charisma, [
+                    (_("Deception"), sheet.charisma.ability_scores.deception),
+                    (_("Intimidation"), sheet.charisma.ability_scores.intimidation),
+                    (_("Performance"), sheet.charisma.ability_scores.performance),
+                    (_("Persuasion"), sheet.charisma.ability_scores.persuasion)
                     ])
                     ] %}
 
@@ -272,13 +284,13 @@
                                 </div>
                             </div>
                             <div class="ability-card-score-box">
-                                <div class="ability-card-score-label">score</div>
+                                <div class="ability-card-score-label">{{ _("score") }}</div>
                                 <div class="ability-card-score-value">
                                     {{ ability.score }}
                                 </div>
                             </div>
                             <div class="ability-card-name">
-                                {{ full_name }}
+                                {{ full_name | upper }}
                             </div>
                         </div>
 
@@ -371,10 +383,10 @@
                     <table class="attacks-table">
                         <thead class="attacks-table-head">
                             <tr>
-                                <th class="attacks-table-head-cell">Name</th>
-                                <th class="attacks-table-head-cell">Atk / DC</th>
-                                <th class="attacks-table-head-cell">Damage & Type</th>
-                                <th class="attacks-table-head-cell hidden sm:table-cell">Notes</th>
+                                <th class="attacks-table-head-cell">{{ _("Name") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Atk / DC") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Damage & Type") }}</th>
+                                <th class="attacks-table-head-cell hidden sm:table-cell">{{ _("Notes") }}</th>
                             </tr>
                         </thead>
                         <tbody class="attacks-table-body">
@@ -410,10 +422,10 @@
                     <table class="attacks-table">
                         <thead class="attacks-table-head">
                             <tr>
-                                <th class="attacks-table-head-cell">Name</th>
-                                <th class="attacks-table-head-cell">Atk / DC</th>
-                                <th class="attacks-table-head-cell">Damage & Type</th>
-                                <th class="attacks-table-head-cell hidden sm:table-cell">Notes</th>
+                                <th class="attacks-table-head-cell">{{ _("Name") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Atk / DC") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Damage & Type") }}</th>
+                                <th class="attacks-table-head-cell hidden sm:table-cell">{{ _("Notes") }}</th>
                             </tr>
                         </thead>
                         <tbody class="attacks-table-body">
@@ -441,19 +453,18 @@
                 <div class="content-section">
                     <div class="combat-actions-grid">
                         {% for action_name, action_desc in [
-                        ("Attack", "Make a melee or ranged attack with a weapon or an unarmed strike."),
-                        ("Dash", "You gain extra movement for the current turn equal to your Speed."),
-                        ("Disengage", "Your movement doesn't provoke Opportunity Attacks for the rest of the turn."),
-                        ("Dodge", "Until the start of your next turn, attack rolls against you have Disadvantage, and
-                        you make Dexterity saving throws with Advantage."),
-                        ("Help", "Help another creature's ability check or attack roll, or administer first aid."),
-                        ("Hide", "Make a Dexterity (Stealth) check to hide."),
-                        ("Influence", "Make a Charisma check to influence a creature's attitude."),
-                        ("Magic", "Cast a spell, use a magic item, or use a magical feature."),
-                        ("Ready", "Prepare to take an action in response to a trigger you define."),
-                        ("Search", "Make a Wisdom (Perception) check to find something."),
-                        ("Study", "Make an Intelligence (Investigation) check to study a creature or object."),
-                        ("Utilize", "Use a nonmagical object, such as opening a door or activating an item.")
+                        (_("Attack"), _("Make a melee or ranged attack with a weapon or an unarmed strike.")),
+                        (_("Dash"), _("You gain extra movement for the current turn equal to your Speed.")),
+                        (_("Disengage"), _("Your movement doesn't provoke Opportunity Attacks for the rest of the turn.")),
+                        (_("Dodge"), _("Until the start of your next turn, attack rolls against you have Disadvantage, and you make Dexterity saving throws with Advantage.")),
+                        (_("Help"), _("Help another creature's ability check or attack roll, or administer first aid.")),
+                        (_("Hide"), _("Make a Dexterity (Stealth) check to hide.")),
+                        (_("Influence"), _("Make a Charisma check to influence a creature's attitude.")),
+                        (_("Magic"), _("Cast a spell, use a magic item, or use a magical feature.")),
+                        (_("Ready"), _("Prepare to take an action in response to a trigger you define.")),
+                        (_("Search"), _("Make a Wisdom (Perception) check to find something.")),
+                        (_("Study"), _("Make an Intelligence (Investigation) check to study a creature or object.")),
+                        (_("Utilize"), _("Use a nonmagical object, such as opening a door or activating an item."))
                         ] %}
                         <div class="combat-action-item">
                             <div class="combat-action-name">{{ action_name }}</div>
@@ -759,8 +770,8 @@
 
             {# Short Fields #}
             {% set short_fields = [
-            ("Background", sheet.character_identity.background),
-            ("Alignment", sheet.get("backstory_and_personality", {}).get("alignment"))
+            (_("Background"), sheet.character_identity.background),
+            (_("Alignment"), sheet.get("backstory_and_personality", {}).get("alignment"))
             ] %}
             {% if short_fields[0][1] or short_fields[1][1] %}
             <div class="bio-grid">
@@ -777,9 +788,9 @@
 
             {# Long Fields #}
             {% for label, val in [
-            ("Appearance", sheet.appearance),
-            ("Personality", sheet.backstory_and_personality.personality),
-            ("Backstory", sheet.backstory_and_personality.backstory)
+            (_("Appearance"), sheet.appearance),
+            (_("Personality"), sheet.backstory_and_personality.personality),
+            (_("Backstory"), sheet.backstory_and_personality.backstory)
             ] %}
             {% if val %}
             <div class="bio-long-card">
@@ -802,7 +813,7 @@
 <div class="player-assignment-section">
 
     <div class="player-assignment-header">
-        <h3 class="player-assignment-title">Player Assignment</h3>
+        <h3 class="player-assignment-title">{{ _("Player Assignment") }}</h3>
     </div>
 
     <div class="player-assignment-content">
@@ -816,33 +827,33 @@
                 </div>
                 <div class="assigned-player-details">
                     <p class="assigned-player-name">{{ character.owner.username }}</p>
-                    <p class="assigned-player-label">Currently assigned</p>
+                    <p class="assigned-player-label">{{ _("Currently assigned") }}</p>
                 </div>
             </div>
             <form method="post" action="/characters/{{ character.id }}/assign">
                 <input type="hidden" name="player_id" value="" />
-                <button type="submit" class="btn-unassign">Unassign</button>
+                <button type="submit" class="btn-unassign">{{ _("Unassign") }}</button>
             </form>
         </div>
         {% else %}
-        <p class="content-section-text" style="margin-bottom: 1rem;">No player assigned to this character.</p>
+        <p class="content-section-text" style="margin-bottom: 1rem;">{{ _("No player assigned to this character.") }}</p>
         {% endif %}
 
         {# Assignment Form #}
         <form method="post" action="/characters/{{ character.id }}/assign" class="assignment-form">
             <div class="assignment-form-group">
-                <label class="assignment-form-label">Assign to player</label>
+                <label class="assignment-form-label">{{ _("Assign to player") }}</label>
                 <select name="player_id" class="assignment-form-select">
-                    <option value="">— Select player —</option>
+                    <option value="">— {{ _("Select player") }} —</option>
                     {% for player in players %}
                     <option value="{{ player.id }}" {% if character.owner_id==player.id %}selected{% endif %}>
                         {{ player.username }}
-                        {% if character.owner_id == player.id %} (current){% endif %}
+                        {% if character.owner_id == player.id %} ({{ _("current") }}){% endif %}
                     </option>
                     {% endfor %}
                 </select>
             </div>
-            <button type="submit" class="assignment-form-submit">Assign</button>
+            <button type="submit" class="assignment-form-submit">{{ _("Assign") }}</button>
         </form>
 
     </div>
@@ -853,9 +864,9 @@
 <nav class="mobile-bottom-nav" x-data>
     <div style="display: flex; width: 100%;">
         {% for t, label, icon in [
-        ('stats', 'Stats', '🎲'),
-        ('actions', 'Actions', '⚔️'),
-        ('spells', 'Spells', '✨'),
+        ('stats', _('Stats'), '🎲'),
+        ('actions', _('Actions'), '⚔️'),
+        ('spells', _('Spells'), '✨'),
         ] %}
         <button @click="$dispatch('switchtab', { tab: '{{ t }}' }); window.scrollTo({ top: 0, behavior: 'smooth' })"
             class="mobile-nav-button">
@@ -865,9 +876,9 @@
         {% endfor %}
         {% if not is_readonly %}
         {% for t, label, icon in [
-        ('inventory', 'Bag', '🎒'),
-        ('features', 'Features', '📜'),
-        ('bio', 'Bio', '📖')
+        ('inventory', _('Bag'), '🎒'),
+        ('features', _('Features'), '📜'),
+        ('bio', _('Bio'), '📖')
         ] %}
         <button @click="$dispatch('switchtab', { tab: '{{ t }}' }); window.scrollTo({ top: 0, behavior: 'smooth' })"
             class="mobile-nav-button">

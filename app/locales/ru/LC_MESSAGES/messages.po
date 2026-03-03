@@ -390,3 +390,262 @@ msgstr "Произошла ошибка при загрузке листа пе�
 
 msgid "Back to Characters"
 msgstr "Вернуться к персонажам"
+
+# Character Sheet - Ability Scores (full names)
+msgid "Strength"
+msgstr "Сила"
+
+msgid "Dexterity"
+msgstr "Ловкость"
+
+msgid "Constitution"
+msgstr "Телосложение"
+
+msgid "Intelligence"
+msgstr "Интеллект"
+
+msgid "Wisdom"
+msgstr "Мудрость"
+
+msgid "Charisma"
+msgstr "Харизма"
+
+msgid "score"
+msgstr "очки"
+
+# Character Sheet - Features & Traits Tab
+msgid "Features & Traits"
+msgstr "Особенности и черты"
+
+msgid "Features"
+msgstr "Способности"
+
+# Character Sheet - Conditions
+msgid "Conditions"
+msgstr "Состояния"
+
+msgid "No active conditions"
+msgstr "Нет активных состояний"
+
+# Condition Names
+msgid "Blinded"
+msgstr "Ослеплён"
+
+msgid "Charmed"
+msgstr "Очарован"
+
+msgid "Deafened"
+msgstr "Оглушён"
+
+msgid "Frightened"
+msgstr "Испуган"
+
+msgid "Grappled"
+msgstr "Схвачен"
+
+msgid "Incapacitated"
+msgstr "Недееспособен"
+
+msgid "Invisible"
+msgstr "Невидимый"
+
+msgid "Paralyzed"
+msgstr "Парализован"
+
+msgid "Petrified"
+msgstr "Окаменевший"
+
+msgid "Prone"
+msgstr "Распластан"
+
+msgid "Restrained"
+msgstr "Обездвижен"
+
+msgid "Stunned"
+msgstr "Оглушён"
+
+msgid "Unconscious"
+msgstr "Без сознания"
+
+# Character Sheet - Defenses
+msgid "Defenses"
+msgstr "Защиты"
+
+msgid "No resistances or immunities"
+msgstr "Нет сопротивлений или иммунитетов"
+
+msgid "e.g., Fire resistance, Poison immunity"
+msgstr "напр., Сопротивление огню, Иммунитет к яду"
+
+msgid "Saving throw proficiency"
+msgstr "Владение спасброском"
+
+# Character Sheet - Actions Tab
+msgid "Bonus Actions"
+msgstr "Бонусные действия"
+
+msgid "Combat Actions"
+msgstr "Боевые действия"
+
+msgid "Spell"
+msgstr "Заклинание"
+
+msgid "Name"
+msgstr "Название"
+
+msgid "Atk / DC"
+msgstr "Атк / СЛ"
+
+msgid "Damage & Type"
+msgstr "Урон и тип"
+
+msgid "Notes"
+msgstr "Заметки"
+
+# Combat Actions
+msgid "Attack"
+msgstr "Атака"
+
+msgid "Make a melee or ranged attack with a weapon or an unarmed strike."
+msgstr "Совершите атаку ближнего или дальнего боя оружием или безоружный удар."
+
+msgid "Dash"
+msgstr "Рывок"
+
+msgid "You gain extra movement for the current turn equal to your Speed."
+msgstr "Вы получаете дополнительное перемещение на текущий ход, равное вашей Скорости."
+
+msgid "Disengage"
+msgstr "Отход"
+
+msgid "Your movement doesn't provoke Opportunity Attacks for the rest of the turn."
+msgstr "Ваше перемещение не провоцирует провоцированные атаки до конца хода."
+
+msgid "Dodge"
+msgstr "Уклонение"
+
+msgid "Until the start of your next turn, attack rolls against you have Disadvantage, and you make Dexterity saving throws with Advantage."
+msgstr "До начала вашего следующего хода броски атаки против вас совершаются с Помехой, а вы совершаете спасброски Ловкости с Преимуществом."
+
+msgid "Help"
+msgstr "Помощь"
+
+msgid "Help another creature's ability check or attack roll, or administer first aid."
+msgstr "Помогите другому существу с проверкой характеристики или броском атаки, или окажите первую помощь."
+
+msgid "Hide"
+msgstr "Прятки"
+
+msgid "Make a Dexterity (Stealth) check to hide."
+msgstr "Совершите проверку Ловкости (Скрытность), чтобы спрятаться."
+
+msgid "Influence"
+msgstr "Воздействие"
+
+msgid "Make a Charisma check to influence a creature's attitude."
+msgstr "Совершите проверку Харизмы, чтобы повлиять на отношение существа."
+
+msgid "Magic"
+msgstr "Магия"
+
+msgid "Cast a spell, use a magic item, or use a magical feature."
+msgstr "Сотворите заклинание, используйте магический предмет или магическую способность."
+
+msgid "Ready"
+msgstr "Подготовка"
+
+msgid "Prepare to take an action in response to a trigger you define."
+msgstr "Подготовьтесь к совершению действия в ответ на определённый вами триггер."
+
+msgid "Search"
+msgstr "Поиск"
+
+msgid "Make a Wisdom (Perception) check to find something."
+msgstr "Совершите проверку Мудрости (Восприятие), чтобы что-то найти."
+
+msgid "Study"
+msgstr "Изучение"
+
+msgid "Make an Intelligence (Investigation) check to study a creature or object."
+msgstr "Совершите проверку Интеллекта (Расследование), чтобы изучить существо или объект."
+
+msgid "Utilize"
+msgstr "Использование"
+
+msgid "Use a nonmagical object, such as opening a door or activating an item."
+msgstr "Используйте немагический объект, например, откройте дверь или активируйте предмет."
+
+# Character Sheet - Spells Tab (additional)
+msgid "(require spell slots)"
+msgstr "(требуют ячейки заклинаний)"
+
+msgid "(cast at will)"
+msgstr "(по желанию)"
+
+# Character Sheet - Bio Tab
+msgid "Background"
+msgstr "Происхождение"
+
+msgid "Alignment"
+msgstr "Мировоззрение"
+
+msgid "Appearance"
+msgstr "Внешность"
+
+msgid "Personality"
+msgstr "Характер"
+
+msgid "Backstory"
+msgstr "Предыстория"
+
+# Player Assignment
+msgid "Player Assignment"
+msgstr "Назначение игрока"
+
+msgid "Currently assigned"
+msgstr "Назначен"
+
+msgid "Unassign"
+msgstr "Отвязать"
+
+msgid "No player assigned to this character."
+msgstr "Нет назначенного игрока для этого персонажа."
+
+msgid "Assign to player"
+msgstr "Назначить игроку"
+
+msgid "Select player"
+msgstr "Выберите игрока"
+
+msgid "Assign"
+msgstr "Назначить"
+
+msgid "current"
+msgstr "текущий"
+
+# Portrait Upload
+msgid "Upload Character Portrait"
+msgstr "Загрузка портрета персонажа"
+
+msgid "Select Image"
+msgstr "Выберите изображение"
+
+msgid "Supported formats: JPEG, PNG | Maximum size: 5MB"
+msgstr "Поддерживаемые форматы: JPEG, PNG | Максимальный размер: 5 МБ"
+
+msgid "Upload Portrait"
+msgstr "Загрузить портрет"
+
+# Sheet Header
+msgid "Click to upload portrait"
+msgstr "Нажмите для загрузки портрета"
+
+msgid "Edit character"
+msgstr "Изменить персонажа"
+
+msgid "Back to campaign"
+msgstr "Назад к кампании"
+
+# Mobile Navigation
+msgid "Bag"
+msgstr "Сумка"

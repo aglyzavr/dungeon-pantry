@@ -392,3 +392,262 @@ msgstr "Back to Characters"
 
 msgid "Sign In"
 msgstr "Sign In"
+
+# Character Sheet - Ability Scores (full names)
+msgid "Strength"
+msgstr "Strength"
+
+msgid "Dexterity"
+msgstr "Dexterity"
+
+msgid "Constitution"
+msgstr "Constitution"
+
+msgid "Intelligence"
+msgstr "Intelligence"
+
+msgid "Wisdom"
+msgstr "Wisdom"
+
+msgid "Charisma"
+msgstr "Charisma"
+
+msgid "score"
+msgstr "score"
+
+# Character Sheet - Features & Traits Tab
+msgid "Features & Traits"
+msgstr "Features & Traits"
+
+msgid "Features"
+msgstr "Features"
+
+# Character Sheet - Conditions
+msgid "Conditions"
+msgstr "Conditions"
+
+msgid "No active conditions"
+msgstr "No active conditions"
+
+# Condition Names
+msgid "Blinded"
+msgstr "Blinded"
+
+msgid "Charmed"
+msgstr "Charmed"
+
+msgid "Deafened"
+msgstr "Deafened"
+
+msgid "Frightened"
+msgstr "Frightened"
+
+msgid "Grappled"
+msgstr "Grappled"
+
+msgid "Incapacitated"
+msgstr "Incapacitated"
+
+msgid "Invisible"
+msgstr "Invisible"
+
+msgid "Paralyzed"
+msgstr "Paralyzed"
+
+msgid "Petrified"
+msgstr "Petrified"
+
+msgid "Prone"
+msgstr "Prone"
+
+msgid "Restrained"
+msgstr "Restrained"
+
+msgid "Stunned"
+msgstr "Stunned"
+
+msgid "Unconscious"
+msgstr "Unconscious"
+
+# Character Sheet - Defenses
+msgid "Defenses"
+msgstr "Defenses"
+
+msgid "No resistances or immunities"
+msgstr "No resistances or immunities"
+
+msgid "e.g., Fire resistance, Poison immunity"
+msgstr "e.g., Fire resistance, Poison immunity"
+
+msgid "Saving throw proficiency"
+msgstr "Saving throw proficiency"
+
+# Character Sheet - Actions Tab
+msgid "Bonus Actions"
+msgstr "Bonus Actions"
+
+msgid "Combat Actions"
+msgstr "Combat Actions"
+
+msgid "Spell"
+msgstr "Spell"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Atk / DC"
+msgstr "Atk / DC"
+
+msgid "Damage & Type"
+msgstr "Damage & Type"
+
+msgid "Notes"
+msgstr "Notes"
+
+# Combat Actions
+msgid "Attack"
+msgstr "Attack"
+
+msgid "Make a melee or ranged attack with a weapon or an unarmed strike."
+msgstr "Make a melee or ranged attack with a weapon or an unarmed strike."
+
+msgid "Dash"
+msgstr "Dash"
+
+msgid "You gain extra movement for the current turn equal to your Speed."
+msgstr "You gain extra movement for the current turn equal to your Speed."
+
+msgid "Disengage"
+msgstr "Disengage"
+
+msgid "Your movement doesn't provoke Opportunity Attacks for the rest of the turn."
+msgstr "Your movement doesn't provoke Opportunity Attacks for the rest of the turn."
+
+msgid "Dodge"
+msgstr "Dodge"
+
+msgid "Until the start of your next turn, attack rolls against you have Disadvantage, and you make Dexterity saving throws with Advantage."
+msgstr "Until the start of your next turn, attack rolls against you have Disadvantage, and you make Dexterity saving throws with Advantage."
+
+msgid "Help"
+msgstr "Help"
+
+msgid "Help another creature's ability check or attack roll, or administer first aid."
+msgstr "Help another creature's ability check or attack roll, or administer first aid."
+
+msgid "Hide"
+msgstr "Hide"
+
+msgid "Make a Dexterity (Stealth) check to hide."
+msgstr "Make a Dexterity (Stealth) check to hide."
+
+msgid "Influence"
+msgstr "Influence"
+
+msgid "Make a Charisma check to influence a creature's attitude."
+msgstr "Make a Charisma check to influence a creature's attitude."
+
+msgid "Magic"
+msgstr "Magic"
+
+msgid "Cast a spell, use a magic item, or use a magical feature."
+msgstr "Cast a spell, use a magic item, or use a magical feature."
+
+msgid "Ready"
+msgstr "Ready"
+
+msgid "Prepare to take an action in response to a trigger you define."
+msgstr "Prepare to take an action in response to a trigger you define."
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Make a Wisdom (Perception) check to find something."
+msgstr "Make a Wisdom (Perception) check to find something."
+
+msgid "Study"
+msgstr "Study"
+
+msgid "Make an Intelligence (Investigation) check to study a creature or object."
+msgstr "Make an Intelligence (Investigation) check to study a creature or object."
+
+msgid "Utilize"
+msgstr "Utilize"
+
+msgid "Use a nonmagical object, such as opening a door or activating an item."
+msgstr "Use a nonmagical object, such as opening a door or activating an item."
+
+# Character Sheet - Spells Tab (additional)
+msgid "(require spell slots)"
+msgstr "(require spell slots)"
+
+msgid "(cast at will)"
+msgstr "(cast at will)"
+
+# Character Sheet - Bio Tab
+msgid "Background"
+msgstr "Background"
+
+msgid "Alignment"
+msgstr "Alignment"
+
+msgid "Appearance"
+msgstr "Appearance"
+
+msgid "Personality"
+msgstr "Personality"
+
+msgid "Backstory"
+msgstr "Backstory"
+
+# Player Assignment
+msgid "Player Assignment"
+msgstr "Player Assignment"
+
+msgid "Currently assigned"
+msgstr "Currently assigned"
+
+msgid "Unassign"
+msgstr "Unassign"
+
+msgid "No player assigned to this character."
+msgstr "No player assigned to this character."
+
+msgid "Assign to player"
+msgstr "Assign to player"
+
+msgid "Select player"
+msgstr "Select player"
+
+msgid "Assign"
+msgstr "Assign"
+
+msgid "current"
+msgstr "current"
+
+# Portrait Upload
+msgid "Upload Character Portrait"
+msgstr "Upload Character Portrait"
+
+msgid "Select Image"
+msgstr "Select Image"
+
+msgid "Supported formats: JPEG, PNG | Maximum size: 5MB"
+msgstr "Supported formats: JPEG, PNG | Maximum size: 5MB"
+
+msgid "Upload Portrait"
+msgstr "Upload Portrait"
+
+# Sheet Header
+msgid "Click to upload portrait"
+msgstr "Click to upload portrait"
+
+msgid "Edit character"
+msgstr "Edit character"
+
+msgid "Back to campaign"
+msgstr "Back to campaign"
+
+# Mobile Navigation
+msgid "Bag"
+msgstr "Bag"

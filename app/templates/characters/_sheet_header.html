@@ -7,7 +7,7 @@
         <div class="sheet-header-avatar">
             {% if can_edit %}
             <button hx-get="/characters/{{ character.id }}/portrait/upload" hx-target="body" hx-swap="beforeend"
-                class="sheet-header-avatar-icon sheet-header-avatar-button" title="Click to upload portrait">
+                class="sheet-header-avatar-icon sheet-header-avatar-button" title="{{ _("Click to upload portrait") }}">
                 {% if character.portrait_data %}
                 <img src="/characters/{{ character.id }}/portrait" alt="{{ sheet.character_identity.character_name }}"
                     class="portrait-image" />
@@ -108,12 +108,12 @@
     <div class="sheet-header-edit-section">
         {% if campaigns %}
         {% set campaign = campaigns[0] %}
-        <a href="/campaigns/{{ campaign.id }}" class="btn-campaign-back" title="Back to campaign">
+        <a href="/campaigns/{{ campaign.id }}" class="btn-campaign-back" title="{{ _("Back to campaign") }}">
             ← {{ campaign.name }}
         </a>
         {% endif %}
         {% if can_edit %}
-        <a href="/characters/{{ character.id }}/edit" class="btn-edit-icon" title="Edit character">
+        <a href="/characters/{{ character.id }}/edit" class="btn-edit-icon" title="{{ _("Edit character") }}">
             ✏️
         </a>
         {% endif %}
