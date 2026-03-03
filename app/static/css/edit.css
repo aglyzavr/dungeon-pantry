@@ -198,8 +198,8 @@
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #818cf8;
-  background: #111827;
+  border-color: var(--color-accent);
+  background: var(--color-bg-primary);
 }
 
 .form-group input[type="number"] {
@@ -217,7 +217,7 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #818cf8;
+  accent-color: var(--color-accent);
 }
 
 .form-group textarea {
@@ -241,9 +241,9 @@
 
 /* Error Messages */
 .error-message {
-  background: #7f1d1d;
-  border: 1px solid #b91c1c;
-  color: #fca5a5;
+  background: var(--color-message-error);
+  border: 1px solid var(--color-message-error-border);
+  color: var(--color-message-error-text);
   padding: 1rem;
   border-radius: 0.5rem;
   margin-bottom: 1.5rem;
@@ -252,8 +252,8 @@
 
 /* Button Styles (Overrides for edit page) */
 .btn-sm--primary {
-  background-color: #4f46e5;
-  color: #ffffff;
+  background-color: var(--color-button-bg);
+  color: var(--color-text-primary);
   border: none;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
@@ -266,13 +266,13 @@
 }
 
 .btn-sm--primary:hover {
-  background-color: #4338ca;
+  background-color: var(--color-button-hover);
 }
 
 .btn-sm--secondary {
-  background-color: #374151;
-  color: #d1d5db;
-  border: 1px solid #4b5563;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-form-border);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
@@ -284,8 +284,8 @@
 }
 
 .btn-sm--secondary:hover {
-  background-color: #4b5563;
-  color: #ffffff;
+  background-color: var(--color-form-border);
+  color: var(--color-text-primary);
 }
 
 /* Responsive adjustments */

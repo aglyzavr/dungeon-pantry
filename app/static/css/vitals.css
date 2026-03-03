@@ -15,7 +15,7 @@
 }
 
 .vitals-stat-box {
-  background-color: #1f2937; /* gray-800 */
+  background-color: var(--color-bg-secondary);
   border-radius: 0.5rem;
   padding: 0.375rem 0.5rem;
   text-align: center;
@@ -25,7 +25,7 @@
 
 .vitals-stat-label {
   font-size: 0.625rem;
-  color: #6b7280; /* gray-500 */
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   line-height: 1;
@@ -34,14 +34,14 @@
 .vitals-stat-value {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin-top: 0.125rem;
   line-height: 1;
 }
 
 /* ── AC Button ────────────────────────────────────────────────── */
 .btn-ac {
-  background-color: #1f2937; /* gray-800 */
+  background-color: var(--color-bg-secondary);
   border-radius: 0.5rem;
   padding: 0.375rem 0.5rem;
   text-align: center;
@@ -57,11 +57,11 @@
 }
 
 .btn-ac--inactive:hover {
-  border-color: #4b5563;
+  border-color: var(--color-form-border);
 }
 
 .btn-ac--active {
-  border-color: #6366f1; /* indigo-500 */
+  border-color: var(--color-vitals-accent);
 }
 
 .btn-ac-status {
@@ -71,17 +71,17 @@
 }
 
 .btn-ac-status--inactive {
-  color: #4b5563; /* gray-600 */
+  color: var(--color-form-border);
 }
 
 .btn-ac-status--active {
-  color: #a5d6ff; /* indigo-400 */
+  color: var(--color-vitals-accent-soft);
 }
 
 /* ── HP Bar Container ─────────────────────────────────────────── */
 .hp-bar-container {
-  background-color: #111827; /* gray-900 */
-  border: 1px solid #1f2937; /* gray-800 */
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   overflow: hidden;
 }
@@ -95,15 +95,15 @@
 }
 
 .hp-bar-fill--healthy {
-  background-color: #22c55e; /* green-500 */
+  background-color: var(--color-success);
 }
 
 .hp-bar-fill--injured {
-  background-color: #eab308; /* yellow-500 */
+  background-color: var(--color-vitals-warning);
 }
 
 .hp-bar-fill--critical {
-  background-color: #ef4444; /* red-500 */
+  background-color: var(--color-error);
 }
 
 .hp-bar-content {
@@ -131,7 +131,7 @@
 
 .hp-label {
   font-size: 0.75rem;
-  color: #6b7280; /* gray-500 */
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-right: 0.25rem;
@@ -144,31 +144,31 @@
 }
 
 .hp-current--healthy {
-  color: #4ade80; /* green-400 */
+  color: var(--color-vitals-health-high);
 }
 
 .hp-current--injured {
-  color: #facc15; /* yellow-400 */
+  color: var(--color-vitals-health-mid);
 }
 
 .hp-current--critical {
-  color: #f87171; /* red-400 */
+  color: var(--color-vitals-health-low);
 }
 
 .hp-divider {
-  color: #4b5563; /* gray-600 */
+  color: var(--color-form-border);
 }
 
 .hp-max {
-  color: #d1d5db; /* gray-300 */
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .hp-temp {
   font-size: 0.75rem;
   padding: 0.125rem 0.375rem;
-  background-color: rgba(59, 130, 246, 0.5); /* blue-900/50 */
-  color: #93c5fd; /* blue-300 */
+  background-color: var(--color-status-blue-bg);
+  color: var(--color-vitals-info);
   border-radius: 9999px;
   margin-left: 0.25rem;
 }
@@ -213,14 +213,14 @@
 
 .hp-control-label {
   font-size: 0.625rem;
-  color: #60a5fa; /* blue-400 */
+  color: var(--color-vitals-info-strong);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 500;
 }
 
 .hp-control-label--max {
-  color: #6b7280; /* gray-500 */
+  color: var(--color-text-muted);
 }
 
 /* ── HP Adjust Controls ───────────────────────────────────────── */
@@ -235,9 +235,9 @@
   max-width: 5rem;
   text-align: center;
   padding: 0.5rem 0.5rem;
-  background-color: #1f2937; /* gray-800 */
-  border: 1px solid #374151; /* gray-700 */
-  color: #ffffff;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
   border-radius: 0.375rem;
   font-size: 1rem;
   transition: border-color 0.2s;
@@ -254,7 +254,7 @@
 
 .hp-input:focus {
   outline: none;
-  border-color: #6366f1; /* indigo-500 */
+  border-color: var(--color-vitals-accent);
 }
 
 .hp-input::-webkit-outer-spin-button,
@@ -289,29 +289,29 @@
 }
 
 .btn-heal {
-  background-color: rgba(34, 197, 94, 0.5); /* green-900/50 */
-  color: #86efac; /* green-300 */
+  background-color: var(--color-status-green-bg);
+  color: var(--color-message-success-text);
 }
 
 .btn-heal:hover {
-  background-color: #166534; /* green-800 */
+  background-color: var(--color-vitals-heal-hover);
 }
 
 .btn-heal:active {
-  background-color: #14532d; /* green-900 */
+  background-color: var(--color-vitals-heal-active);
 }
 
 .btn-damage {
-  background-color: rgba(239, 68, 68, 0.5); /* red-900/50 */
-  color: #fca5a5; /* red-300 */
+  background-color: var(--color-status-red-bg);
+  color: var(--color-message-error-text);
 }
 
 .btn-damage:hover {
-  background-color: #7f1d1d; /* red-800 */
+  background-color: var(--color-message-error);
 }
 
 .btn-damage:active {
-  background-color: #450a0a; /* red-950 */
+  background-color: var(--color-vitals-damage-active);
 }
 
 /* ── Temp/Max HP Forms ────────────────────────────────────────── */
@@ -339,9 +339,9 @@
   max-width: 5rem;
   text-align: center;
   padding: 0.5rem 0.5rem;
-  background-color: #1f2937; /* gray-800 */
-  border: 1px solid #374151; /* gray-700 */
-  color: #ffffff;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
   border-radius: 0.375rem;
   font-size: 1rem;
   transition: border-color 0.2s;
@@ -358,11 +358,11 @@
 
 .hp-form-input:focus {
   outline: none;
-  border-color: #60a5fa; /* blue-500 */
+  border-color: var(--color-vitals-info-strong);
 }
 
 .hp-form-input--max:focus {
-  border-color: #6366f1; /* indigo-500 */
+  border-color: var(--color-vitals-accent);
 }
 
 .hp-form-input::-webkit-outer-spin-button,
@@ -374,8 +374,8 @@
 .hp-form-submit {
   flex: 1;
   padding: 0.5rem 1rem;
-  background-color: #374151; /* gray-700 */
-  color: #d1d5db; /* gray-300 */
+  background-color: var(--color-bg-light);
+  color: var(--color-text-secondary);
   border: none;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -397,31 +397,31 @@
 }
 
 .hp-form-submit:hover {
-  background-color: #4b5563; /* gray-600 */
+  background-color: var(--color-form-border);
 }
 
 .hp-form-submit:active {
-  background-color: #6b7280; /* gray-500 */
+  background-color: var(--color-text-muted);
 }
 
 /* ── Spell Slots Container ────────────────────────────────────── */
 .spell-slots-container {
-  background-color: #111827; /* gray-900 */
-  border: 1px solid #1f2937; /* gray-800 */
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   overflow: hidden;
   margin-top: 0.75rem;
 }
 
 .spell-slots-header {
-  background-color: #1f2937; /* gray-800 */
+  background-color: var(--color-bg-secondary);
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid #374151; /* gray-700 */
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .spell-slots-title {
   font-size: 0.75rem;
-  color: #9ca3af; /* gray-400 */
+  color: var(--color-text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 600;
@@ -439,7 +439,7 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.5rem;
-  background-color: #1f2937; /* gray-800 */
+  background-color: var(--color-bg-secondary);
   border-radius: 0.5rem;
 }
 
@@ -453,7 +453,7 @@
 
 .spell-slot-level-label {
   font-size: 0.875rem;
-  color: #d1d5db; /* gray-300 */
+  color: var(--color-text-secondary);
   font-weight: 500;
   min-width: 5rem;
 }
@@ -481,13 +481,13 @@
 }
 
 .spell-slot-dot--available {
-  border-color: #a78bfa; /* purple-400 */
-  background-color: #7c3aed; /* purple-600 */
-  box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
+  border-color: var(--color-vitals-slot-border);
+  background-color: var(--color-vitals-slot-fill);
+  box-shadow: 0 0 8px var(--color-status-purple-glow);
 }
 
 .spell-slot-dot--expended {
-  border-color: #4b5563; /* gray-600 */
+  border-color: var(--color-form-border);
   background-color: transparent;
 }
 
@@ -519,27 +519,27 @@
 }
 
 .spell-slot-btn--use {
-  background-color: rgba(239, 68, 68, 0.5); /* red-900/50 */
-  color: #fca5a5; /* red-300 */
+  background-color: var(--color-status-red-bg);
+  color: var(--color-message-error-text);
 }
 
 .spell-slot-btn--use:hover {
-  background-color: #7f1d1d; /* red-800 */
+  background-color: var(--color-message-error);
 }
 
 .spell-slot-btn--use:active {
-  background-color: #450a0a; /* red-950 */
+  background-color: var(--color-vitals-damage-active);
 }
 
 .spell-slot-btn--restore {
-  background-color: rgba(139, 92, 246, 0.5); /* purple-900/50 */
-  color: #c4b5fd; /* purple-300 */
+  background-color: var(--color-status-purple-bg);
+  color: var(--color-vitals-slot-text);
 }
 
 .spell-slot-btn--restore:hover {
-  background-color: #5b21b6; /* purple-800 */
+  background-color: var(--color-vitals-slot-restore-hover);
 }
 
 .spell-slot-btn--restore:active {
-  background-color: #3b0764; /* purple-950 */
+  background-color: var(--color-vitals-slot-restore-active);
 }

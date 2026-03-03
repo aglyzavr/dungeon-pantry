@@ -63,40 +63,6 @@
   gap: 1.25rem;
 }
 
-/* Form Group */
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  margin-bottom: 0.25rem;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.625rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--color-form-bg);
-  border: 1px solid var(--color-form-border);
-  color: var(--color-form-text);
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-
-.form-input::placeholder {
-  color: var(--color-form-placeholder);
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px var(--color-accent);
-}
 /* Submit Button */
 .btn-submit {
   width: 100%;

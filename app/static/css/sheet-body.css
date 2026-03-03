@@ -82,7 +82,7 @@
 .sheet-tab-button--active {
   background-color: var(--color-accent);
   color: var(--color-form-text);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px var(--color-overlay-shadow-sm);
 }
 
 .sheet-tab-button--inactive {
@@ -275,8 +275,8 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  background-color: rgba(31, 41, 55, 0.6); /* gray-800/60 */
-  border-bottom: 1px solid #1f2937; /* gray-800 */
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .ability-card-modifier {
@@ -327,8 +327,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid rgba(31, 41, 55, 0.6); /* gray-800/60 */
-  background-color: rgba(31, 41, 55, 0.2); /* gray-800/20 */
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: var(--color-bg-secondary-40);
 }
 
 .ability-card-save-label {
@@ -373,7 +373,8 @@
 }
 
 .ability-card-skills {
-  border-top: 1px solid rgba(31, 41, 55, 0.4); /* gray-800/40 */
+  border-top: 1px solid var(--color-border-light);
+  background-color: var(--color-bg-primary);
 }
 
 .ability-card-skill-row {
@@ -381,12 +382,16 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.625rem 1rem;
-  border-bottom: 1px solid rgba(31, 41, 55, 0.4); /* gray-800/40 */
+  border-bottom: 1px solid var(--color-border-light);
   transition: background-color 0.2s;
 }
 
+.ability-card-skill-row:nth-child(even) {
+  background-color: var(--color-bg-secondary-20);
+}
+
 .ability-card-skill-row:hover {
-  background-color: rgba(31, 41, 55, 0.3); /* gray-800/30 */
+  background-color: var(--color-bg-secondary-30);
 }
 
 .ability-card-skill-row:last-child {
@@ -473,7 +478,7 @@
 .actions-section-header {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #1f2937; /* gray-800 */
-  background-color: rgba(31, 41, 55, 0.5); /* gray-800/50 */
+  background-color: var(--color-bg-secondary-50);
 }
 
 .actions-section-title {
@@ -498,7 +503,7 @@
   font-size: 0.75rem;
   color: #4b5563; /* gray-600 */
   text-transform: uppercase;
-  background-color: rgba(31, 41, 55, 0.3); /* gray-800/30 */
+  background-color: var(--color-bg-secondary-30);
 }
 
 .attacks-table-head-cell {
@@ -516,7 +521,7 @@
 }
 
 .attacks-table-row:hover {
-  background-color: rgba(31, 41, 55, 0.4); /* gray-800/40 */
+  background-color: var(--color-bg-secondary-40);
 }
 
 .attacks-table-cell {
@@ -568,7 +573,7 @@
 }
 
 .combat-action-item:hover {
-  background-color: rgba(31, 41, 55, 0.7); /* gray-800/70 */
+  background-color: var(--color-bg-secondary-70);
 }
 
 .combat-action-name {
@@ -705,7 +710,7 @@
 }
 
 .spell-item:hover {
-  background-color: rgba(31, 41, 55, 0.4); /* gray-800/40 */
+  background-color: var(--color-bg-secondary-40);
 }
 
 .spell-header {
@@ -726,17 +731,17 @@
   font-size: 0.75rem;
   padding: 0 0.5rem;
   border-radius: 9999px;
-  background-color: rgba(79, 70, 229, 0.5); /* indigo-600/50 */
+  background-color: var(--color-tag-indigo-bg);
   color: #a5d6ff; /* indigo-300 */
 }
 
 .spell-tag--concentration {
-  background-color: rgba(180, 83, 9, 0.4); /* yellow-900/40 */
+  background-color: var(--color-tag-amber-bg-40);
   color: #fcd34d; /* yellow-300 */
 }
 
 .spell-tag--ritual {
-  background-color: rgba(75, 0, 130, 0.4); /* purple-900/40 */
+  background-color: var(--color-tag-purple-bg-40);
   color: #d8b4fe; /* purple-300 */
 }
 
@@ -894,7 +899,7 @@
 }
 
 .currency-box--copper {
-  background-color: rgba(234, 88, 12, 0.3); /* orange-900/30 */
+  background-color: var(--color-currency-orange-bg);
 }
 
 .currency-box--silver {
@@ -902,15 +907,15 @@
 }
 
 .currency-box--electrum {
-  background-color: rgba(59, 130, 246, 0.3); /* blue-900/30 */
+  background-color: var(--color-currency-blue-bg);
 }
 
 .currency-box--gold {
-  background-color: rgba(180, 83, 9, 0.3); /* yellow-900/30 */
+  background-color: var(--color-currency-amber-bg);
 }
 
 .currency-box--platinum {
-  background-color: rgba(147, 51, 234, 0.3); /* purple-900/30 */
+  background-color: var(--color-currency-purple-bg);
 }
 
 .currency-label {
@@ -1001,7 +1006,7 @@
 .player-assignment-header {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #1f2937; /* gray-800 */
-  background-color: rgba(31, 41, 55, 0.5); /* gray-800/50 */
+  background-color: var(--color-bg-secondary-50);
 }
 
 .player-assignment-title {
@@ -1064,7 +1069,7 @@
 
 .btn-unassign {
   padding: 0.375rem 0.75rem;
-  background-color: rgba(127, 29, 29, 0.4); /* red-900/40 */
+  background-color: var(--color-danger-bg-40);
   color: #fca5a5; /* red-300 */
   border: none;
   border-radius: 0.5rem;
@@ -1140,7 +1145,7 @@
   left: 0;
   right: 0;
   z-index: 50;
-  background-color: rgba(17, 24, 39, 0.95); /* gray-900/95 */
+  background-color: var(--color-bg-primary-95);
   backdrop-filter: blur(10px);
   border-top: 1px solid #1f2937; /* gray-800 */
   display: flex;
@@ -1325,7 +1330,7 @@
 .defenses-textarea:focus {
   outline: none;
   border-color: #059669;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  box-shadow: 0 0 0 3px var(--color-focus-success-ring);
 }
 
 /* ─────────────────────────────────────────────────────────────────

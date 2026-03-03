@@ -2,46 +2,18 @@
    CAMPAIGNS-ADD.CSS - Add characters page styling
    ======================================== */
 
-/* Page Container */
+/* Page Scaffold Overrides */
 .page-container {
   max-width: 48rem;
-  margin: 0 auto;
 }
 
 .page-title {
   font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
   margin-bottom: 1.5rem;
 }
 
 .page-title-highlight {
   color: var(--color-accent);
-}
-
-/* Breadcrumb Navigation */
-.breadcrumb {
-  font-size: 0.875rem;
-  color: var(--color-text-tertiary);
-  margin-bottom: 1.5rem;
-}
-
-.breadcrumb-link {
-  color: var(--color-text-tertiary);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.breadcrumb-link:hover {
-  color: var(--color-text-secondary);
-}
-
-.breadcrumb-separator {
-  margin: 0 0.5rem;
-}
-
-.breadcrumb-current {
-  color: var(--color-text-secondary);
 }
 
 /* Character Button (Clickable Card) */

@@ -2,12 +2,6 @@
    FORMS.CSS - Form styling
    ======================================== */
 
-/* Form Container */
-.form-container {
-  max-width: 32rem;
-  margin: 0 auto;
-}
-
 .form-card {
   background-color: var(--color-form-bg);
   border: 1px solid var(--color-form-border);
@@ -41,16 +35,6 @@ form {
 
 /* Form Fields */
 .form-field {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  margin-bottom: 0.25rem;
 }
 
 .form-label-required {
@@ -62,7 +46,6 @@ form {
   font-weight: 400;
 }
 
-.form-input,
 .form-textarea,
 .form-file {
   width: 100%;
@@ -76,12 +59,10 @@ form {
   font-family: inherit;
 }
 
-.form-input::placeholder,
 .form-textarea::placeholder {
   color: var(--color-form-placeholder);
 }
 
-.form-input:focus,
 .form-textarea:focus,
 .form-file:focus {
   outline: none;
@@ -115,13 +96,6 @@ form {
   resize: none;
 }
 
-/* Form Actions */
-.form-actions {
-  display: flex;
-  gap: 0.75rem;
-  padding-top: 0.5rem;
-}
-
 .btn-form-primary,
 .btn-form-secondary {
   padding: 0.625rem 1.5rem;
@@ -151,31 +125,6 @@ form {
 
 .btn-form-secondary:hover {
   background-color: var(--color-bg-light);
-}
-
-/* Breadcrumb Navigation */
-.breadcrumb {
-  font-size: 0.875rem;
-  color: var(--color-text-tertiary);
-  margin-bottom: 1.5rem;
-}
-
-.breadcrumb-link {
-  color: var(--color-text-tertiary);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.breadcrumb-link:hover {
-  color: var(--color-text-secondary);
-}
-
-.breadcrumb-separator {
-  margin: 0 0.5rem;
-}
-
-.breadcrumb-current {
-  color: var(--color-text-secondary);
 }
 
 /* Upload Description */

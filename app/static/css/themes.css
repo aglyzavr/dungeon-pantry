@@ -59,6 +59,50 @@
   --color-form-border: #4b5563;
   --color-form-text: #f3f4f6;
   --color-form-placeholder: #9ca3af;
+
+  --color-vitals-accent: #6366f1;
+  --color-vitals-accent-soft: #a5d6ff;
+  --color-vitals-warning: #eab308;
+  --color-vitals-health-high: #4ade80;
+  --color-vitals-health-mid: #facc15;
+  --color-vitals-health-low: #f87171;
+  --color-vitals-info: #93c5fd;
+  --color-vitals-info-strong: #60a5fa;
+  --color-vitals-heal-hover: #166534;
+  --color-vitals-heal-active: #14532d;
+  --color-vitals-damage-active: #450a0a;
+  --color-vitals-slot-border: #a78bfa;
+  --color-vitals-slot-fill: #7c3aed;
+  --color-vitals-slot-text: #c4b5fd;
+  --color-vitals-slot-restore-hover: #5b21b6;
+  --color-vitals-slot-restore-active: #3b0764;
+
+  --color-overlay-shadow-sm: rgba(0, 0, 0, 0.3);
+  --color-bg-secondary-20: rgba(31, 41, 55, 0.2);
+  --color-bg-secondary-30: rgba(31, 41, 55, 0.3);
+  --color-bg-secondary-40: rgba(31, 41, 55, 0.4);
+  --color-bg-secondary-50: rgba(31, 41, 55, 0.5);
+  --color-bg-secondary-60: rgba(31, 41, 55, 0.6);
+  --color-bg-secondary-70: rgba(31, 41, 55, 0.7);
+  --color-bg-primary-95: rgba(17, 24, 39, 0.95);
+
+  --color-status-blue-bg: rgba(59, 130, 246, 0.5);
+  --color-status-green-bg: rgba(34, 197, 94, 0.5);
+  --color-status-red-bg: rgba(239, 68, 68, 0.5);
+  --color-status-purple-bg: rgba(139, 92, 246, 0.5);
+  --color-status-purple-glow: rgba(167, 139, 250, 0.4);
+
+  --color-tag-indigo-bg: rgba(79, 70, 229, 0.5);
+  --color-tag-amber-bg-40: rgba(180, 83, 9, 0.4);
+  --color-tag-purple-bg-40: rgba(75, 0, 130, 0.4);
+
+  --color-currency-orange-bg: rgba(234, 88, 12, 0.3);
+  --color-currency-blue-bg: rgba(59, 130, 246, 0.3);
+  --color-currency-amber-bg: rgba(180, 83, 9, 0.3);
+  --color-currency-purple-bg: rgba(147, 51, 234, 0.3);
+
+  --color-danger-bg-40: rgba(127, 29, 29, 0.4);
+  --color-focus-success-ring: rgba(5, 150, 105, 0.1);
 }
 
 /* Light Theme - Fully Inverted Dark Theme */
@@ -118,6 +162,50 @@
   --color-form-border: #d2c8b7;
   --color-form-text: #0c0b09;
   --color-form-placeholder: #948d7f;
+
+  --color-vitals-accent: #7e730f;
+  --color-vitals-accent-soft: #fd7b38;
+  --color-vitals-warning: #db9d08;
+  --color-vitals-health-high: #791a2b;
+  --color-vitals-health-mid: #db9d08;
+  --color-vitals-health-low: #0e8e8e;
+  --color-vitals-info: #fd7b38;
+  --color-vitals-info-strong: #0480db;
+  --color-vitals-heal-hover: #b4a09c;
+  --color-vitals-heal-active: #ce7f7e;
+  --color-vitals-damage-active: #035a5a;
+  --color-vitals-slot-border: #8770f0;
+  --color-vitals-slot-fill: #3f00b0;
+  --color-vitals-slot-text: #e1bf30;
+  --color-vitals-slot-restore-hover: #8770f0;
+  --color-vitals-slot-restore-active: #3f00b0;
+
+  --color-overlay-shadow-sm: rgba(0, 0, 0, 0.15);
+  --color-bg-secondary-20: rgba(224, 216, 199, 0.2);
+  --color-bg-secondary-30: rgba(224, 216, 199, 0.3);
+  --color-bg-secondary-40: rgba(224, 216, 199, 0.4);
+  --color-bg-secondary-50: rgba(224, 216, 199, 0.5);
+  --color-bg-secondary-60: rgba(224, 216, 199, 0.6);
+  --color-bg-secondary-70: rgba(224, 216, 199, 0.7);
+  --color-bg-primary-95: rgba(238, 231, 216, 0.95);
+
+  --color-status-blue-bg: rgba(4, 128, 219, 0.4);
+  --color-status-green-bg: rgba(221, 58, 171, 0.35);
+  --color-status-red-bg: rgba(16, 187, 187, 0.35);
+  --color-status-purple-bg: rgba(63, 0, 176, 0.35);
+  --color-status-purple-glow: rgba(148, 92, 127, 0.4);
+
+  --color-tag-indigo-bg: rgba(126, 115, 15, 0.35);
+  --color-tag-amber-bg-40: rgba(219, 157, 8, 0.35);
+  --color-tag-purple-bg-40: rgba(148, 92, 127, 0.35);
+
+  --color-currency-orange-bg: rgba(193, 89, 10, 0.3);
+  --color-currency-blue-bg: rgba(4, 128, 219, 0.3);
+  --color-currency-amber-bg: rgba(219, 157, 8, 0.3);
+  --color-currency-purple-bg: rgba(148, 92, 127, 0.3);
+
+  --color-danger-bg-40: rgba(16, 187, 187, 0.35);
+  --color-focus-success-ring: rgba(121, 26, 43, 0.12);
 }
 
 /* Light Theme Card Styling */
@@ -394,8 +482,8 @@
 }
 
 [data-theme="light"] .ability-card-header {
-  background-color: rgba(224, 216, 199, 0.6);
-  border-bottom-color: #d2c8b7;
+  background-color: var(--color-bg-secondary);
+  border-bottom-color: var(--color-border-light);
 }
 
 [data-theme="light"] .ability-card-modifier-value {
@@ -420,8 +508,8 @@
 }
 
 [data-theme="light"] .ability-card-save-row {
-  border-bottom-color: rgba(210, 200, 183, 0.6);
-  background-color: rgba(224, 216, 199, 0.2);
+  border-bottom-color: var(--color-border-light);
+  background-color: var(--color-bg-secondary-40);
 }
 
 [data-theme="light"] .ability-card-save-icon--proficient {
@@ -450,15 +538,20 @@
 
 /* Light Theme Skills */
 [data-theme="light"] .ability-card-skills {
-  border-top-color: rgba(210, 200, 183, 0.4);
+  border-top-color: var(--color-border-light);
+  background-color: var(--color-form-bg);
 }
 
 [data-theme="light"] .ability-card-skill-row {
-  border-bottom-color: rgba(210, 200, 183, 0.4);
+  border-bottom-color: var(--color-border-light);
+}
+
+[data-theme="light"] .ability-card-skill-row:nth-child(even) {
+  background-color: var(--color-bg-secondary-20);
 }
 
 [data-theme="light"] .ability-card-skill-row:hover {
-  background-color: rgba(224, 216, 199, 0.3);
+  background-color: var(--color-bg-secondary-50);
 }
 
 [data-theme="light"] .ability-card-skill-icon--expertise {

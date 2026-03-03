@@ -2,12 +2,6 @@
    PLAYERS-FORM.CSS - Player form styling
    ======================================== */
 
-/* Form Container */
-.form-container {
-  max-width: 32rem;
-  margin: 0 auto;
-}
-
 /* Page Header */
 .form-page-header {
   display: flex;
@@ -42,15 +36,13 @@ form {
 
 /* Form Field */
 .form-field {
-  display: flex;
-  flex-direction: column;
   gap: 0.25rem;
 }
 
 .form-label {
-  font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-text-tertiary);
+  margin-bottom: 0;
 }
 
 .form-label-required {
@@ -66,24 +58,8 @@ form {
 
 /* Form Input Regular */
 .form-input {
-  background-color: var(--color-form-bg);
-  border: 1px solid var(--color-form-border);
-  color: var(--color-form-text);
   font-size: 0.875rem;
-  border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
-  width: 100%;
-  transition: all 0.2s;
-}
-
-.form-input::placeholder {
-  color: var(--color-form-placeholder);
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px var(--color-accent);
 }
 
 /* Form Input Disabled */
@@ -159,8 +135,8 @@ form {
   bottom: 100%;
   left: 0;
   margin-bottom: 0.5rem;
-  background-color: #1f2937;
-  color: #d1d5db;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   border-radius: 0.5rem;
   padding: 0.75rem;
@@ -180,26 +156,23 @@ form {
   top: 100%;
   left: 1rem;
   border: 0.25rem solid transparent;
-  border-top-color: #1f2937;
+  border-top-color: var(--color-bg-secondary);
 }
 
 .form-disabled-hint {
   font-size: 0.75rem;
-  color: #4b5563;
+  color: var(--color-text-muted);
 }
 
 /* Form Actions */
 .form-actions {
-  display: flex;
-  gap: 0.75rem;
-  padding-top: 0.5rem;
   flex-wrap: wrap;
   align-items: center;
 }
 
 .btn-submit {
-  background-color: #4f46e5;
-  color: #ffffff;
+  background-color: var(--color-button-bg);
+  color: var(--color-text-primary);
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.5rem 1rem;
@@ -210,11 +183,11 @@ form {
 }
 
 .btn-submit:hover {
-  background-color: #4338ca;
+  background-color: var(--color-button-hover);
 }
 
 .btn-submit:disabled {
-  background-color: #6b7280;
+  background-color: var(--color-text-muted);
   cursor: not-allowed;
   opacity: 0.6;
 }
