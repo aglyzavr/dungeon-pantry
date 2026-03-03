@@ -68,7 +68,14 @@
                             ("Charisma", "CHA", sheet.charisma)
                             ] %}
                             <div class="ability-score-card">
-                                <div class="ability-score-label">{{ short }}</div>
+                                <div class="ability-score-label-row">
+                                    <div class="ability-score-label">{{ short }}</div>
+                                    <span
+                                        class="ability-score-prof-marker {% if ability.saving_throw_proficient %}ability-score-prof-marker--proficient{% else %}ability-score-prof-marker--unproficient{% endif %}"
+                                        title="{{ _('Saving throw proficiency') }}">
+                                        {{ "●" if ability.saving_throw_proficient else "○" }}
+                                    </span>
+                                </div>
                                 <div class="ability-score-modifier">
                                     {{ "+" if ability.modifier >= 0 else "" }}{{ ability.modifier }}
                                 </div>
@@ -273,6 +280,23 @@
                             <div class="ability-card-name">
                                 {{ full_name }}
                             </div>
+                        </div>
+
+                        {# Saving Throw #}
+                        {% set save_bonus = ability.saving_throw if ability.saving_throw is defined else 0 %}
+                        {% set save_prof = ability.saving_throw_proficient if ability.saving_throw_proficient is defined else false %}
+                        <div class="ability-card-save-row">
+                            <div class="ability-card-save-label">
+                                <span
+                                    class="ability-card-save-icon {% if save_prof %}ability-card-save-icon--proficient{% else %}ability-card-save-icon--unproficient{% endif %}">
+                                    {{ "●" if save_prof else "○" }}
+                                </span>
+                                <span class="ability-card-save-label-text">{{ _("Saving Throw") }}</span>
+                            </div>
+                            <span
+                                class="ability-card-save-value {% if save_bonus | int > 0 %}ability-card-save-value--positive{% elif save_bonus | int < 0 %}ability-card-save-value--negative{% else %}ability-card-save-value--neutral{% endif %}">
+                                {{ "+" if save_bonus | int >= 0 else "" }}{{ save_bonus }}
+                            </span>
                         </div>
 
                         {# Skills #}
