@@ -91,6 +91,7 @@
   display: flex;
   gap: 1rem;
   align-items: flex-start;
+  box-shadow: var(--shadow-card);
 }
 
 .character-card .sheet-header-avatar-icon {
@@ -115,7 +116,7 @@
 
 .character-card:hover {
   border-color: var(--color-accent);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .character-card--unavailable {

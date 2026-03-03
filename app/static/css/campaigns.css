@@ -34,11 +34,12 @@
   padding: 1.5rem;
   transition: all 0.2s;
   position: relative;
+  box-shadow: var(--shadow-card);
 }
 
 .campaign-card:hover {
   border-color: var(--color-accent);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .campaign-card-header {

@@ -22,11 +22,12 @@
   border-radius: 0.75rem;
   padding: 1.25rem;
   transition: all 0.2s;
+  box-shadow: var(--shadow-card);
 }
 
 .character-card:hover {
   border-color: var(--color-accent);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .character-card-header {
@@ -103,15 +104,15 @@
 }
 
 .hp-bar-fill--healthy {
-  background-color: #22c55e;
+  background-color: var(--color-success);
 }
 
 .hp-bar-fill--injured {
-  background-color: #eab308;
+  background-color: var(--color-vitals-warning);
 }
 
 .hp-bar-fill--critical {
-  background-color: #ef4444;
+  background-color: var(--color-error);
 }
 
 /* Empty State in Grid */
