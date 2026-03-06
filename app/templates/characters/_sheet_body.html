@@ -317,6 +317,7 @@
                             {% for skill_name, s in skills %}
                             {% set bonus = s.bonus if s is mapping else (s | default(0)) %}
                             {% set is_prof = s.proficient if s is mapping else false %}
+                            {% set adv = s.advantage if s is mapping and s.advantage is defined else 'none' %}
                             <div class="ability-card-skill-row">
                                 <div class="ability-card-skill-info">
                                     <span
@@ -327,6 +328,11 @@
                                         class="ability-card-skill-name {% if is_prof %}ability-card-skill-name--proficient{% else %}ability-card-skill-name--unproficient{% endif %}">
                                         {{ skill_name }}
                                     </span>
+                                    {% if adv == 'advantage' %}
+                                    <span class="ability-card-skill-adv ability-card-skill-adv--advantage" title="{{ _('Advantage') }}">▲</span>
+                                    {% elif adv == 'disadvantage' %}
+                                    <span class="ability-card-skill-adv ability-card-skill-adv--disadvantage" title="{{ _('Disadvantage') }}">▼</span>
+                                    {% endif %}
                                 </div>
                                 <span
                                     class="ability-card-skill-bonus {% if bonus | int > 0 %}ability-card-skill-bonus--positive{% elif bonus | int < 0 %}ability-card-skill-bonus--negative{% else %}ability-card-skill-bonus--neutral{% endif %}">
@@ -1046,6 +1052,7 @@
                     {% for skill_name, s in skills %}
                     {% set bonus = s.bonus if s is mapping else (s | default(0)) %}
                     {% set is_prof = s.proficient if s is mapping else false %}
+                    {% set adv = s.advantage if s is mapping and s.advantage is defined else 'none' %}
                     <div class="flex items-center justify-between px-4 py-2.5
                           hover:bg-gray-800/30 transition-colors">
                         <div class="flex items-center gap-2">
@@ -1057,6 +1064,11 @@
                                            else 'text-gray-400' }}">
                                 {{ skill_name }}
                             </span>
+                            {% if adv == 'advantage' %}
+                            <span class="ability-card-skill-adv ability-card-skill-adv--advantage" title="Advantage">▲</span>
+                            {% elif adv == 'disadvantage' %}
+                            <span class="ability-card-skill-adv ability-card-skill-adv--disadvantage" title="Disadvantage">▼</span>
+                            {% endif %}
                         </div>
                         <span class="text-sm font-semibold
                   {{ 'text-green-400' if bonus | int > 0

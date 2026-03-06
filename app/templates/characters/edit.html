@@ -320,10 +320,10 @@
         <h2 class="form-section-title">{{ ability_label }} Skills</h2>
         {% for skill_name, skill_data in ability.ability_scores.items() %}
         {% set skill_key = (ability_name ~ '_' ~ skill_name.replace(' ', '_').lower().replace('_of_', '_')) %}
-        <div class="form-grid" style="margin-bottom: 0.75rem; align-items: center;">
-          <div style="font-weight: 500;">{{ skill_name | title }}</div>
+        <div class="skill-edit-row">
+          <div class="skill-edit-name">{{ skill_name | title }}</div>
           
-          <div class="form-group">
+          <div class="form-group skill-edit-bonus">
             <label for="{{ skill_key }}_bonus">Bonus</label>
             <input type="number" id="{{ skill_key }}_bonus" name="{{ skill_key }}_bonus" 
                    value="{{ skill_data.bonus }}">
@@ -333,6 +333,15 @@
             <input type="checkbox" id="{{ skill_key }}_prof" name="{{ skill_key }}_prof" 
                    {% if skill_data.proficient %}checked{% endif %}>
             <label for="{{ skill_key }}_prof">Proficient</label>
+          </div>
+
+          <div class="form-group skill-edit-adv">
+            <label for="{{ skill_key }}_advantage">Adv/Disadv</label>
+            <select id="{{ skill_key }}_advantage" name="{{ skill_key }}_advantage" class="form-select-sm">
+              <option value="none" {% if skill_data.get('advantage', 'none') == 'none' %}selected{% endif %}>—</option>
+              <option value="advantage" {% if skill_data.get('advantage') == 'advantage' %}selected{% endif %}>▲ Adv</option>
+              <option value="disadvantage" {% if skill_data.get('advantage') == 'disadvantage' %}selected{% endif %}>▼ Disadv</option>
+            </select>
           </div>
         </div>
         {% endfor %}

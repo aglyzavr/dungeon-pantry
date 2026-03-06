@@ -469,10 +469,14 @@ class CharacterService:
                     skill_key = f"{ability}_{skill_name.replace(' ', '_').replace('_of_', '_')}"
                     bonus = get_int(f"{skill_key}_bonus", 0)
                     prof = get_bool(f"{skill_key}_prof")
+                    advantage = get_form(f"{skill_key}_advantage", "none")
+                    if advantage not in ("advantage", "disadvantage"):
+                        advantage = "none"
                     
                     sheet[ability]["ability_scores"][skill_name] = {
                         "bonus": bonus,
-                        "proficient": prof
+                        "proficient": prof,
+                        "advantage": advantage
                     }
         
         # Equipment & proficiencies

@@ -430,6 +430,21 @@
   color: var(--color-text-tertiary);
 }
 
+.ability-card-skill-adv {
+  font-size: 0.625rem;
+  line-height: 1;
+  font-weight: 700;
+  margin-left: 0.125rem;
+}
+
+.ability-card-skill-adv--advantage {
+  color: var(--color-positive);
+}
+
+.ability-card-skill-adv--disadvantage {
+  color: var(--color-negative);
+}
+
 .ability-card-skill-bonus {
   font-size: 0.875rem;
   font-weight: 600;

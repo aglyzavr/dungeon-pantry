@@ -14,6 +14,13 @@ def is_proficient(skill_data) -> bool:
     return False
 
 
+def get_skill_advantage(skill_data) -> str:
+    """Return 'advantage', 'disadvantage', or 'none' for a skill."""
+    if isinstance(skill_data, dict):
+        return skill_data.get("advantage", "none")
+    return "none"
+
+
 
 
 def validate_mandatory_fields(data: dict) -> list[str]:
