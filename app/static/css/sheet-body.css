@@ -409,10 +409,6 @@
   line-height: 1;
 }
 
-.ability-card-skill-icon--expertise {
-  color: var(--color-marker-expertise);
-}
-
 .ability-card-skill-icon--proficient {
   color: var(--color-accent-light);
 }
@@ -852,7 +848,7 @@
 }
 
 .magic-item-status--attuned {
-  color: var(--color-marker-expertise);
+  color: var(--color-positive);
 }
 
 .magic-item-status--not-attuned {

@@ -469,12 +469,10 @@ class CharacterService:
                     skill_key = f"{ability}_{skill_name.replace(' ', '_').replace('_of_', '_')}"
                     bonus = get_int(f"{skill_key}_bonus", 0)
                     prof = get_bool(f"{skill_key}_prof")
-                    exp = get_bool(f"{skill_key}_exp")
                     
                     sheet[ability]["ability_scores"][skill_name] = {
                         "bonus": bonus,
-                        "proficient": prof,
-                        "expertise": exp
+                        "proficient": prof
                     }
         
         # Equipment & proficiencies

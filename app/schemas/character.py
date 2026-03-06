@@ -14,10 +14,6 @@ def is_proficient(skill_data) -> bool:
     return False
 
 
-def is_expertise(skill_data) -> bool:
-    if isinstance(skill_data, dict):
-        return bool(skill_data.get("expertise", False))
-    return False
 
 
 def validate_mandatory_fields(data: dict) -> list[str]:

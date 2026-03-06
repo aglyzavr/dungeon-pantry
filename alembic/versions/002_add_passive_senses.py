@@ -15,7 +15,7 @@ depends_on = None
 def upgrade() -> None:
     # JSONB schema evolution — no DDL required.
     # New fields added to character JSON:
-    #   - per-skill: { bonus, proficient, expertise }
+    #   - per-skill: { bonus, proficient }
     #   - per ability: saving_throw_proficient bool
     #   - passive_investigation, passive_insight int
     # Existing characters will render gracefully via Jinja2 default filters.

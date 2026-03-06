@@ -317,15 +317,14 @@
                             {% for skill_name, s in skills %}
                             {% set bonus = s.bonus if s is mapping else (s | default(0)) %}
                             {% set is_prof = s.proficient if s is mapping else false %}
-                            {% set is_exp = s.expertise if s is mapping else false %}
                             <div class="ability-card-skill-row">
                                 <div class="ability-card-skill-info">
                                     <span
-                                        class="ability-card-skill-icon {% if is_exp %}ability-card-skill-icon--expertise{% elif is_prof %}ability-card-skill-icon--proficient{% else %}ability-card-skill-icon--unproficient{% endif %}">
-                                        {{ "★" if is_exp else "●" if is_prof else "○" }}
+                                        class="ability-card-skill-icon {% if is_prof %}ability-card-skill-icon--proficient{% else %}ability-card-skill-icon--unproficient{% endif %}">
+                                        {{ "●" if is_prof else "○" }}
                                     </span>
                                     <span
-                                        class="ability-card-skill-name {% if is_prof or is_exp %}ability-card-skill-name--proficient{% else %}ability-card-skill-name--unproficient{% endif %}">
+                                        class="ability-card-skill-name {% if is_prof %}ability-card-skill-name--proficient{% else %}ability-card-skill-name--unproficient{% endif %}">
                                         {{ skill_name }}
                                     </span>
                                 </div>
@@ -1044,16 +1043,14 @@
                     {% for skill_name, s in skills %}
                     {% set bonus = s.bonus if s is mapping else (s | default(0)) %}
                     {% set is_prof = s.proficient if s is mapping else false %}
-                    {% set is_exp = s.expertise if s is mapping else false %}
                     <div class="flex items-center justify-between px-4 py-2.5
                           hover:bg-gray-800/30 transition-colors">
                         <div class="flex items-center gap-2">
-                            <span class="{{ 'text-yellow-400' if is_exp
-                                  else 'text-indigo-400' if is_prof
+                            <span class="{{ 'text-indigo-400' if is_prof
                                   else 'text-gray-600' }} text-sm leading-none">
-                                {{ "★" if is_exp else "●" if is_prof else "○" }}
+                                {{ "●" if is_prof else "○" }}
                             </span>
-                            <span class="text-sm {{ 'text-white font-medium' if is_prof or is_exp
+                            <span class="text-sm {{ 'text-white font-medium' if is_prof
                                            else 'text-gray-400' }}">
                                 {{ skill_name }}
                             </span>
