@@ -600,6 +600,24 @@ msgstr "Personality"
 msgid "Backstory"
 msgstr "Backstory"
 
+msgid "Ideals"
+msgstr "Ideals"
+
+msgid "Bonds"
+msgstr "Bonds"
+
+msgid "Flaws"
+msgstr "Flaws"
+
+msgid "ideals_placeholder"
+msgstr "What drives and motivates your character? What values do they hold most important? What are they fighting for?"
+
+msgid "bonds_placeholder"
+msgstr "Whom does your character care most about? To what place do they feel a special connection? What is their most treasured possession?"
+
+msgid "flaws_placeholder"
+msgstr "What are your character's vices or weaknesses? What do other people not like about them? What traits do they not like about themself?"
+
 # Player Assignment
 msgid "Player Assignment"
 msgstr "Player Assignment"

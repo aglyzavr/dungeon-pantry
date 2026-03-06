@@ -598,6 +598,27 @@
                  value="{{ sheet.backstory_and_personality.alignment or '' }}">
         </div>
       </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Ideals</h2>
+        <div class="form-group">
+          <textarea id="ideals" name="ideals" placeholder="{{ _('ideals_placeholder') }}">{{ sheet.backstory_and_personality.ideals or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Bonds</h2>
+        <div class="form-group">
+          <textarea id="bonds" name="bonds" placeholder="{{ _('bonds_placeholder') }}">{{ sheet.backstory_and_personality.bonds or '' }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2 class="form-section-title">Flaws</h2>
+        <div class="form-group">
+          <textarea id="flaws" name="flaws" placeholder="{{ _('flaws_placeholder') }}">{{ sheet.backstory_and_personality.flaws or '' }}</textarea>
+        </div>
+      </div>
     </div>
 
     </form>

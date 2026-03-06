@@ -789,6 +789,9 @@
             {% for label, val in [
             (_("Appearance"), sheet.appearance),
             (_("Personality"), sheet.backstory_and_personality.personality),
+            (_("Ideals"), sheet.get("backstory_and_personality", {}).get("ideals")),
+            (_("Bonds"), sheet.get("backstory_and_personality", {}).get("bonds")),
+            (_("Flaws"), sheet.get("backstory_and_personality", {}).get("flaws")),
             (_("Backstory"), sheet.backstory_and_personality.backstory)
             ] %}
             {% if val %}
@@ -1482,6 +1485,9 @@
     {% for label, val in [
     ("Appearance", sheet.appearance),
     ("Personality", sheet.backstory_and_personality.personality),
+    ("Ideals", sheet.get("backstory_and_personality", {}).get("ideals")),
+    ("Bonds", sheet.get("backstory_and_personality", {}).get("bonds")),
+    ("Flaws", sheet.get("backstory_and_personality", {}).get("flaws")),
     ("Backstory", sheet.backstory_and_personality.backstory)
     ] %}
     {% if val %}

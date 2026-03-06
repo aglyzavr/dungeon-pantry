@@ -598,6 +598,24 @@ msgstr "Характер"
 msgid "Backstory"
 msgstr "Предыстория"
 
+msgid "Ideals"
+msgstr "Идеалы"
+
+msgid "Bonds"
+msgstr "Привязанности"
+
+msgid "Flaws"
+msgstr "Слабости"
+
+msgid "ideals_placeholder"
+msgstr "Что движет вашим персонажем? Какие ценности для него важнее всего? За что он борется?"
+
+msgid "bonds_placeholder"
+msgstr "Кто для вашего персонажа важнее всего? К какому месту он чувствует особую связь? Какое его самое ценное имущество?"
+
+msgid "flaws_placeholder"
+msgstr "Какие у вашего персонажа пороки или слабости? Что другим людям в нём не нравится? Какие черты ему не нравятся в себе?"
+
 # Player Assignment
 msgid "Player Assignment"
 msgstr "Назначение игрока"

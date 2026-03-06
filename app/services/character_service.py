@@ -498,7 +498,10 @@ class CharacterService:
         sheet["backstory_and_personality"] = {
             "backstory": get_form("backstory", ""),
             "personality": get_form("personality", ""),
-            "alignment": get_form("alignment", "")
+            "alignment": get_form("alignment", ""),
+            "ideals": get_form("ideals", ""),
+            "bonds": get_form("bonds", ""),
+            "flaws": get_form("flaws", ""),
         }
         
         # Equipment
