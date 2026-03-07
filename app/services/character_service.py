@@ -253,6 +253,8 @@ class CharacterService:
             data["backstory_and_personality"] = {}
         if not isinstance(data.get("equipment"), dict):
             data["equipment"] = {"equipment_list": [], "magic_item_attunement": []}
+        if not isinstance(data["equipment"].get("throwable_cases"), list):
+            data["equipment"]["throwable_cases"] = []
         if not isinstance(data.get("spell_slots"), dict):
             data["spell_slots"] = {}
         # coins structure expected by _sheet_body.html
@@ -353,6 +355,21 @@ class CharacterService:
         self._check_write_permission(character, user_id, is_dm)
         data = copy.deepcopy(character.sheet_data)
         data["conditions"] = conditions
+        return await self._repo.save_sheet_data(character, data)
+
+    async def update_throwable_case_quantity(
+        self, character_id: UUID, user_id: UUID, is_dm: bool,
+        case_index: int, item_index: int, delta: int
+    ) -> Character:
+        """Adjust the quantity of an item in a throwable case by delta."""
+        character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        cases = data.get("equipment", {}).get("throwable_cases", [])
+        if 0 <= case_index < len(cases):
+            items = cases[case_index].get("items", [])
+            if 0 <= item_index < len(items):
+                items[item_index]["quantity"] = max(0, int(items[item_index].get("quantity", 0)) + delta)
         return await self._repo.save_sheet_data(character, data)
 
     async def update_portrait(self, character_id: UUID, portrait_data: bytes, mime_type: str) -> Character:
@@ -510,9 +527,42 @@ class CharacterService:
         
         # Equipment
         equipment_list = [x.strip() for x in get_form("equipment_list", "").split(",") if x.strip()]
+
+        # Throwable cases (submitted as JSON from the edit form)
+        throwable_cases = []
+        cases_raw = str(get_form("throwable_cases_json", "")).strip()
+        if cases_raw:
+            try:
+                submitted_cases = json.loads(cases_raw)
+            except (json.JSONDecodeError, TypeError):
+                submitted_cases = None
+            if isinstance(submitted_cases, list):
+                for case in submitted_cases:
+                    if not isinstance(case, dict):
+                        continue
+                    case_name = str(case.get("name", "")).strip()
+                    if not case_name:
+                        continue
+                    items = []
+                    for item in (case.get("items") or []):
+                        if not isinstance(item, dict):
+                            continue
+                        item_name = str(item.get("name", "")).strip()
+                        if not item_name:
+                            continue
+                        items.append({
+                            "name": item_name,
+                            "quantity": max(0, int(item.get("quantity", 0))),
+                            "note": str(item.get("note", "")).strip(),
+                        })
+                    throwable_cases.append({"name": case_name, "items": items})
+        else:
+            throwable_cases = sheet.get("equipment", {}).get("throwable_cases", [])
+
         sheet["equipment"] = {
             "equipment_list": equipment_list,
-            "magic_item_attunement": sheet.get("equipment", {}).get("magic_item_attunement", [])
+            "magic_item_attunement": sheet.get("equipment", {}).get("magic_item_attunement", []),
+            "throwable_cases": throwable_cases,
         }
         
         # Coins

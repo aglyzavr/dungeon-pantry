@@ -766,6 +766,54 @@
             </div>
             {% endif %}
 
+            {# Throwable Cases #}
+            {% set cases = sheet.equipment.get("throwable_cases", []) %}
+            {% for tcase in cases %}
+            {% set case_idx = loop.index0 %}
+            {% if tcase.name %}
+            <div class="content-section">
+                <h3 class="content-section-title">{{ tcase.name }}</h3>
+                {% if tcase["items"] %}
+                <div class="throwable-case-items">
+                    {% for item in tcase["items"] %}
+                    {% if item.name %}
+                    <div class="throwable-case-item">
+                        <div class="throwable-case-item-info">
+                            <span class="throwable-case-item-name">{{ item.name }}</span>
+                            <div class="throwable-case-item-qty">
+                                {% if can_edit %}
+                                <button class="throwable-case-qty-btn"
+                                    @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                    hx-post="/characters/{{ character.id }}/inventory/throwable-case-qty"
+                                    hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": -1}'
+                                    hx-target="#sheet-body"
+                                    hx-select="#sheet-body"
+                                    hx-swap="outerHTML">−</button>
+                                {% endif %}
+                                <span class="throwable-case-qty-value">{{ item.quantity }}</span>
+                                {% if can_edit %}
+                                <button class="throwable-case-qty-btn"
+                                    @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                    hx-post="/characters/{{ character.id }}/inventory/throwable-case-qty"
+                                    hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": 1}'
+                                    hx-target="#sheet-body"
+                                    hx-select="#sheet-body"
+                                    hx-swap="outerHTML">+</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if item.note %}
+                        <p class="throwable-case-item-note">{{ item.note }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+
         </div>
         {% endif %}
 

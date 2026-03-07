@@ -60,6 +60,26 @@ const attackSchema = {
 };
 
 /**
+ * Schema defining the structure and default values for case item entries
+ */
+const caseItemSchema = {
+  name: '',
+  quantity: 0,
+  note: '',
+};
+
+/**
+ * Normalizer for throwable case entries (handles nested items array)
+ */
+function normalizeCase(source) {
+  const src = source || {};
+  return {
+    name: String(src.name ?? ''),
+    items: (Array.isArray(src.items) ? src.items : []).map(item => createNormalizer(caseItemSchema)(item)),
+  };
+}
+
+/**
  * Character Editor utilities for Alpine.js
  * Provides normalizer functions for spell and attack entries
  */
@@ -75,5 +95,15 @@ window.CharacterEditor = {
    * Ensures consistent data structure and type conversion
    */
   normalizeAttack: createNormalizer(attackSchema),
+
+  /**
+   * Normalizer function for throwable case entries
+   */
+  normalizeCase: normalizeCase,
+
+  /**
+   * Normalizer function for throwable case item entries
+   */
+  normalizeCaseItem: createNormalizer(caseItemSchema),
 };
 

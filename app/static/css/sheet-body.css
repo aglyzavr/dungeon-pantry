@@ -936,6 +936,79 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────
+   THROWABLE CASES STYLES
+   ───────────────────────────────────────────────────────────────── */
+
+.throwable-case-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.throwable-case-item {
+  background-color: var(--color-bg-secondary);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+}
+
+.throwable-case-item-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.throwable-case-item-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.throwable-case-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.throwable-case-qty-btn {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.throwable-case-qty-btn:hover {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-text-muted);
+}
+
+.throwable-case-qty-value {
+  min-width: 1.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.throwable-case-item-note {
+  margin: 0.375rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────────────────────────
    BIO TAB SPECIFIC STYLES
    ───────────────────────────────────────────────────────────────── */
 

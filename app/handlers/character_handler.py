@@ -615,6 +615,42 @@ async def update_conditions(
     )
 
 
+# ── Inventory: Throwable case item quantity ────────────────────────────────
+
+@router.post("/{character_id}/inventory/throwable-case-qty", response_class=HTMLResponse)
+async def update_throwable_case_qty(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    form = await request.form()
+    case_index = int(form.get("case_index", 0))
+    item_index = int(form.get("item_index", 0))
+    delta = int(form.get("delta", 0))
+
+    try:
+        character = await service.update_throwable_case_quantity(
+            character_id, UUID(current_user.user_id), current_user.is_dm,
+            case_index, item_index, delta,
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return HTMLResponse("Forbidden", status_code=403)
+
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+        },
+        language=current_user.language,
+    )
+
+
 # ── Assign owner (DM only) ────────────────────────────────────────────────
 
 @router.post("/{character_id}/assign", response_class=HTMLResponse)
