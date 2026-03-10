@@ -1,5 +1,3 @@
-import json
-import os
 from uuid import UUID
 from pathlib import Path
 
@@ -12,7 +10,10 @@ from app.database import get_db
 from app.i18n import error_response, render_template
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
-from app.schemas.character import HPUpdate, DeathSaveUpdate, SpellSlotUpdate, validate_mandatory_fields
+from app.schemas.character import (
+    HPUpdate, DeathSaveUpdate, SpellSlotUpdate,
+    TempHPUpdate, MaxHPUpdate, ThrowableCaseQtyUpdate,
+)
 from jinja2 import TemplateError
 from app.services.character_service import (
     CharacterNotFound,
@@ -102,39 +103,23 @@ async def upload_character(
         )
 
     try:
-        data = json.loads(contents.decode("utf-8"))
-    except (json.JSONDecodeError, UnicodeDecodeError):
+        character = await service.create_from_upload(
+            raw_content=contents,
+            owner_id=UUID(current_user.user_id),
+        )
+    except CharacterValidationError as e:
         return render_template(
             templates,
             "characters/upload.html",
             {
                 "request": request,
                 "current_user": current_user,
-                "error": "Invalid JSON file. Please upload a valid character sheet.",
+                "error": "; ".join(e.errors),
             },
             language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
-    errors = validate_mandatory_fields(data)
-    if errors:
-        return render_template(
-            templates,
-            "characters/upload.html",
-            {
-                "request": request,
-                "current_user": current_user,
-                "error": "Validation failed: " + "; ".join(errors),
-            },
-            language=current_user.language,
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        )
-
-    # Create the character after validation
-    character = await service.create(
-        sheet_data=data,
-        owner_id=UUID(current_user.user_id),
-    )
     return RedirectResponse(
         url=f"/characters/{character.id}",
         status_code=status.HTTP_303_SEE_OTHER,
@@ -274,29 +259,26 @@ async def edit_character_submit(
     
     try:
         updated_sheet = await service.build_sheet_from_form(character, form)
-        errors = validate_mandatory_fields(updated_sheet)
-        
-        if errors:
-            return render_template(
-                templates,
-                "characters/edit.html",
-                {
-                    "request": request,
-                    "current_user": current_user,
-                    "character": character,
-                    "sheet": character.sheet_data,
-                    "error": "Validation failed: " + "; ".join(errors),
-                },
-                language=current_user.language,
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            )
-        
         await service.update_sheet_data(character_id, updated_sheet)
         return RedirectResponse(
             url=f"/characters/{character_id}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
-    except (CharacterValidationError, CharacterNotFound, ValueError, KeyError) as e:
+    except CharacterValidationError as e:
+        return render_template(
+            templates,
+            "characters/edit.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "character": character,
+                "sheet": character.sheet_data,
+                "error": "Validation failed: " + "; ".join(e.errors),
+            },
+            language=current_user.language,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+    except (CharacterNotFound, ValueError, KeyError) as e:
         return render_template(
             templates,
             "characters/edit.html",
@@ -468,12 +450,15 @@ async def update_temp_hp(
     service: CharacterService = Depends(_service),
 ):
     form = await request.form()
-    delta = int(form["delta"]) if "delta" in form else None
-    value = int(form["value"]) if "value" in form else None
+    payload = TempHPUpdate(
+        delta=form.get("delta"),
+        value=form.get("value"),
+    )
 
     try:
         character = await service.update_temp_hp(
-            character_id, UUID(current_user.user_id), current_user.is_dm, delta, value
+            character_id, UUID(current_user.user_id), current_user.is_dm,
+            payload.delta, payload.value,
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -502,11 +487,12 @@ async def update_max_hp(
     service: CharacterService = Depends(_service),
 ):
     form = await request.form()
-    value = int(form.get("value", 1))
+    payload = MaxHPUpdate(value=form.get("value", 1))
 
     try:
         character = await service.update_max_hp(
-            character_id, UUID(current_user.user_id), current_user.is_dm, value
+            character_id, UUID(current_user.user_id), current_user.is_dm,
+            payload.value,
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -629,14 +615,16 @@ async def update_throwable_case_qty(
     service: CharacterService = Depends(_service),
 ):
     form = await request.form()
-    case_index = int(form.get("case_index", 0))
-    item_index = int(form.get("item_index", 0))
-    delta = int(form.get("delta", 0))
+    payload = ThrowableCaseQtyUpdate(
+        case_index=form.get("case_index", 0),
+        item_index=form.get("item_index", 0),
+        delta=form.get("delta", 0),
+    )
 
     try:
         character = await service.update_throwable_case_quantity(
             character_id, UUID(current_user.user_id), current_user.is_dm,
-            case_index, item_index, delta,
+            payload.case_index, payload.item_index, payload.delta,
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)

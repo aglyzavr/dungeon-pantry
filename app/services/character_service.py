@@ -143,6 +143,20 @@ class CharacterService:
         data = self._normalize_sheet(data)
         return await self._repo.create(owner_id=owner_id, sheet_data=data)
 
+    async def create_from_upload(self, raw_content: bytes, owner_id: UUID) -> Character:
+        """Parse raw uploaded file content as JSON, validate, and create a character."""
+        try:
+            raw_json = raw_content.decode("utf-8")
+        except UnicodeDecodeError:
+            raise CharacterValidationError(["Invalid JSON file. Please upload a valid character sheet."])
+
+        try:
+            data = json.loads(raw_json)
+        except json.JSONDecodeError:
+            raise CharacterValidationError(["Invalid JSON file. Please upload a valid character sheet."])
+
+        return await self.create(sheet_data=data, owner_id=owner_id)
+
     async def adjust_hp(self, character: Character, delta: int | None, absolute: int | None) -> Character:
         data = copy.deepcopy(character.sheet_data)
         hp = data["vitality"]["hit_points"]

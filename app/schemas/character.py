@@ -85,3 +85,39 @@ class SpellSlotUpdate(BaseModel):
         if not (1 <= v <= 9):
             raise ValueError("Spell slot level must be 1-9")
         return v
+
+
+class TempHPUpdate(BaseModel):
+    delta: int | None = None
+    value: int | None = None
+
+    @field_validator("delta", "value", mode="before")
+    @classmethod
+    def coerce_none_string(cls, v):
+        if v == "" or v is None:
+            return None
+        return v
+
+
+class MaxHPUpdate(BaseModel):
+    value: int = 1
+
+    @field_validator("value", mode="before")
+    @classmethod
+    def coerce_default(cls, v):
+        if v == "" or v is None:
+            return 1
+        return v
+
+
+class ThrowableCaseQtyUpdate(BaseModel):
+    case_index: int = 0
+    item_index: int = 0
+    delta: int = 0
+
+    @field_validator("case_index", "item_index", "delta", mode="before")
+    @classmethod
+    def coerce_ints(cls, v):
+        if v == "" or v is None:
+            return 0
+        return v
