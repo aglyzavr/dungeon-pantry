@@ -887,6 +887,7 @@
                 </div>
             </div>
             <form method="post" action="/characters/{{ character.id }}/assign">
+                <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}" />
                 <input type="hidden" name="player_id" value="" />
                 <button type="submit" class="btn-unassign">{{ _("Unassign") }}</button>
             </form>
@@ -897,6 +898,7 @@
 
         {# Assignment Form #}
         <form method="post" action="/characters/{{ character.id }}/assign" class="assignment-form">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
             <div class="assignment-form-group">
                 <label class="assignment-form-label">{{ _("Assign to player") }}</label>
                 <select name="player_id" class="assignment-form-select">

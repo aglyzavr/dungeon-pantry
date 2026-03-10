@@ -28,6 +28,7 @@
     {% for character in available %}
     {% set sheet = character.sheet_data %}
     <form method="post" action="/campaigns/{{ campaign.id }}/characters">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}" />
       <input type="hidden" name="character_id" value="{{ character.id }}" />
       <button type="submit" class="character-button">
         <div class="character-button-content">

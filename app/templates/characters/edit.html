@@ -89,6 +89,7 @@
     </div>
 
     <form id="edit-form" method="post" action="/characters/{{ character.id }}/edit">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
     <input type="hidden" name="spells_json" :value="JSON.stringify(spellEntries)">
     <input type="hidden" name="attacks_json" :value="JSON.stringify(attackEntries)">
     <input type="hidden" name="throwable_cases_json" :value="JSON.stringify(caseEntries)">

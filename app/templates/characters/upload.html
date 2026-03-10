@@ -43,6 +43,7 @@
     {% endif %}
 
     <form method="post" action="/characters/upload" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
       <div class="form-field">
         <label class="form-label" for="file">
           Character JSON File <span class="form-label-required">*</span>

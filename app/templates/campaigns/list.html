@@ -50,6 +50,7 @@
           <form method="post" action="/campaigns/{{ campaign.id }}/delete"
                 class="js-confirm-delete"
                 data-confirm-name="{{ campaign.name }}">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
             <button type="submit" class="btn-sm btn-sm--danger">
               Delete
             </button>

@@ -71,6 +71,7 @@
                 class="js-confirm-delete"
                 data-confirm-name="{{ player.username }}"
               >
+                <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
                 <button
                   type="submit"
                   class="btn-table btn-table--delete"

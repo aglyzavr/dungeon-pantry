@@ -32,6 +32,7 @@
 
     <form method="post"
           action="{{ '/campaigns/' + campaign.id|string + '/edit' if campaign else '/campaigns' }}">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
 
       <div class="form-field">
         <label for="name" class="form-label">

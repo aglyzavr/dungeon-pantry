@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="/static/css/shared/shared-page.css" />
   {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full flex flex-col" style="background-color: var(--color-bg-primary); color: var(--color-text-primary)">
+<body class="h-full flex flex-col" style="background-color: var(--color-bg-primary); color: var(--color-text-primary)" hx-headers='{"x-csrf-token": "{{ request.state.csrf_token }}"}'>
 
   {# ── Navbar ───────────────────────────────────────────────────── #}
   {% if current_user %}
@@ -45,6 +45,7 @@
       </span>
 
       <form method="POST" action="/logout">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
         <button type="submit" class="navbar-logout">
           {{ _("Logout") if _ is defined else "Logout" }}
         </button>

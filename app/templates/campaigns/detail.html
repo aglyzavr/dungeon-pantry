@@ -30,6 +30,7 @@
       </a>
       <form method="post" action="/campaigns/{{ campaign.id }}/delete"
           onsubmit="return confirm('Delete this campaign? Characters will stay in the pool.')">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
         <button type="submit" class="btn-sm btn-sm--danger">
           Delete
         </button>
@@ -94,6 +95,7 @@
           {% endif %}
           {% if current_user.is_dm %}
           <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
             <button type="submit" class="btn-sm btn-sm--secondary">
               Remove
             </button>
@@ -163,6 +165,7 @@
               View
             </a>
             <form method="post" action="/campaigns/{{ campaign.id }}/characters">
+              <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
               <input type="hidden" name="character_id" value="{{ character.id }}">
               <button type="submit" class="btn-sm btn-sm--secondary">
                 + Add

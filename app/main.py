@@ -45,6 +45,9 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    from app.middleware.csrf import CSRFMiddleware
+    app.add_middleware(CSRFMiddleware)
+
     app.mount("/static", StaticFiles(directory="app/static", check_dir=False), name="static")
     _register_routes(app)
     return app

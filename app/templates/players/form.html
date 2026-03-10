@@ -27,6 +27,7 @@
     novalidate
     aria-label="{{ 'Edit player form' if player else 'New player form' }}"
   >
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
 
     {# ── Username ──────────────────────────────────────────────── #}
     <div class="form-field">

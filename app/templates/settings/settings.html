@@ -104,6 +104,7 @@
   <div class="settings-section">
     <h2 class="settings-title">{{ _("Language") }}</h2>
     <form method="post" action="/settings/language" class="settings-form-space">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
       <div class="settings-form-space">
         <label class="settings-option">
           <input 
@@ -147,6 +148,7 @@
   <div class="settings-section">
     <h2 class="settings-title">{{ _("Theme") }}</h2>
     <form method="post" action="/settings/theme" class="settings-form-space">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
       <div class="settings-form-space">
         <label class="settings-option">
           <input 
