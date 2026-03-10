@@ -88,7 +88,7 @@ async def campaign_detail(
 ):
     try:
         campaign = await service.get_campaign(campaign_id)
-        unassigned_characters = await service.get_unassigned_characters(campaign_id)
+        unassigned_characters = await service.get_unassigned_characters()
     except CampaignNotFound:
         return templates.TemplateResponse(
             "campaigns/list.html",
@@ -179,7 +179,7 @@ async def add_characters_form(
 ):
     try:
         campaign = await service.get_campaign(campaign_id)
-        available = await service.get_unassigned_characters(campaign_id)
+        available = await service.get_unassigned_characters()
     except CampaignNotFound:
         return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 

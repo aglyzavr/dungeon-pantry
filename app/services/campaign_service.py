@@ -61,15 +61,9 @@ class CampaignService:
             raise CampaignNotFound(f"Campaign {campaign_id} not found")
         await self._repo.delete(campaign)
 
-    async def get_unassigned_characters(self, campaign_id: UUID) -> list[Character]:
-        """Return characters with no campaign assignment at all.
-
-        The campaign_id argument is preserved for compatibility with callers,
-        but does not influence the query. Previously the implementation only
-        excluded characters already in the given campaign, leading to a bug where
-        characters assigned to *other* campaigns still appeared in the list.
-        """
-        return await self._repo.get_unassigned_characters(campaign_id)
+    async def get_unassigned_characters(self) -> list[Character]:
+        """Return characters with no campaign assignment at all."""
+        return await self._repo.get_unassigned_characters()
 
     async def assign_character(self, campaign_id: UUID, character_id: UUID) -> None:
         campaign = await self._repo.get_by_id(campaign_id)

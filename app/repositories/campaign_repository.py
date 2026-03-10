@@ -68,17 +68,8 @@ class CampaignRepository:
 
     # ── Character assignment ──────────────────────────────────────────────────
 
-    async def get_unassigned_characters(self, campaign_id: UUID) -> list[Character]:
-        """All characters not assigned to *any* campaign.
-
-        The `campaign_id` parameter is still accepted by the public API because
-        callers previously passed it, but it is ignored. Previously the query
-        only excluded characters already in the current campaign, which meant a
-        character assigned elsewhere would still be considered "unassigned" and
-        show up in the DM view. The updated query returns only characters that
-        have no rows in the join table at all.
-        """
-        # we don't actually use ``campaign_id`` any more; the filter is global
+    async def get_unassigned_characters(self) -> list[Character]:
+        """Return all characters not assigned to *any* campaign."""
         all_assigned = select(campaign_characters.c.character_id)
         result = await self._db.execute(
             select(Character)
