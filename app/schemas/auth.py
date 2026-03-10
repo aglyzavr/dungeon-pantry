@@ -1,5 +1,7 @@
 from pydantic import BaseModel, field_validator
 
+from app.schemas import validate_non_empty
+
 
 class LoginRequest(BaseModel):
     username: str
@@ -8,9 +10,7 @@ class LoginRequest(BaseModel):
     @field_validator("username", "password")
     @classmethod
     def must_not_be_blank(cls, v: str) -> str:
-        if not v or not v.strip():
-            raise ValueError("This field cannot be blank")
-        return v.strip()
+        return validate_non_empty(v)
 
 
 class UserSession(BaseModel):

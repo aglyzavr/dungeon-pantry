@@ -3,6 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, field_validator
 
+from app.schemas import validate_non_empty
+
 
 class CampaignCreate(BaseModel):
     name: str
@@ -11,9 +13,7 @@ class CampaignCreate(BaseModel):
     @field_validator("name")
     @classmethod
     def name_must_not_be_blank(cls, v: str) -> str:
-        if not v or not v.strip():
-            raise ValueError("Campaign name cannot be blank")
-        return v.strip()
+        return validate_non_empty(v, "Campaign name")
 
 
 class CampaignUpdate(BaseModel):
@@ -23,9 +23,7 @@ class CampaignUpdate(BaseModel):
     @field_validator("name")
     @classmethod
     def name_must_not_be_blank(cls, v: str) -> str:
-        if not v or not v.strip():
-            raise ValueError("Campaign name cannot be blank")
-        return v.strip()
+        return validate_non_empty(v, "Campaign name")
 
 
 class CampaignResponse(BaseModel):
