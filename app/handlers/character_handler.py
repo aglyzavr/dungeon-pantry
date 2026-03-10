@@ -24,6 +24,11 @@ router = APIRouter(prefix="/characters", tags=["Characters"])
 templates = Jinja2Templates(directory="app/templates")
 
 
+def _can_edit(current_user: UserSession, character) -> bool:
+    """Check if the current user has edit permission on a character."""
+    return current_user.is_dm or str(character.owner_id) == current_user.user_id
+
+
 def _service(db: AsyncSession = Depends(get_db)) -> CharacterService:
     return CharacterService(db)
 
@@ -161,7 +166,7 @@ async def character_sheet(
     players = await player_service.list_players() if current_user.is_dm else []
 
     # Determine if user can edit and view full details
-    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    can_edit = _can_edit(current_user, character)
     is_readonly = not can_edit  # If can't edit, it's read-only mode
     
     # Pass full sheet data to template - template conditionals handle visibility
@@ -230,7 +235,7 @@ async def edit_character_form(
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
 
     # Check if user can edit (DM or character owner)
-    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    can_edit = _can_edit(current_user, character)
     if not can_edit:
         return RedirectResponse(url=f"/characters/{character_id}", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -262,7 +267,7 @@ async def edit_character_submit(
         return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 
     # Check if user can edit
-    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
+    can_edit = _can_edit(current_user, character)
     if not can_edit:
         return RedirectResponse(url=f"/characters/{character_id}", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -338,7 +343,7 @@ async def update_hp(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -378,7 +383,7 @@ async def update_death_save(
             "character": character,
             "sheet": character.sheet_data,
             "campaigns": character.campaigns,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -412,7 +417,7 @@ async def toggle_inspiration(
             "character": character,
             "sheet": character.sheet_data,
             "campaigns": character.campaigns,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -448,7 +453,7 @@ async def update_spell_slot(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -482,7 +487,7 @@ async def update_temp_hp(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -545,7 +550,7 @@ async def toggle_shield(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -576,7 +581,7 @@ async def update_defenses(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -609,7 +614,7 @@ async def update_conditions(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -645,7 +650,7 @@ async def update_throwable_case_qty(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "can_edit": current_user.is_dm or str(character.owner_id) == current_user.user_id,
+            "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
     )
@@ -702,8 +707,7 @@ async def portrait_upload_form(
         return HTMLResponse("Forbidden", status_code=403)
     
     # Check if user can edit
-    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
-    if not can_edit:
+    if not _can_edit(current_user, character):
         return HTMLResponse("Forbidden", status_code=403)
     
     return render_template(
@@ -734,8 +738,7 @@ async def upload_portrait(
         return HTMLResponse("Forbidden", status_code=403)
     
     # Check if user can edit this character
-    can_edit = current_user.is_dm or str(character.owner_id) == current_user.user_id
-    if not can_edit:
+    if not _can_edit(current_user, character):
         return HTMLResponse("Forbidden", status_code=403)
 
     # Validate file extension
@@ -782,7 +785,7 @@ async def upload_portrait(
                 "current_user": current_user,
                 "character": updated_character,
                 "sheet": updated_character.sheet_data,
-                "can_edit": current_user.is_dm or str(updated_character.owner_id) == current_user.user_id,
+                "can_edit": _can_edit(current_user, updated_character),
             },
             language=current_user.language,
         )
