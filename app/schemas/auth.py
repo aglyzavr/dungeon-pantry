@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel, field_validator
 
 from app.schemas import validate_non_empty
@@ -15,7 +17,7 @@ class LoginRequest(BaseModel):
 
 class UserSession(BaseModel):
     """What we store in the signed session cookie — minimal, no sensitive data."""
-    user_id: str
+    user_id: UUID
     username: str
     # we persist a simple boolean rather than the full ``role`` string,
     # keeping the session payload compact and avoiding any need to fetch the

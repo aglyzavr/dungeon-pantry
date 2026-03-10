@@ -29,7 +29,7 @@ async def campaign_list(
     service: CampaignService = Depends(_service),
 ):
     campaigns = await service.list_campaigns(
-        user_id=UUID(current_user.user_id),
+        user_id=current_user.user_id,
         is_dm=current_user.is_dm,
     )
     return templates.TemplateResponse("campaigns/list.html", {
@@ -64,7 +64,7 @@ async def campaign_create(
 ):
     try:
         data = CampaignCreate(name=name, description=description or None)
-        campaign = await service.create_campaign(data, created_by=UUID(current_user.user_id))
+        campaign = await service.create_campaign(data, created_by=current_user.user_id)
         return RedirectResponse(
             url=f"/campaigns/{campaign.id}",
             status_code=status.HTTP_303_SEE_OTHER,

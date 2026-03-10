@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel, field_validator
 
 from app.schemas import validate_non_empty
@@ -27,4 +29,4 @@ class PlayerCreate(BaseModel):
 
 
 class PlayerAssignCharacter(BaseModel):
-    character_id: str
+    character_id: UUID

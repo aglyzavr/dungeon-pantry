@@ -1,6 +1,5 @@
 """Handler for user settings."""
 from datetime import timedelta
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -50,7 +49,7 @@ async def change_language(
     
     # Update user in database
     user_repo = UserRepository(db)
-    user = await user_repo.get_by_id(UUID(current_user.user_id))
+    user = await user_repo.get_by_id(current_user.user_id)
     if not user:
         return RedirectResponse(url="/auth/login", status_code=303)
     
@@ -89,7 +88,7 @@ async def change_theme(
     
     # Update user in database
     user_repo = UserRepository(db)
-    user = await user_repo.get_by_id(UUID(current_user.user_id))
+    user = await user_repo.get_by_id(current_user.user_id)
     if not user:
         return RedirectResponse(url="/auth/login", status_code=303)
     

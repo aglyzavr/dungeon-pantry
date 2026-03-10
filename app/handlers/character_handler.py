@@ -29,7 +29,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 def _can_edit(current_user: UserSession, character) -> bool:
     """Check if the current user has edit permission on a character."""
-    return current_user.is_dm or str(character.owner_id) == current_user.user_id
+    return current_user.is_dm or character.owner_id == current_user.user_id
 
 
 def _service(db: AsyncSession = Depends(get_db)) -> CharacterService:
@@ -105,7 +105,7 @@ async def upload_character(
     try:
         character = await service.create_from_upload(
             raw_content=contents,
-            owner_id=UUID(current_user.user_id),
+            owner_id=current_user.user_id,
         )
     except CharacterValidationError as e:
         return render_template(
@@ -139,7 +139,7 @@ async def character_sheet(
 ):
     try:
         character = await service.get_character(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except CharacterNotFound:
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
@@ -213,7 +213,7 @@ async def edit_character_form(
 ):
     try:
         character = await service.get_character(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except CharacterNotFound:
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
@@ -245,7 +245,7 @@ async def edit_character_submit(
 ):
     try:
         character = await service.get_character(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except CharacterNotFound:
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
@@ -311,7 +311,7 @@ async def update_hp(
 
     try:
         character = await service.update_hp(
-            character_id, UUID(current_user.user_id), current_user.is_dm, payload
+            character_id, current_user.user_id, current_user.is_dm, payload
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -348,7 +348,7 @@ async def update_death_save(
 
     try:
         character = await service.update_death_save(
-            character_id, UUID(current_user.user_id), current_user.is_dm, payload
+            character_id, current_user.user_id, current_user.is_dm, payload
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -382,7 +382,7 @@ async def toggle_inspiration(
 ):
     try:
         character = await service.toggle_inspiration(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -421,7 +421,7 @@ async def update_spell_slot(
 
     try:
         character = await service.update_spell_slot(
-            character_id, UUID(current_user.user_id), current_user.is_dm, payload
+            character_id, current_user.user_id, current_user.is_dm, payload
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -457,7 +457,7 @@ async def update_temp_hp(
 
     try:
         character = await service.update_temp_hp(
-            character_id, UUID(current_user.user_id), current_user.is_dm,
+            character_id, current_user.user_id, current_user.is_dm,
             payload.delta, payload.value,
         )
     except (CharacterNotFound, CharacterPermissionError):
@@ -491,7 +491,7 @@ async def update_max_hp(
 
     try:
         character = await service.update_max_hp(
-            character_id, UUID(current_user.user_id), current_user.is_dm,
+            character_id, current_user.user_id, current_user.is_dm,
             payload.value,
         )
     except (CharacterNotFound, CharacterPermissionError):
@@ -522,7 +522,7 @@ async def toggle_shield(
 ):
     try:
         character = await service.toggle_shield(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -553,7 +553,7 @@ async def update_defenses(
 ):
     try:
         character = await service.update_defenses(
-            character_id, defenses, UUID(current_user.user_id), current_user.is_dm
+            character_id, defenses, current_user.user_id, current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -586,7 +586,7 @@ async def update_conditions(
 
     try:
         character = await service.update_conditions(
-            character_id, conditions, UUID(current_user.user_id), current_user.is_dm
+            character_id, conditions, current_user.user_id, current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
@@ -623,7 +623,7 @@ async def update_throwable_case_qty(
 
     try:
         character = await service.update_throwable_case_quantity(
-            character_id, UUID(current_user.user_id), current_user.is_dm,
+            character_id, current_user.user_id, current_user.is_dm,
             payload.case_index, payload.item_index, payload.delta,
         )
     except (CharacterNotFound, CharacterPermissionError):
@@ -688,7 +688,7 @@ async def portrait_upload_form(
     """Display portrait upload modal"""
     try:
         character = await service.get_character(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except CharacterNotFound:
         return error_response(request, 404, language=current_user.language)
@@ -719,7 +719,7 @@ async def upload_portrait(
     """Handle portrait image upload and store in database"""
     try:
         character = await service.get_character(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except CharacterNotFound:
         return error_response(request, 404, language=current_user.language)
@@ -800,7 +800,7 @@ async def get_portrait(
     """Retrieve portrait image from database"""
     try:
         character = await service.get_character(
-            character_id, UUID(current_user.user_id), current_user.is_dm
+            character_id, current_user.user_id, current_user.is_dm
         )
     except CharacterNotFound:
         return error_response(request, 404, language=current_user.language)

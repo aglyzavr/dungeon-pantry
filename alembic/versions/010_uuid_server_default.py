@@ -6,6 +6,7 @@ Create Date: 2026-03-10 12:00:00.000000
 
 """
 from alembic import op
+from sqlalchemy import text
 
 
 # revision identifiers, used by Alembic.
@@ -18,11 +19,11 @@ depends_on = None
 def upgrade() -> None:
     op.alter_column(
         "campaigns", "id",
-        server_default=op.inline_literal("gen_random_uuid()"),
+        server_default=text("gen_random_uuid()"),
     )
     op.alter_column(
         "characters", "id",
-        server_default=op.inline_literal("gen_random_uuid()"),
+        server_default=text("gen_random_uuid()"),
     )
 
 
