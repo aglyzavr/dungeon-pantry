@@ -18,6 +18,7 @@ class ShareLink(Base):
         UUID(as_uuid=True),
         ForeignKey("characters.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
     label: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

@@ -36,6 +36,7 @@ class Character(Base):
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),      # ← SET NULL on user delete
         nullable=True,
+        index=True,
     )
     sheet_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
     portrait_path: Mapped[str | None] = mapped_column(
