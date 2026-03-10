@@ -48,7 +48,8 @@
             Edit
           </a>
           <form method="post" action="/campaigns/{{ campaign.id }}/delete"
-                onsubmit="return confirm('Delete \'{{ campaign.name }}\'? Characters will stay in the pool.')">
+                class="js-confirm-delete"
+                data-confirm-name="{{ campaign.name }}">
             <button type="submit" class="btn-sm btn-sm--danger">
               Delete
             </button>
@@ -71,7 +72,18 @@
           subtext="Create your first campaign to get started." %}
     {% include "shared/_empty_state.html" %}
   {% endwith %}
-  {% endif %}
-
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.js-confirm-delete').forEach(function(form) {
+  form.addEventListener('submit', function(e) {
+    var name = form.getAttribute('data-confirm-name');
+    if (!confirm('Delete \'' + name + '\'? Characters will stay in the pool.')) {
+      e.preventDefault();
+    }
+  });
+});
+</script>
 {% endblock %}

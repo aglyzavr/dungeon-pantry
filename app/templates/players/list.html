@@ -68,7 +68,8 @@
               <form
                 method="POST"
                 action="/players/{{ player.id }}/delete"
-                onsubmit="return confirm('Permanently delete player {{ player.username }}?')"
+                class="js-confirm-delete"
+                data-confirm-name="{{ player.username }}"
               >
                 <button
                   type="submit"
@@ -95,7 +96,18 @@
       + New Player
     </a>
   </div>
-  {% endif %}
-
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.js-confirm-delete').forEach(function(form) {
+  form.addEventListener('submit', function(e) {
+    var name = form.getAttribute('data-confirm-name');
+    if (!confirm('Permanently delete player ' + name + '?')) {
+      e.preventDefault();
+    }
+  });
+});
+</script>
 {% endblock %}
