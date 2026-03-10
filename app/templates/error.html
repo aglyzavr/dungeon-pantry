@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %}{{ error_title }} — Campaign Manager{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="/static/css/error.css" />
+{% endblock %}
+
+{% block content %}
+<div class="error-page">
+  <div class="error-page-icon">
+    {% if status_code == 403 %}🚫{% elif status_code == 404 %}🔍{% elif status_code == 410 %}⏳{% else %}❌{% endif %}
+  </div>
+
+  <h1 class="error-page-title">{{ error_title }}</h1>
+
+  <p class="error-page-message">{{ error_message }}</p>
+
+  {% if error_detail %}
+  <div class="error-page-detail">{{ error_detail }}</div>
+  {% endif %}
+
+  <div class="error-page-actions">
+    {% if back_url %}
+      <a href="{{ back_url }}" class="btn-primary">{{ back_label|default("Go Back") }}</a>
+    {% endif %}
+    <a href="/" class="btn-sm btn-sm--secondary">{{ _("Home") if _ is defined else "Home" }}</a>
+  </div>
+</div>
+{% endblock %}

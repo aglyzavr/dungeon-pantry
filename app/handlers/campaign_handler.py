@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.i18n import error_response
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.campaign import CampaignCreate, CampaignUpdate
@@ -90,11 +91,12 @@ async def campaign_detail(
         campaign = await service.get_campaign(campaign_id)
         unassigned_characters = await service.get_unassigned_characters()
     except CampaignNotFound:
-        return templates.TemplateResponse(
-            "campaigns/list.html",
-            {"request": request, "current_user": current_user,
-             "campaigns": [], "error": "Campaign not found"},
-            status_code=status.HTTP_404_NOT_FOUND,
+        return error_response(
+            request, 404,
+            error_message="Campaign not found.",
+            back_url="/campaigns",
+            back_label="Back to Campaigns",
+            language=current_user.language,
         )
     return templates.TemplateResponse("campaigns/detail.html", {
         "request": request,

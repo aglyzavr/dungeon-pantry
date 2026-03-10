@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
 from app.database import async_session_factory, engine
@@ -49,8 +50,34 @@ def create_app() -> FastAPI:
     app.add_middleware(CSRFMiddleware)
 
     app.mount("/static", StaticFiles(directory="app/static", check_dir=False), name="static")
+    _register_exception_handlers(app)
     _register_routes(app)
     return app
+
+
+def _register_exception_handlers(app: FastAPI) -> None:
+    from app.i18n import error_response
+
+    @app.exception_handler(StarletteHTTPException)
+    async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+        # Let redirects pass through unchanged
+        if exc.status_code == 307 and "Location" in (exc.headers or {}):
+            return RedirectResponse(
+                url=exc.headers["Location"],
+                status_code=307,
+            )
+
+        # Render HTML error page for browser-facing errors
+        language = "en"
+        if hasattr(request.state, "current_user_language"):
+            language = request.state.current_user_language
+
+        return error_response(
+            request,
+            exc.status_code,
+            error_message=exc.detail if isinstance(exc.detail, str) else None,
+            language=language,
+        )
 
 
 def _register_routes(app: FastAPI) -> None:

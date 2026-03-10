@@ -6,6 +6,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.i18n import error_response
 from app.middleware.auth import require_dm
 from app.schemas.auth import UserSession
 from app.services.share_link_service import (
@@ -35,30 +36,18 @@ async def public_sheet(
     try:
         link = await service.get_valid_link(token)
     except ShareLinkNotFound:
-        return templates.TemplateResponse(
-            "share/sheet.html",
-            {
-                "request": request,
-                "error": "This share link does not exist.",
-                "character": None,
-                "sheet": None,
-                "link": None,
-                "current_user": None,  # ← add
-            },
-            status_code=status.HTTP_404_NOT_FOUND,
+        return error_response(
+            request, 404,
+            error_message="This share link does not exist.",
+            back_url="/",
+            back_label="Back to Home",
         )
     except ShareLinkExpired:
-        return templates.TemplateResponse(
-            "share/sheet.html",
-            {
-                "request": request,
-                "error": "This share link has expired or been revoked.",
-                "character": None,
-                "sheet": None,
-                "link": None,
-                "current_user": None,  # ← add
-            },
-            status_code=status.HTTP_410_GONE,
+        return error_response(
+            request, 410,
+            error_message="This share link has expired or been revoked.",
+            back_url="/",
+            back_label="Back to Home",
         )
 
     character = link.character

@@ -28,6 +28,7 @@ def require_login(
 
 
 def require_dm(
+    request: Request,
     user: UserSession = Depends(require_login),
 ) -> UserSession:
     if not user.is_dm:

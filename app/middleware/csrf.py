@@ -5,6 +5,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
+from app.i18n import error_response
+
 CSRF_COOKIE_NAME = "csrf_token"
 CSRF_FIELD_NAME = "csrf_token"
 CSRF_HEADER_NAME = "x-csrf-token"
@@ -32,7 +34,10 @@ class CSRFMiddleware(BaseHTTPMiddleware):
                 submitted_token = request.headers.get(CSRF_HEADER_NAME)
 
             if not submitted_token or not hmac.compare_digest(str(submitted_token), csrf_cookie):
-                return Response("CSRF token missing or invalid", status_code=403)
+                return error_response(
+                    request, 403,
+                    error_message="CSRF token missing or invalid. Please refresh the page and try again.",
+                )
 
         response = await call_next(request)
 

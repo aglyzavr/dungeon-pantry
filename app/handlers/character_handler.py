@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.i18n import render_template
+from app.i18n import error_response, render_template
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.character import HPUpdate, DeathSaveUpdate, SpellSlotUpdate, validate_mandatory_fields
@@ -192,16 +192,13 @@ async def character_sheet(
         )
         return resp
     except TemplateError as e:
-        return render_template(
-            templates,
-            "characters/error.html",
-            {
-                "request": request,
-                "current_user": current_user,
-                "error": str(e),
-            },
+        return error_response(
+            request, 500,
+            error_message="There was an error loading this character sheet. This might be due to corrupted data or a temporary issue.",
+            error_detail=str(e),
+            back_url="/characters",
+            back_label="Back to Characters",
             language=current_user.language,
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -266,7 +263,7 @@ async def edit_character_submit(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
     except CharacterNotFound:
-        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
 
     # Check if user can edit
     can_edit = _can_edit(current_user, character)
@@ -335,7 +332,7 @@ async def update_hp(
             character_id, UUID(current_user.user_id), current_user.is_dm, payload
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -372,7 +369,7 @@ async def update_death_save(
             character_id, UUID(current_user.user_id), current_user.is_dm, payload
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     await db.refresh(character, ["campaigns"])
 
@@ -406,7 +403,7 @@ async def toggle_inspiration(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     await db.refresh(character, ["campaigns"])
 
@@ -445,7 +442,7 @@ async def update_spell_slot(
             character_id, UUID(current_user.user_id), current_user.is_dm, payload
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -479,7 +476,7 @@ async def update_temp_hp(
             character_id, UUID(current_user.user_id), current_user.is_dm, delta, value
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -512,7 +509,7 @@ async def update_max_hp(
             character_id, UUID(current_user.user_id), current_user.is_dm, value
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -542,7 +539,7 @@ async def toggle_shield(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -573,7 +570,7 @@ async def update_defenses(
             character_id, defenses, UUID(current_user.user_id), current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -606,7 +603,7 @@ async def update_conditions(
             character_id, conditions, UUID(current_user.user_id), current_user.is_dm
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -642,7 +639,7 @@ async def update_throwable_case_qty(
             case_index, item_index, delta,
         )
     except (CharacterNotFound, CharacterPermissionError):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     return render_template(
         templates,
@@ -706,11 +703,11 @@ async def portrait_upload_form(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
     except CharacterNotFound:
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 404, language=current_user.language)
     
     # Check if user can edit
     if not _can_edit(current_user, character):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
     
     return render_template(
         templates,
@@ -737,11 +734,11 @@ async def upload_portrait(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
     except CharacterNotFound:
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 404, language=current_user.language)
     
     # Check if user can edit this character
     if not _can_edit(current_user, character):
-        return HTMLResponse("Forbidden", status_code=403)
+        return error_response(request, 403, language=current_user.language)
 
     # Validate file extension
     file_ext = Path(file.filename).suffix.lower()
@@ -807,6 +804,7 @@ async def upload_portrait(
 
 @router.get("/{character_id}/portrait", response_class=Response)
 async def get_portrait(
+    request: Request,
     character_id: UUID,
     current_user: UserSession = Depends(require_login),
     service: CharacterService = Depends(_service),
@@ -817,7 +815,7 @@ async def get_portrait(
             character_id, UUID(current_user.user_id), current_user.is_dm
         )
     except CharacterNotFound:
-        return Response("Not Found", status_code=404)
+        return error_response(request, 404, language=current_user.language)
 
     # Return portrait from database
     if character.portrait_data:
@@ -826,6 +824,5 @@ async def get_portrait(
             media_type=character.portrait_mime_type or "image/jpeg",
         )
     else:
-        # No portrait uploaded
-        return Response("No portrait found", status_code=404)
+        return error_response(request, 404, error_message="No portrait found.", language=current_user.language)
 
