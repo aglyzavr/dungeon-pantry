@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.i18n import error_response
+from app.i18n import error_response, render_template
 from app.middleware.auth import require_dm
 from app.schemas.auth import UserSession
 from app.services.share_link_service import (
@@ -51,13 +51,13 @@ async def public_sheet(
         )
 
     character = link.character
-    return templates.TemplateResponse("share/sheet.html", {
+    return render_template(templates, "share/sheet.html", {
         "request": request,
         "character": character,
         "sheet": character.sheet_data,
         "link": link,
         "error": None,
-        "current_user": None,  # ← add
+        "current_user": None,
     })
 
 

@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.i18n import error_response
+from app.i18n import error_response, render_template
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.campaign import CampaignCreate, CampaignUpdate
@@ -32,11 +32,11 @@ async def campaign_list(
         user_id=current_user.user_id,
         is_dm=current_user.is_dm,
     )
-    return templates.TemplateResponse("campaigns/list.html", {
+    return render_template(templates, "campaigns/list.html", {
         "request": request,
         "current_user": current_user,
         "campaigns": campaigns,
-    })
+    }, language=current_user.language)
 
 
 # ── Create (NEW must be before /{campaign_id}) ────────────────────────────────
@@ -46,12 +46,12 @@ async def campaign_new_form(
     request: Request,
     current_user: UserSession = Depends(require_dm),
 ):
-    return templates.TemplateResponse("campaigns/form.html", {
+    return render_template(templates, "campaigns/form.html", {
         "request": request,
         "current_user": current_user,
         "campaign": None,
         "error": None,
-    })
+    }, language=current_user.language)
 
 
 @router.post("", response_class=HTMLResponse)
@@ -70,10 +70,12 @@ async def campaign_create(
             status_code=status.HTTP_303_SEE_OTHER,
         )
     except ValueError as e:
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "campaigns/form.html",
             {"request": request, "current_user": current_user,
              "campaign": None, "error": str(e)},
+            language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
@@ -98,12 +100,12 @@ async def campaign_detail(
             back_label="Back to Campaigns",
             language=current_user.language,
         )
-    return templates.TemplateResponse("campaigns/detail.html", {
+    return render_template(templates, "campaigns/detail.html", {
         "request": request,
         "current_user": current_user,
         "campaign": campaign,
         "unassigned_characters": unassigned_characters,
-    })
+    }, language=current_user.language)
 
 
 # ── Edit ─────────────────────────────────────────────────────────────────────
@@ -119,12 +121,12 @@ async def campaign_edit_form(
         campaign = await service.get_campaign(campaign_id)
     except CampaignNotFound:
         return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
-    return templates.TemplateResponse("campaigns/form.html", {
+    return render_template(templates, "campaigns/form.html", {
         "request": request,
         "current_user": current_user,
         "campaign": campaign,
         "error": None,
-    })
+    }, language=current_user.language)
 
 
 @router.post("/{campaign_id}/edit", response_class=HTMLResponse)
@@ -148,10 +150,12 @@ async def campaign_update(
             campaign = await service.get_campaign(campaign_id)
         except CampaignNotFound:
             return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "campaigns/form.html",
             {"request": request, "current_user": current_user,
              "campaign": campaign, "error": str(e)},
+            language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
@@ -185,12 +189,12 @@ async def add_characters_form(
     except CampaignNotFound:
         return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 
-    return templates.TemplateResponse("campaigns/add_characters.html", {
+    return render_template(templates, "campaigns/add_characters.html", {
         "request": request,
         "current_user": current_user,
         "campaign": campaign,
         "available": available,
-    })
+    }, language=current_user.language)
 
 
 @router.post("/{campaign_id}/characters", response_class=HTMLResponse)

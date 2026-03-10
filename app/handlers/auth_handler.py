@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.database import get_db
+from app.i18n import render_template
 from app.middleware.auth import SESSION_COOKIE_NAME, get_current_user
 from app.schemas.auth import UserSession
 from app.services.auth_service import authenticate_user, create_session_token
@@ -22,13 +23,14 @@ async def login_page(
 ):
     if user:
         return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
-    return templates.TemplateResponse(
+    return render_template(
+        templates,
         "auth/login.html", {
             "request": request,
             "current_user": None,
             "messages": [],
             "error": None,
-        }
+        },
     )
 
 
@@ -46,7 +48,8 @@ async def login_submit(
 
     if session is None:
         # Generic error message — never reveal whether username or password was wrong
-        return templates.TemplateResponse(
+        return render_template(
+            templates,
             "auth/login.html",
             {"request": request, "error": "Invalid username or password"},
             status_code=status.HTTP_401_UNAUTHORIZED,

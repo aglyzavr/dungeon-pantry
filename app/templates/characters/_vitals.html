@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/static/css/vitals.css" />
+<script src="/static/js/vitals.js"></script>
 
 <div id="vitals-section">
   {% set hp  = sheet.vitality.hit_points %}
@@ -25,7 +26,7 @@
       </div>
     </button>
     {% else %}
-    <div class="vitals-stat-box" style="border-color: transparent;">
+    <div class="vitals-stat-box">
       <div class="vitals-stat-label">{{ _("AC") }} {{ '🛡️' if shield else '' }}</div>
       <div class="vitals-stat-value">{{ total_ac }}</div>
     </div>
@@ -37,7 +38,7 @@
       (_("Speed"),      sheet.speed),
       (_("Prof."),      "+" ~ sheet.proficiency_bonus)
     ] %}
-    <div class="vitals-stat-box" style="border-color: transparent;">
+    <div class="vitals-stat-box">
       <div class="vitals-stat-label">{{ label }}</div>
       <div class="vitals-stat-value">{{ value }}</div>
     </div>
@@ -46,7 +47,7 @@
     {# Hit Dice #}
     {% set hd = sheet.vitality.get("hit_dice", {}) %}
     {% if hd and hd.get("total") %}
-    <div class="vitals-stat-box" style="border-color: transparent;">
+    <div class="vitals-stat-box">
       <div class="vitals-stat-label">{{ _("Hit Dice") }}</div>
       <div class="vitals-stat-value vitals-stat-value--small">{{ hd.total }}</div>
       {% if hd.get("spent") and hd.spent != "0" %}
@@ -101,25 +102,15 @@
               placeholder="0"
             />
             <button
-              onclick="
-                const healVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
-                htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
-                  target: '#vitals-section',
-                  swap: 'outerHTML',
-                  values: { delta: healVal }
-                });"
+              data-hp-action="heal"
+              data-character-id="{{ character.id }}"
               class="btn-heal"
             >
               {{ _("Heal") }}
             </button>
             <button
-              onclick="
-                const dmgVal = parseInt(document.getElementById('hp-input-{{ character.id }}').value) || 0;
-                htmx.ajax('POST', '/characters/{{ character.id }}/vitals/hp', {
-                  target: '#vitals-section',
-                  swap: 'outerHTML',
-                  values: { delta: -dmgVal }
-                });"
+              data-hp-action="damage"
+              data-character-id="{{ character.id }}"
               class="btn-damage"
             >
               {{ _("Dmg") }}

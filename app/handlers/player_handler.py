@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import ValidationError
 
 from app.database import get_db
+from app.i18n import render_template
 from app.middleware.auth import require_dm
 from app.schemas.auth import UserSession
 from app.schemas.player import PlayerCreate
@@ -35,12 +36,12 @@ async def player_list(
 ):
     players = await service.list_players()
     characters = await service.get_all_characters()
-    return templates.TemplateResponse("players/list.html", {
+    return render_template(templates, "players/list.html", {
         "request": request,
         "current_user": current_user,
         "players": players,
         "characters": characters,
-    })
+    }, language=current_user.language)
 
 
 # ── New form ──────────────────────────────────────────────────────────────
@@ -50,7 +51,7 @@ async def player_new_form(
     request: Request,
     user: UserSession = Depends(require_dm),
 ):
-    return templates.TemplateResponse("players/form.html", {
+    return render_template(templates, "players/form.html", {
         "request": request,
         "current_user": user,
         "messages": [],
@@ -58,7 +59,7 @@ async def player_new_form(
         "form": {},
         "errors": {},
         "all_characters": [],
-    })
+    }, language=user.language)
 
 
 
@@ -88,7 +89,7 @@ async def player_create(
         except UsernameAlreadyExists as e:
             errors["username"] = str(e)
 
-    return templates.TemplateResponse("players/form.html", {
+    return render_template(templates, "players/form.html", {
         "request": request,
         "current_user": current_user,
         "messages": [],
@@ -96,7 +97,7 @@ async def player_create(
         "form": {"username": username},
         "errors": errors,
         "all_characters": [],
-    }, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    }, language=current_user.language, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 # ── Assign character ──────────────────────────────────────────────────────
@@ -144,7 +145,7 @@ async def player_edit_form(
         return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)
 
     all_characters = await service.get_all_characters()
-    return templates.TemplateResponse("players/form.html", {
+    return render_template(templates, "players/form.html", {
         "request": request,
         "current_user": current_user,
         "player": player,
@@ -152,7 +153,7 @@ async def player_edit_form(
         "errors": {},
         "messages": [],
         "all_characters": all_characters,
-    })
+    }, language=current_user.language)
 
 
 # ── Update ────────────────────────────────────────────────────────────────
@@ -183,7 +184,7 @@ async def player_update(
 
     if errors:
         all_characters = await service.get_all_characters()
-        return templates.TemplateResponse("players/form.html", {
+        return render_template(templates, "players/form.html", {
             "request": request,
             "current_user": current_user,
             "player": player,
@@ -191,7 +192,7 @@ async def player_update(
             "errors": errors,
             "messages": [],
             "all_characters": all_characters,
-        }, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        }, language=current_user.language, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     # Update password if provided
     if password:

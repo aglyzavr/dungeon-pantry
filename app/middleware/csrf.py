@@ -27,8 +27,13 @@ class CSRFMiddleware(BaseHTTPMiddleware):
 
             content_type = request.headers.get("content-type", "")
             if "multipart/form-data" in content_type or "application/x-www-form-urlencoded" in content_type:
+                body = await request.body()
                 form = await request.form()
                 submitted_token = form.get(CSRF_FIELD_NAME)
+                # Re-inject the raw body so FastAPI can parse Form(...) later
+                async def receive():
+                    return {"type": "http.request", "body": body}
+                request._receive = receive
 
             if not submitted_token:
                 submitted_token = request.headers.get(CSRF_HEADER_NAME)
