@@ -31,14 +31,26 @@ Before you begin, ensure you have the following installed:
    cd dnd-app-backend
    ```
 
-2. **Start the application**
+2. **Create a `.env` file** with the required environment variables (see [Configuration](#configuration)):
+   ```bash
+   POSTGRES_HOST=db
+   POSTGRES_PORT=5432
+   POSTGRES_DB=dnd_campaigns
+   POSTGRES_USER=dnd_user
+   POSTGRES_PASSWORD=your_password
+   SESSION_SECRET_KEY=your_secret_key
+   DM_SEED_USERNAME=dm
+   DM_SEED_PASSWORD=your_dm_password
+   ```
+
+3. **Start the application**
    ```bash
    docker compose up --build
    ```
 
-3. **Access the application**
+4. **Access the application**
    - Open your browser and navigate to `http://localhost:8080`
-   - Default DM credentials: `username: dm`, `password: pswd`
+   - Log in with the DM credentials you set via `DM_SEED_USERNAME` / `DM_SEED_PASSWORD`
 
 The application will automatically run database migrations on startup.
 
@@ -57,6 +69,7 @@ docker run -p 8080:8080 \
   -e POSTGRES_USER=dnd_user \
   -e POSTGRES_PASSWORD=your_password \
   -e SESSION_SECRET_KEY=your_secret_key \
+  -e DM_SEED_PASSWORD=your_dm_password \
   dnd-app-manager:local
 ```
 
@@ -121,14 +134,16 @@ docker buildx build \
    pip install -r requirements.txt
    ```
 
-3. **Run the application locally**
+3. **Create a `.env` file** in the project root with the required environment variables (see [Configuration](#configuration)).
+
+4. **Run the application locally**
    ```bash
    python -m app.main
    ```
 
 ### Database Setup
 
-Ensure PostgreSQL is running and accessible. Update the database connection settings in `app/config.py` or via environment variables.
+Ensure PostgreSQL is running and accessible. Set the database connection via environment variables in your `.env` file.
 
 ## Configuration
 
@@ -140,22 +155,21 @@ Key environment variables for configuration:
 |----------|-------------|---------|
 | `APP_PORT` | Application server port | `8080` |
 | `APP_ENV` | Environment (development/production) | `development` |
-| `POSTGRES_HOST` | PostgreSQL host | `localhost` |
+| `POSTGRES_HOST` | PostgreSQL host | (required) |
 | `POSTGRES_PORT` | PostgreSQL port | `5432` |
-| `POSTGRES_DB` | Database name | `dnd_campaigns` |
-| `POSTGRES_USER` | Database user | `dnd_user` |
+| `POSTGRES_DB` | Database name | (required) |
+| `POSTGRES_USER` | Database user | (required) |
 | `POSTGRES_PASSWORD` | Database password | (required) |
 | `SESSION_SECRET_KEY` | Secret key for session management | (required) |
-| `SESSION_DURATION_DAYS` | Session validity period | `30` |
-| `DM_SEED_USERNAME` | Default DM username | `dm` |
-| `DM_SEED_PASSWORD` | Default DM password | `pswd` |
+| `DM_SEED_USERNAME` | DM username created on first startup | `dm` |
+| `DM_SEED_PASSWORD` | DM password created on first startup | (optional) |
 
 ## Project Structure
 
 ```
 dnd-app-backend/
 ├── app/
-│   ├── handlers/          # API route handlers
+│   ├── handlers/          # Route handlers
 │   ├── models/            # Database models
 │   ├── repositories/      # Database access layer
 │   ├── schemas/           # Pydantic schemas for validation
@@ -169,21 +183,26 @@ dnd-app-backend/
 │   ├── i18n.py            # i18n setup
 │   └── main.py            # Application entry point
 ├── alembic/               # Database migrations
+├── test_data/             # Sample character/player JSON files
+├── babel.cfg              # Babel extraction config
+├── compile_translations.py # Translation compilation script
 ├── docker-compose.yml     # Docker Compose configuration
 ├── Dockerfile             # Docker image definition
+├── I18N_GUIDE.md          # Internationalization guide
 ├── requirements.txt       # Python dependencies
-├── start.sh              # Container startup script
-└── README.md             # This file
+├── start.sh               # Container startup script
+└── README.md              # This file
 ```
 
 ## Technologies
 
 - **FastAPI** - Modern Python web framework
-- **SQLAlchemy** - ORM for database operations
+- **SQLAlchemy** - Async ORM for database operations
 - **Alembic** - Database migration tool
 - **PostgreSQL** - Relational database
-- **Pydantic** - Data validation
+- **Pydantic** - Data validation and settings management
 - **Jinja2** - Template engine
+- **Babel** - Internationalization (i18n)
 - **Docker** - Containerization
 
 ## Contributing
@@ -192,11 +211,5 @@ dnd-app-backend/
 2. Commit your changes (`git commit -m 'Add amazing feature'`)
 3. Push to the branch (`git push origin feature/amazing-feature`)
 4. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
 
 For issues, questions, or suggestions, please open an issue in the repository.
