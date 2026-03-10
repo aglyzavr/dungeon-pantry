@@ -61,12 +61,21 @@ function closePortraitModal() {
 function showSuccessNotification(message) {
     const notification = document.createElement('div');
     notification.className = 'success-notification';
-    notification.innerHTML = `
-        <div class="success-notification-content">
-            <div class="success-notification-icon">✓</div>
-            <div class="success-notification-message">${message}</div>
-        </div>
-    `;
+
+    const content = document.createElement('div');
+    content.className = 'success-notification-content';
+
+    const icon = document.createElement('div');
+    icon.className = 'success-notification-icon';
+    icon.textContent = '✓';
+
+    const msg = document.createElement('div');
+    msg.className = 'success-notification-message';
+    msg.textContent = message;
+
+    content.appendChild(icon);
+    content.appendChild(msg);
+    notification.appendChild(content);
     document.body.appendChild(notification);
     
     // Auto remove after 3 seconds
