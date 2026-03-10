@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Login — Campaign Manager{% endblock %}
+{% block title %}{{ _("Sign In") }} — Campaign Manager{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/login.css" />
@@ -13,7 +13,7 @@
     <div class="login-header">
       <div class="login-icon">⚔️</div>
       <h1 class="login-title">DnD Campaign Manager</h1>
-      <p class="login-subtitle">Sign in to continue</p>
+      <p class="login-subtitle">{{ _("Sign in to continue") }}</p>
     </div>
 
     {% if error %}
@@ -25,7 +25,7 @@
     <form method="post" action="/login" class="login-form">
       <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
       <div class="form-group">
-        <label for="username" class="form-label">Username</label>
+        <label for="username" class="form-label">{{ _("Username") }}</label>
         <input
           type="text"
           id="username"
@@ -33,23 +33,23 @@
           required
           autofocus
           class="form-input"
-          placeholder="Enter your username"
+          placeholder="{{ _("Enter your username") }}"
         />
       </div>
 
       <div class="form-group">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">{{ _("Password") }}</label>
         <input
           type="password"
           id="password"
           name="password"
           required
           class="form-input"
-          placeholder="Enter your password"
+          placeholder="{{ _("Enter your password") }}"
         />
       </div>
 
-      <button type="submit" class="btn-submit">Sign In</button>
+      <button type="submit" class="btn-submit">{{ _("Sign In") }}</button>
     </form>
 
   </div>

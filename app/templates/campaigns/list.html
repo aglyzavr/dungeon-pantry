@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Campaigns — Campaign Manager{% endblock %}
+{% block title %}{{ _("Campaigns") }} — Campaign Manager{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/campaigns.css" />
@@ -11,12 +11,12 @@
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Campaigns</h1>
+      <h1 class="page-title">{{ _("Campaigns") }}</h1>
       <p class="page-subtitle">{{ campaigns | length }} campaign{{ 's' if campaigns | length != 1 }}</p>
     </div>
     {% if current_user.is_dm %}
     <a href="/campaigns/new" class="btn-primary">
-      + New Campaign
+      + {{ _("New Campaign") }}
     </a>
     {% endif %}
   </div>
@@ -39,29 +39,29 @@
           {% if campaign.description %}
           <p class="campaign-card-description">{{ campaign.description }}</p>
           {% else %}
-          <p class="campaign-card-description empty">No description</p>
+          <p class="campaign-card-description empty">{{ _("No description") }}</p>
           {% endif %}
         </div>
         {% if current_user.is_dm %}
         <div class="campaign-actions">
           <a href="/campaigns/{{ campaign.id }}/edit" class="btn-sm btn-sm--secondary">
-            Edit
+            {{ _("Edit") }}
           </a>
           <form method="post" action="/campaigns/{{ campaign.id }}/delete"
                 class="js-confirm-delete"
                 data-confirm-name="{{ campaign.name }}">
             <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
             <button type="submit" class="btn-sm btn-sm--danger">
-              Delete
+              {{ _("Delete") }}
             </button>
           </form>
         </div>
         {% endif %}
       </div>
       <div class="campaign-card-footer">
-        <span>Created {{ campaign.created_at.strftime('%b %d, %Y') }}</span>
+        <span>{{ _("Created") }} {{ campaign.created_at.strftime('%b %d, %Y') }}</span>
         <a href="/campaigns/{{ campaign.id }}" class="campaign-card-link">
-          View →
+          {{ _("View") }} →
         </a>
       </div>
     </div>
@@ -69,8 +69,8 @@
   </div>
 
   {% else %}
-  {% with icon="🗺️", message="No campaigns yet",
-          subtext="Create your first campaign to get started." %}
+  {% with icon="🗺️", message=_("No campaigns yet"),
+          subtext=_("Create your first campaign to get started.") %}
     {% include "shared/_empty_state.html" %}
   {% endwith %}
   {% endif %}

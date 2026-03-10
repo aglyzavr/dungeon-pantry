@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Edit {{ sheet.character_identity.character_name }} — Campaign Manager{% endblock %}
+{% block title %}{{ _("Edit") }} {{ sheet.character_identity.character_name }} — Campaign Manager{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/edit.css" />
@@ -9,10 +9,10 @@
 {% block content %}
 <div class="edit-container">
   <div class="edit-header">
-    <h1 class="edit-title">Edit Character</h1>
+    <h1 class="edit-title">{{ _("Edit Character") }}</h1>
     <div class="edit-actions">
-      <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">Cancel</a>
-      <button type="submit" form="edit-form" class="btn-sm btn-sm--primary">Save Changes</button>
+      <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">{{ _("Cancel") }}</a>
+      <button type="submit" form="edit-form" class="btn-sm btn-sm--primary">{{ _("Save Changes") }}</button>
     </div>
   </div>
 
@@ -60,31 +60,31 @@
     }" x-init="init()">
     <div class="tab-navigation">
       <button type="button" class="tab-btn" @click="activeTab = 'identity'" :class="{ 'active': activeTab === 'identity' }">
-        Identity
+        {{ _("Identity") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'stats'" :class="{ 'active': activeTab === 'stats' }">
-        Stats & Abilities
+        {{ _("Stats & Abilities") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'vitals'" :class="{ 'active': activeTab === 'vitals' }">
-        Vitals
+        {{ _("Vitals") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'skills'" :class="{ 'active': activeTab === 'skills' }">
-        Skills
+        {{ _("Skills") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'features'" :class="{ 'active': activeTab === 'features' }">
-        Features & Traits
+        {{ _("Features & Traits") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'spells'" :class="{ 'active': activeTab === 'spells' }">
-        Spells
+        {{ _("Spells") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'attacks'" :class="{ 'active': activeTab === 'attacks' }">
-        Attacks & Cantrips
+        {{ _("Attacks & Cantrips") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'equipment'" :class="{ 'active': activeTab === 'equipment' }">
-        Equipment
+        {{ _("Equipment") }}
       </button>
       <button type="button" class="tab-btn" @click="activeTab = 'bio'" :class="{ 'active': activeTab === 'bio' }">
-        Biography
+        {{ _("Biography") }}
       </button>
     </div>
 
@@ -97,16 +97,16 @@
     {# ── TAB: IDENTITY ────────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'identity'" x-cloak>
       <div class="form-section">
-        <h2 class="form-section-title">Basic Information</h2>
+        <h2 class="form-section-title">{{ _("Basic Information") }}</h2>
         <div class="form-grid">
           <div class="form-group">
-            <label for="character_name">Character Name *</label>
+            <label for="character_name">{{ _("Character Name") }} *</label>
             <input type="text" id="character_name" name="character_name" 
                    value="{{ sheet.character_identity.character_name }}" required>
           </div>
           
           <div class="form-group">
-            <label for="background">Background</label>
+            <label for="background">{{ _("Background") }}</label>
             <input type="text" id="background" name="background" 
                    value="{{ sheet.character_identity.background }}">
           </div>
@@ -114,16 +114,16 @@
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Class</h2>
+        <h2 class="form-section-title">{{ _("Class") }}</h2>
         <div class="form-grid-2">
           <div class="form-group">
-            <label for="class_name">Class Name *</label>
+            <label for="class_name">{{ _("Class Name") }} *</label>
             <input type="text" id="class_name" name="class_name" 
                    value="{{ sheet.character_identity.class.name }}" required>
           </div>
           
           <div class="form-group">
-            <label for="class_subclass">Subclass</label>
+            <label for="class_subclass">{{ _("Subclass") }}</label>
             <input type="text" id="class_subclass" name="class_subclass" 
                    value="{{ sheet.character_identity.class.subclass or '' }}">
           </div>
@@ -131,16 +131,16 @@
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Species</h2>
+        <h2 class="form-section-title">{{ _("Species") }}</h2>
         <div class="form-grid-2">
           <div class="form-group">
-            <label for="species_name">Species Name *</label>
+            <label for="species_name">{{ _("Species Name") }} *</label>
             <input type="text" id="species_name" name="species_name" 
                    value="{{ sheet.character_identity.species.name }}" required>
           </div>
           
           <div class="form-group">
-            <label for="species_subtype">Subtype</label>
+            <label for="species_subtype">{{ _("Subtype") }}</label>
             <input type="text" id="species_subtype" name="species_subtype" 
                    value="{{ sheet.character_identity.species.subtype or '' }}">
           </div>
@@ -148,16 +148,16 @@
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Level & Experience</h2>
+        <h2 class="form-section-title">{{ _("Level & Experience") }}</h2>
         <div class="form-grid-2">
           <div class="form-group">
-            <label for="level">Level *</label>
+            <label for="level">{{ _("Level") }} *</label>
             <input type="number" id="level" name="level" min="1" max="20"
                    value="{{ sheet.character_level.level }}" required>
           </div>
           
           <div class="form-group">
-            <label for="xp">XP</label>
+            <label for="xp">{{ _("XP") }}</label>
             <input type="text" id="xp" name="xp" 
                    value="{{ sheet.character_level.xp }}">
           </div>
@@ -168,34 +168,34 @@
     {# ── TAB: STATS & ABILITIES ───────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'stats'" x-cloak>
       <div class="form-section">
-        <h2 class="form-section-title">Basic Stats</h2>
+        <h2 class="form-section-title">{{ _("Basic Stats") }}</h2>
         <div class="form-grid">
           <div class="form-group">
-            <label for="armor_class">Armor Class</label>
+            <label for="armor_class">{{ _("Armor Class") }}</label>
             <input type="number" id="armor_class" name="armor_class" 
                    value="{{ sheet.armor_class }}">
           </div>
           
           <div class="form-group">
-            <label for="initiative">Initiative</label>
+            <label for="initiative">{{ _("Initiative") }}</label>
             <input type="text" id="initiative" name="initiative" 
                    value="{{ sheet.initiative }}">
           </div>
           
           <div class="form-group">
-            <label for="speed">Speed</label>
+            <label for="speed">{{ _("Speed") }}</label>
             <input type="text" id="speed" name="speed" 
                    value="{{ sheet.speed }}">
           </div>
           
           <div class="form-group">
-            <label for="size">Size</label>
+            <label for="size">{{ _("Size") }}</label>
             <input type="text" id="size" name="size" 
                    value="{{ sheet.size }}">
           </div>
           
           <div class="form-group">
-            <label for="proficiency_bonus">Proficiency Bonus</label>
+            <label for="proficiency_bonus">{{ _("Proficiency Bonus") }}</label>
             <input type="number" id="proficiency_bonus" name="proficiency_bonus" 
                    value="{{ sheet.proficiency_bonus }}">
           </div>
@@ -203,19 +203,19 @@
         
         <div class="form-grid-3" style="margin-top: 1rem;">
           <div class="form-group">
-            <label for="passive_perception">Passive Perception</label>
+            <label for="passive_perception">{{ _("Passive Perception") }}</label>
             <input type="number" id="passive_perception" name="passive_perception" 
                    value="{{ sheet.passive_perception }}">
           </div>
           
           <div class="form-group">
-            <label for="passive_investigation">Passive Investigation</label>
+            <label for="passive_investigation">{{ _("Passive Investigation") }}</label>
             <input type="number" id="passive_investigation" name="passive_investigation" 
                    value="{{ sheet.get('passive_investigation', 10) }}">
           </div>
           
           <div class="form-group">
-            <label for="passive_insight">Passive Insight</label>
+            <label for="passive_insight">{{ _("Passive Insight") }}</label>
             <input type="number" id="passive_insight" name="passive_insight" 
                    value="{{ sheet.get('passive_insight', 10) }}">
           </div>
@@ -224,37 +224,37 @@
         <div class="checkbox-group" style="margin-top: 1rem;">
           <input type="checkbox" id="heroic_inspiration" name="heroic_inspiration" 
                  {% if sheet.heroic_inspiration %}checked{% endif %}>
-          <label for="heroic_inspiration">Heroic Inspiration</label>
+          <label for="heroic_inspiration">{{ _("Heroic Inspiration") }}</label>
         </div>
       </div>
 
       {# Ability Scores #}
       {% for ability_name, ability_label in [
-        ('strength', 'Strength'),
-        ('dexterity', 'Dexterity'),
-        ('constitution', 'Constitution'),
-        ('intelligence', 'Intelligence'),
-        ('wisdom', 'Wisdom'),
-        ('charisma', 'Charisma')
+        ('strength', _('Strength')),
+        ('dexterity', _('Dexterity')),
+        ('constitution', _('Constitution')),
+        ('intelligence', _('Intelligence')),
+        ('wisdom', _('Wisdom')),
+        ('charisma', _('Charisma'))
       ] %}
       {% set ability = sheet[ability_name] %}
       <div class="form-section">
         <h2 class="form-section-title">{{ ability_label }}</h2>
         <div class="form-grid">
           <div class="form-group">
-            <label for="{{ ability_name }}_score">Score</label>
+            <label for="{{ ability_name }}_score">{{ _("Score") }}</label>
             <input type="number" id="{{ ability_name }}_score" name="{{ ability_name }}_score" 
                    value="{{ ability.score }}">
           </div>
           
           <div class="form-group">
-            <label for="{{ ability_name }}_modifier">Modifier</label>
+            <label for="{{ ability_name }}_modifier">{{ _("Modifier") }}</label>
             <input type="number" id="{{ ability_name }}_modifier" name="{{ ability_name }}_modifier" 
                    value="{{ ability.modifier }}">
           </div>
           
           <div class="form-group">
-            <label for="{{ ability_name }}_save">Saving Throw</label>
+            <label for="{{ ability_name }}_save">{{ _("Saving Throw") }}</label>
             <input type="number" id="{{ ability_name }}_save" name="{{ ability_name }}_save" 
                    value="{{ ability.saving_throw }}">
           </div>
@@ -262,7 +262,7 @@
           <div class="form-group checkbox-group">
             <input type="checkbox" id="{{ ability_name }}_save_prof" name="{{ ability_name }}_save_prof" 
                    {% if ability.saving_throw_proficient %}checked{% endif %}>
-            <label for="{{ ability_name }}_save_prof">Save Proficient</label>
+            <label for="{{ ability_name }}_save_prof">{{ _("Save Proficient") }}</label>
           </div>
         </div>
       </div>
@@ -272,22 +272,22 @@
     {# ── TAB: VITALS ──────────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'vitals'" x-cloak>
       <div class="form-section">
-        <h2 class="form-section-title">Hit Points</h2>
+        <h2 class="form-section-title">{{ _("Hit Points") }}</h2>
         <div class="form-grid-3">
           <div class="form-group">
-            <label for="hp_current">Current HP *</label>
+            <label for="hp_current">{{ _("Current HP") }} *</label>
             <input type="number" id="hp_current" name="hp_current" min="0"
                    value="{{ sheet.vitality.hit_points.current }}" required>
           </div>
           
           <div class="form-group">
-            <label for="hp_max">Max HP *</label>
+            <label for="hp_max">{{ _("Max HP") }} *</label>
             <input type="number" id="hp_max" name="hp_max" min="1"
                    value="{{ sheet.vitality.hit_points.max }}" required>
           </div>
           
           <div class="form-group">
-            <label for="hp_temp">Temp HP</label>
+            <label for="hp_temp">{{ _("Temp HP") }}</label>
             <input type="number" id="hp_temp" name="hp_temp" min="0"
                    value="{{ sheet.vitality.hit_points.temp }}">
           </div>
@@ -295,16 +295,16 @@
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Hit Dice</h2>
+        <h2 class="form-section-title">{{ _("Hit Dice") }}</h2>
         <div class="form-grid-2">
           <div class="form-group">
-            <label for="hit_dice_total">Total</label>
+            <label for="hit_dice_total">{{ _("Total") }}</label>
             <input type="text" id="hit_dice_total" name="hit_dice_total" 
                    value="{{ sheet.vitality.hit_dice.total }}">
           </div>
           
           <div class="form-group">
-            <label for="hit_dice_spent">Spent</label>
+            <label for="hit_dice_spent">{{ _("Spent") }}</label>
             <input type="text" id="hit_dice_spent" name="hit_dice_spent" 
                    value="{{ sheet.vitality.hit_dice.spent }}">
           </div>
@@ -312,9 +312,9 @@
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Defenses</h2>
+        <h2 class="form-section-title">{{ _("Defenses") }}</h2>
         <div class="form-group">
-          <label for="defenses">Resistances & Immunities</label>
+          <label for="defenses">{{ _("Resistances & Immunities") }}</label>
           <input type="text" id="defenses" name="defenses" 
                  value="{{ sheet.get('defenses', '') }}"
                  placeholder="e.g., Fire resistance, Poison immunity">
@@ -325,23 +325,23 @@
     {# ── TAB: SKILLS ──────────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'skills'" x-cloak>
       {% for ability_name, ability_label in [
-        ('strength', 'Strength'),
-        ('dexterity', 'Dexterity'),
-        ('intelligence', 'Intelligence'),
-        ('wisdom', 'Wisdom'),
-        ('charisma', 'Charisma')
+        ('strength', _('Strength')),
+        ('dexterity', _('Dexterity')),
+        ('intelligence', _('Intelligence')),
+        ('wisdom', _('Wisdom')),
+        ('charisma', _('Charisma'))
       ] %}
       {% set ability = sheet[ability_name] %}
       {% if ability.get('ability_scores') %}
       <div class="form-section">
-        <h2 class="form-section-title">{{ ability_label }} Skills</h2>
+        <h2 class="form-section-title">{{ ability_label }} {{ _("Skills") }}</h2>
         {% for skill_name, skill_data in ability.ability_scores.items() %}
         {% set skill_key = (ability_name ~ '_' ~ skill_name.replace(' ', '_').lower().replace('_of_', '_')) %}
         <div class="skill-edit-row">
           <div class="skill-edit-name">{{ skill_name | title }}</div>
           
           <div class="form-group skill-edit-bonus">
-            <label for="{{ skill_key }}_bonus">Bonus</label>
+            <label for="{{ skill_key }}_bonus">{{ _("Bonus") }}</label>
             <input type="number" id="{{ skill_key }}_bonus" name="{{ skill_key }}_bonus" 
                    value="{{ skill_data.bonus }}">
           </div>
@@ -349,7 +349,7 @@
           <div class="checkbox-group">
             <input type="checkbox" id="{{ skill_key }}_prof" name="{{ skill_key }}_prof" 
                    {% if skill_data.proficient %}checked{% endif %}>
-            <label for="{{ skill_key }}_prof">Proficient</label>
+            <label for="{{ skill_key }}_prof">{{ _("Proficient") }}</label>
           </div>
 
           <div class="form-group skill-edit-adv">
@@ -370,48 +370,48 @@
     {# ── TAB: FEATURES & TRAITS ───────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'features'" x-cloak>
       <div class="form-section">
-        <h2 class="form-section-title">Proficiencies</h2>
+        <h2 class="form-section-title">{{ _("Proficiencies") }}</h2>
         <div class="form-group">
-          <label for="armor_training">Armor Training (comma-separated)</label>
+          <label for="armor_training">{{ _("Armor Training") }}</label>
           <input type="text" id="armor_training" name="armor_training" 
                  value="{{ sheet.equipment_training_proficiencies.armor_training | join(', ') }}">
         </div>
         
         <div class="form-group">
-          <label for="weapons">Weapons (comma-separated)</label>
+          <label for="weapons">{{ _("Weapons") }}</label>
           <input type="text" id="weapons" name="weapons" 
                  value="{{ sheet.equipment_training_proficiencies.weapons | join(', ') }}">
         </div>
         
         <div class="form-group">
-          <label for="tools">Tools (comma-separated)</label>
+          <label for="tools">{{ _("Tools") }}</label>
           <input type="text" id="tools" name="tools" 
                  value="{{ sheet.equipment_training_proficiencies.tools | join(', ') }}">
         </div>
         
         <div class="form-group">
-          <label for="languages">Languages</label>
+          <label for="languages">{{ _("Languages") }}</label>
           <input type="text" id="languages" name="languages" 
                  value="{{ sheet.languages }}">
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Class Features</h2>
+        <h2 class="form-section-title">{{ _("Class Features") }}</h2>
         <div class="form-group">
           <textarea id="class_features" name="class_features">{{ sheet.class_features or '' }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Species Traits</h2>
+        <h2 class="form-section-title">{{ _("Species Traits") }}</h2>
         <div class="form-group">
           <textarea id="species_traits" name="species_traits">{{ sheet.species_traits or '' }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Feats</h2>
+        <h2 class="form-section-title">{{ _("Feats") }}</h2>
         <div class="form-group">
           <textarea id="feats" name="feats">{{ sheet.feats or '' }}</textarea>
         </div>
@@ -422,54 +422,54 @@
     <div class="tab-content" x-show="activeTab === 'spells'" x-cloak>
       <div class="form-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
-          <h2 class="form-section-title" style="margin: 0;">Spells</h2>
-          <button type="button" class="btn-sm btn-sm--secondary" @click="addSpell()">Add Spell</button>
+          <h2 class="form-section-title" style="margin: 0;">{{ _("Spells") }}</h2>
+          <button type="button" class="btn-sm btn-sm--secondary" @click="addSpell()">{{ _("Add Spell") }}</button>
         </div>
 
         <template x-if="spellEntries.length === 0">
-          <p style="margin: 0; opacity: 0.8;">No spells added yet.</p>
+          <p style="margin: 0; opacity: 0.8;">{{ _("No spells added yet.") }}</p>
         </template>
 
         <template x-for="(spell, index) in spellEntries" :key="index">
           <div class="form-section" style="padding: 1rem; margin-bottom: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.75rem;">
-              <h3 style="margin: 0; font-size: 1rem;">Spell <span x-text="index + 1"></span></h3>
-              <button type="button" class="btn-sm btn-sm--secondary" @click="removeSpell(index)">Remove</button>
+              <h3 style="margin: 0; font-size: 1rem;">{{ _("Spell") }} <span x-text="index + 1"></span></h3>
+              <button type="button" class="btn-sm btn-sm--secondary" @click="removeSpell(index)">{{ _("Remove") }}</button>
             </div>
 
             <div class="form-grid-2">
               <div class="form-group">
-                <label>Spell Name</label>
+                <label>{{ _("Spell Name") }}</label>
                 <input type="text" x-model="spell.name" placeholder="e.g. Fireball">
               </div>
               <div class="form-group">
-                <label>Level (0-9)</label>
+                <label>{{ _("Level (0-9)") }}</label>
                 <input type="number" min="0" max="9" x-model="spell.level">
               </div>
             </div>
 
             <div class="form-grid-3">
               <div class="form-group">
-                <label>Attack / Save</label>
+                <label>{{ _("Attack / Save") }}</label>
                 <input type="text" x-model="spell.attack_save" placeholder="DEX save / spell attack">
               </div>
               <div class="form-group">
-                <label>Casting Time</label>
+                <label>{{ _("Casting Time") }}</label>
                 <input type="text" x-model="spell.casting_time" placeholder="1 action">
               </div>
               <div class="form-group">
-                <label>Range</label>
+                <label>{{ _("Range") }}</label>
                 <input type="text" x-model="spell.range" placeholder="60 ft">
               </div>
             </div>
 
             <div class="form-grid-2">
               <div class="form-group">
-                <label>Components</label>
+                <label>{{ _("Components") }}</label>
                 <input type="text" x-model="spell.components" placeholder="V, S, M">
               </div>
               <div class="form-group">
-                <label>Duration</label>
+                <label>{{ _("Duration") }}</label>
                 <input type="text" x-model="spell.duration" placeholder="Instantaneous">
               </div>
             </div>
@@ -477,21 +477,21 @@
             <div class="form-grid-3" style="margin-top: 0.25rem;">
               <div class="checkbox-group">
                 <input type="checkbox" :id="'spell_concentration_' + index" x-model="spell.crrm.concentration">
-                <label :for="'spell_concentration_' + index">Concentration</label>
+                <label :for="'spell_concentration_' + index">{{ _("Concentration") }}</label>
               </div>
               <div class="checkbox-group">
                 <input type="checkbox" :id="'spell_ritual_' + index" x-model="spell.crrm.ritual">
-                <label :for="'spell_ritual_' + index">Ritual</label>
+                <label :for="'spell_ritual_' + index">{{ _("Ritual") }}</label>
               </div>
               <div class="checkbox-group">
                 <input type="checkbox" :id="'spell_bonus_action_' + index" x-model="spell.bonus_action">
-                <label :for="'spell_bonus_action_' + index">Bonus Action</label>
+                <label :for="'spell_bonus_action_' + index">{{ _("Bonus Action") }}</label>
               </div>
             </div>
 
             <div class="form-group" style="margin-top: 0.75rem;">
-              <label>Notes</label>
-              <textarea x-model="spell.notes" placeholder="Optional spell notes"></textarea>
+              <label>{{ _("Notes") }}</label>
+              <textarea x-model="spell.notes" placeholder="{{ _("Optional spell notes") }}"></textarea>
             </div>
           </div>
         </template>
@@ -502,46 +502,46 @@
     <div class="tab-content" x-show="activeTab === 'attacks'" x-cloak>
       <div class="form-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
-          <h2 class="form-section-title" style="margin: 0;">Attacks & Cantrips</h2>
-          <button type="button" class="btn-sm btn-sm--secondary" @click="addAttack()">Add Attack</button>
+          <h2 class="form-section-title" style="margin: 0;">{{ _("Attacks & Cantrips") }}</h2>
+          <button type="button" class="btn-sm btn-sm--secondary" @click="addAttack()">{{ _("Add Attack") }}</button>
         </div>
 
         <template x-if="attackEntries.length === 0">
-          <p style="margin: 0; opacity: 0.8;">No attacks added yet.</p>
+          <p style="margin: 0; opacity: 0.8;">{{ _("No attacks added yet.") }}</p>
         </template>
 
         <template x-for="(attack, index) in attackEntries" :key="index">
           <div class="form-section" style="padding: 1rem; margin-bottom: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.75rem;">
-              <h3 style="margin: 0; font-size: 1rem;">Attack <span x-text="index + 1"></span></h3>
-              <button type="button" class="btn-sm btn-sm--secondary" @click="removeAttack(index)">Remove</button>
+              <h3 style="margin: 0; font-size: 1rem;">{{ _("Attack") }} <span x-text="index + 1"></span></h3>
+              <button type="button" class="btn-sm btn-sm--secondary" @click="removeAttack(index)">{{ _("Remove") }}</button>
             </div>
 
             <div class="form-grid-2">
               <div class="form-group">
-                <label>Name</label>
+                <label>{{ _("Name") }}</label>
                 <input type="text" x-model="attack.name" placeholder="e.g. Longsword, Fire Bolt">
               </div>
               <div class="form-group">
-                <label>Attack Bonus / DC</label>
+                <label>{{ _("Attack Bonus / DC") }}</label>
                 <input type="text" x-model="attack.atk_bonus_or_dc" placeholder="e.g. +5, DC 13">
               </div>
             </div>
 
             <div class="form-grid-2">
               <div class="form-group">
-                <label>Damage & Type</label>
+                <label>{{ _("Damage & Type") }}</label>
                 <input type="text" x-model="attack.damage_and_type" placeholder="e.g. 1d8+3 Slashing, 1d10 Fire">
               </div>
               <div class="form-group">
-                <label>Notes</label>
+                <label>{{ _("Notes") }}</label>
                 <input type="text" x-model="attack.notes" placeholder="e.g. V/S, Versatile">
               </div>
             </div>
 
             <div class="checkbox-group" style="margin-top: 0.5rem;">
               <input type="checkbox" :id="'attack_bonus_action_' + index" x-model="attack.bonus_action">
-              <label :for="'attack_bonus_action_' + index">Bonus Action</label>
+                <label :for="'attack_bonus_action_' + index">{{ _("Bonus Action") }}</label>
             </div>
           </div>
         </template>
@@ -551,42 +551,42 @@
     {# ── TAB: EQUIPMENT ───────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'equipment'" x-cloak>
       <div class="form-section">
-        <h2 class="form-section-title">Equipment</h2>
+        <h2 class="form-section-title">{{ _("Equipment") }}</h2>
         <div class="form-group">
-          <label for="equipment_list">Equipment List (comma-separated)</label>
+          <label for="equipment_list">{{ _("Equipment List") }}</label>
           <textarea id="equipment_list" name="equipment_list">{{ sheet.equipment.equipment_list | join(', ') }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Coins</h2>
+        <h2 class="form-section-title">{{ _("Coins") }}</h2>
         <div class="form-grid-4">
           <div class="form-group">
-            <label for="coins_cp">Copper</label>
+            <label for="coins_cp">{{ _("Copper") }}</label>
             <input type="number" id="coins_cp" name="coins_cp" min="0"
                    value="{{ sheet.coins.cp }}">
           </div>
           
           <div class="form-group">
-            <label for="coins_sp">Silver</label>
+            <label for="coins_sp">{{ _("Silver") }}</label>
             <input type="number" id="coins_sp" name="coins_sp" min="0"
                    value="{{ sheet.coins.sp }}">
           </div>
           
           <div class="form-group">
-            <label for="coins_ep">Electrum</label>
+            <label for="coins_ep">{{ _("Electrum") }}</label>
             <input type="number" id="coins_ep" name="coins_ep" min="0"
                    value="{{ sheet.coins.ep }}">
           </div>
           
           <div class="form-group">
-            <label for="coins_gp">Gold</label>
+            <label for="coins_gp">{{ _("Gold") }}</label>
             <input type="number" id="coins_gp" name="coins_gp" min="0"
                    value="{{ sheet.coins.gp }}">
           </div>
           
           <div class="form-group">
-            <label for="coins_pp">Platinum</label>
+            <label for="coins_pp">{{ _("Platinum") }}</label>
             <input type="number" id="coins_pp" name="coins_pp" min="0"
                    value="{{ sheet.coins.pp }}">
           </div>
@@ -595,48 +595,48 @@
 
       <div class="form-section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
-          <h2 class="form-section-title" style="margin: 0;">Throwable Cases</h2>
-          <button type="button" class="btn-sm btn-sm--secondary" @click="addCase()">Add Case</button>
+          <h2 class="form-section-title" style="margin: 0;">{{ _("Throwable Cases") }}</h2>
+          <button type="button" class="btn-sm btn-sm--secondary" @click="addCase()">{{ _("Add Case") }}</button>
         </div>
 
         <template x-if="caseEntries.length === 0">
-          <p style="margin: 0; opacity: 0.8;">No throwable cases added yet.</p>
+          <p style="margin: 0; opacity: 0.8;">{{ _("No throwable cases added yet.") }}</p>
         </template>
 
         <template x-for="(tcase, caseIdx) in caseEntries" :key="caseIdx">
           <div class="form-section" style="padding: 1rem; margin-bottom: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.75rem;">
-              <h3 style="margin: 0; font-size: 1rem;">Case <span x-text="caseIdx + 1"></span></h3>
-              <button type="button" class="btn-sm btn-sm--secondary" @click="removeCase(caseIdx)">Remove Case</button>
+              <h3 style="margin: 0; font-size: 1rem;">{{ _("Case") }} <span x-text="caseIdx + 1"></span></h3>
+              <button type="button" class="btn-sm btn-sm--secondary" @click="removeCase(caseIdx)">{{ _("Remove Case") }}</button>
             </div>
 
             <div class="form-group">
-              <label>Case Name</label>
+              <label>{{ _("Case Name") }}</label>
               <input type="text" x-model="tcase.name" placeholder="e.g. CROSSBOW BOLT CASE">
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0 0.5rem; gap: 0.75rem;">
-              <h4 style="margin: 0; font-size: 0.9rem;">Items</h4>
-              <button type="button" class="btn-sm btn-sm--secondary" @click="addCaseItem(caseIdx)">Add Item</button>
+              <h4 style="margin: 0; font-size: 0.9rem;">{{ _("Items") }}</h4>
+              <button type="button" class="btn-sm btn-sm--secondary" @click="addCaseItem(caseIdx)">{{ _("Add Item") }}</button>
             </div>
 
             <template x-for="(item, itemIdx) in tcase.items" :key="itemIdx">
               <div style="padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid var(--color-border-light); border-radius: 0.5rem;">
                 <div class="form-grid-3">
                   <div class="form-group">
-                    <label>Item Name</label>
+                    <label>{{ _("Item Name") }}</label>
                     <input type="text" x-model="item.name" placeholder="e.g. Bolts">
                   </div>
                   <div class="form-group">
-                    <label>Quantity</label>
+                    <label>{{ _("Quantity") }}</label>
                     <input type="number" min="0" x-model="item.quantity">
                   </div>
                   <div class="form-group" style="display: flex; align-items: flex-end;">
-                    <button type="button" class="btn-sm btn-sm--secondary" @click="removeCaseItem(caseIdx, itemIdx)">Remove</button>
+                    <button type="button" class="btn-sm btn-sm--secondary" @click="removeCaseItem(caseIdx, itemIdx)">{{ _("Remove") }}</button>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label>Note</label>
+                  <label>{{ _("Note") }}</label>
                   <textarea x-model="item.note" placeholder="Optional note about this item"></textarea>
                 </div>
               </div>
@@ -649,28 +649,28 @@
     {# ── TAB: BIOGRAPHY ───────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'bio'" x-cloak>
       <div class="form-section">
-        <h2 class="form-section-title">Appearance</h2>
+        <h2 class="form-section-title">{{ _("Appearance") }}</h2>
         <div class="form-group">
           <textarea id="appearance" name="appearance">{{ sheet.appearance or '' }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Backstory</h2>
+        <h2 class="form-section-title">{{ _("Backstory") }}</h2>
         <div class="form-group">
           <textarea id="backstory" name="backstory">{{ sheet.backstory_and_personality.backstory or '' }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Personality</h2>
+        <h2 class="form-section-title">{{ _("Personality") }}</h2>
         <div class="form-group">
           <textarea id="personality" name="personality">{{ sheet.backstory_and_personality.personality or '' }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Alignment</h2>
+        <h2 class="form-section-title">{{ _("Alignment") }}</h2>
         <div class="form-group">
           <input type="text" id="alignment" name="alignment" 
                  value="{{ sheet.backstory_and_personality.alignment or '' }}">
@@ -678,21 +678,21 @@
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Ideals</h2>
+        <h2 class="form-section-title">{{ _("Ideals") }}</h2>
         <div class="form-group">
           <textarea id="ideals" name="ideals" placeholder="{{ _('ideals_placeholder') }}">{{ sheet.backstory_and_personality.ideals or '' }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Bonds</h2>
+        <h2 class="form-section-title">{{ _("Bonds") }}</h2>
         <div class="form-group">
           <textarea id="bonds" name="bonds" placeholder="{{ _('bonds_placeholder') }}">{{ sheet.backstory_and_personality.bonds or '' }}</textarea>
         </div>
       </div>
 
       <div class="form-section">
-        <h2 class="form-section-title">Flaws</h2>
+        <h2 class="form-section-title">{{ _("Flaws") }}</h2>
         <div class="form-group">
           <textarea id="flaws" name="flaws" placeholder="{{ _('flaws_placeholder') }}">{{ sheet.backstory_and_personality.flaws or '' }}</textarea>
         </div>

@@ -669,3 +669,385 @@ msgstr "Back to campaign"
 # Mobile Navigation
 msgid "Bag"
 msgstr "Bag"
+
+# Auth - additional
+msgid "Sign in to continue"
+msgstr "Sign in to continue"
+
+msgid "Enter your username"
+msgstr "Enter your username"
+
+msgid "Enter your password"
+msgstr "Enter your password"
+
+# Campaign list
+msgid "New Campaign"
+msgstr "New Campaign"
+
+msgid "No description"
+msgstr "No description"
+
+msgid "Created"
+msgstr "Created"
+
+msgid "View"
+msgstr "View"
+
+msgid "No campaigns yet"
+msgstr "No campaigns yet"
+
+msgid "Create your first campaign to get started."
+msgstr "Create your first campaign to get started."
+
+# Campaign detail
+msgid "Add Character"
+msgstr "Add Character"
+
+msgid "Remove"
+msgstr "Remove"
+
+msgid "No characters assigned"
+msgstr "No characters assigned"
+
+msgid "Add characters from the character pool."
+msgstr "Add characters from the character pool."
+
+msgid "Available Characters"
+msgstr "Available Characters"
+
+msgid "All characters assigned"
+msgstr "All characters assigned"
+
+msgid "You're all set for this campaign!"
+msgstr "You're all set for this campaign!"
+
+msgid "Delete this campaign? Characters will stay in the pool."
+msgstr "Delete this campaign? Characters will stay in the pool."
+
+msgid "by"
+msgstr "by"
+
+# Campaign detail - unassigned
+msgid "Unassigned"
+msgstr "Unassigned"
+
+# Campaign form
+msgid "Campaign"
+msgstr "Campaign"
+
+msgid "Edit Campaign"
+msgstr "Edit Campaign"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "(optional)"
+msgstr "(optional)"
+
+msgid "Save Changes"
+msgstr "Save Changes"
+
+# Campaign add characters
+msgid "Add Characters to"
+msgstr "Add Characters to"
+
+msgid "No unassigned characters available"
+msgstr "No unassigned characters available"
+
+msgid "Upload a new character first from the Character Pool."
+msgstr "Upload a new character first from the Character Pool."
+
+# Character pool
+msgid "Character Pool"
+msgstr "Character Pool"
+
+msgid "No characters yet"
+msgstr "No characters yet"
+
+msgid "Upload a JSON character sheet to get started."
+msgstr "Upload a JSON character sheet to get started."
+
+# Character upload
+msgid "Upload Character Sheet"
+msgstr "Upload Character Sheet"
+
+msgid "Upload failed — fix these errors:"
+msgstr "Upload failed — fix these errors:"
+
+msgid "Character JSON File"
+msgstr "Character JSON File"
+
+msgid "Upload & Create"
+msgstr "Upload & Create"
+
+# Character edit - tabs
+msgid "Identity"
+msgstr "Identity"
+
+msgid "Stats & Abilities"
+msgstr "Stats & Abilities"
+
+msgid "Vitals"
+msgstr "Vitals"
+
+msgid "Skills"
+msgstr "Skills"
+
+msgid "Biography"
+msgstr "Biography"
+
+# Character edit - Identity
+msgid "Basic Information"
+msgstr "Basic Information"
+
+msgid "Class"
+msgstr "Class"
+
+msgid "Class Name"
+msgstr "Class Name"
+
+msgid "Subclass"
+msgstr "Subclass"
+
+msgid "Species"
+msgstr "Species"
+
+msgid "Species Name"
+msgstr "Species Name"
+
+msgid "Subtype"
+msgstr "Subtype"
+
+msgid "Level & Experience"
+msgstr "Level & Experience"
+
+msgid "XP"
+msgstr "XP"
+
+# Character edit - Stats
+msgid "Basic Stats"
+msgstr "Basic Stats"
+
+msgid "Size"
+msgstr "Size"
+
+msgid "Proficiency Bonus"
+msgstr "Proficiency Bonus"
+
+msgid "Heroic Inspiration"
+msgstr "Heroic Inspiration"
+
+msgid "Score"
+msgstr "Score"
+
+msgid "Modifier"
+msgstr "Modifier"
+
+msgid "Save Proficient"
+msgstr "Save Proficient"
+
+# Character edit - Vitals
+msgid "Current HP"
+msgstr "Current HP"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Spent"
+msgstr "Spent"
+
+msgid "Resistances & Immunities"
+msgstr "Resistances & Immunities"
+
+# Character edit - Skills
+msgid "Bonus"
+msgstr "Bonus"
+
+msgid "Proficient"
+msgstr "Proficient"
+
+# Character edit - Proficiencies
+msgid "Proficiencies"
+msgstr "Proficiencies"
+
+msgid "Armor Training"
+msgstr "Armor Training"
+
+# Character edit - Spells
+msgid "Add Spell"
+msgstr "Add Spell"
+
+msgid "No spells added yet."
+msgstr "No spells added yet."
+
+msgid "Spell Name"
+msgstr "Spell Name"
+
+msgid "Level (0-9)"
+msgstr "Level (0-9)"
+
+msgid "Attack / Save"
+msgstr "Attack / Save"
+
+msgid "Casting Time"
+msgstr "Casting Time"
+
+msgid "Range"
+msgstr "Range"
+
+msgid "Components"
+msgstr "Components"
+
+msgid "Duration"
+msgstr "Duration"
+
+msgid "Concentration"
+msgstr "Concentration"
+
+msgid "Ritual"
+msgstr "Ritual"
+
+msgid "Bonus Action"
+msgstr "Bonus Action"
+
+msgid "Optional spell notes"
+msgstr "Optional spell notes"
+
+# Character edit - Attacks
+msgid "Add Attack"
+msgstr "Add Attack"
+
+msgid "No attacks added yet."
+msgstr "No attacks added yet."
+
+msgid "Attack Bonus / DC"
+msgstr "Attack Bonus / DC"
+
+# Character edit - Equipment
+msgid "Equipment List"
+msgstr "Equipment List"
+
+msgid "Coins"
+msgstr "Coins"
+
+msgid "Throwable Cases"
+msgstr "Throwable Cases"
+
+msgid "Add Case"
+msgstr "Add Case"
+
+msgid "No throwable cases added yet."
+msgstr "No throwable cases added yet."
+
+msgid "Case"
+msgstr "Case"
+
+msgid "Remove Case"
+msgstr "Remove Case"
+
+msgid "Case Name"
+msgstr "Case Name"
+
+msgid "Items"
+msgstr "Items"
+
+msgid "Add Item"
+msgstr "Add Item"
+
+msgid "Item Name"
+msgstr "Item Name"
+
+msgid "Quantity"
+msgstr "Quantity"
+
+msgid "Note"
+msgstr "Note"
+
+# Players
+msgid "New Player"
+msgstr "New Player"
+
+msgid "Edit Player"
+msgstr "Edit Player"
+
+msgid "Back to Players"
+msgstr "Back to Players"
+
+msgid "Member Since"
+msgstr "Member Since"
+
+msgid "No players yet"
+msgstr "No players yet"
+
+msgid "Create the first player account to get the campaign started."
+msgstr "Create the first player account to get the campaign started."
+
+msgid "Create Player"
+msgstr "Create Player"
+
+msgid "New Password"
+msgstr "New Password"
+
+msgid "Confirm Password"
+msgstr "Confirm Password"
+
+msgid "Confirm New Password"
+msgstr "Confirm New Password"
+
+msgid "(leave blank to keep current)"
+msgstr "(leave blank to keep current)"
+
+msgid "Between 3 and 32 characters."
+msgstr "Between 3 and 32 characters."
+
+msgid "Minimum 8 characters."
+msgstr "Minimum 8 characters."
+
+msgid "Username changes will be available in a future update"
+msgstr "Username changes will be available in a future update"
+
+msgid "Usernames cannot be changed at this time."
+msgstr "Usernames cannot be changed at this time."
+
+# Share page
+msgid "Back to home"
+msgstr "Back to home"
+
+msgid "Read-only shared sheet."
+msgstr "Read-only shared sheet."
+
+msgid "This link was shared by the player or Dungeon Master."
+msgstr "This link was shared by the player or Dungeon Master."
+
+msgid "Expires"
+msgstr "Expires"
+
+msgid "This link does not expire."
+msgstr "This link does not expire."
+
+# Error page
+msgid "Go Back"
+msgstr "Go Back"
+
+msgid "Home"
+msgstr "Home"
+
+# Layout
+msgid "DM"
+msgstr "DM"
+
+msgid "Player"
+msgstr "Player"
+
+# Vitals
+msgid "Hit Dice"
+msgstr "Hit Dice"
+
+msgid "spent"
+msgstr "spent"
+
+msgid "Advantage"
+msgstr "Advantage"
+
+msgid "Disadvantage"
+msgstr "Disadvantage"

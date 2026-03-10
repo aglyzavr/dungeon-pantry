@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}{{ "Edit Player" if player else "New Player" }}{% endblock %}
+{% block title %}{{ _("Edit Player") if player else _("New Player") }}{% endblock %}
 {% block meta_description %}{{ "Edit an existing player account." if player else "Create a new player account." }}{% endblock %}
 
 {% block extra_head %}
@@ -13,10 +13,10 @@
   {# ── Page Header ──────────────────────────────────────────────── #}
   <div class="form-page-header">
     <h1 class="form-page-title">
-      {{ "Edit Player" if player else "New Player" }}
+      {{ _("Edit Player") if player else _("New Player") }}
     </h1>
     <a href="/players" class="form-back-link">
-      ← Back to Players
+      ← {{ _("Back to Players") }}
     </a>
   </div>
 
@@ -32,7 +32,7 @@
     {# ── Username ──────────────────────────────────────────────── #}
     <div class="form-field">
       <label class="form-label" for="username">
-        Username
+        {{ _("Username") }}
         {% if not player %}<span class="form-label-required" aria-hidden="true">*</span>{% endif %}
       </label>
 
@@ -49,11 +49,11 @@
             class="form-input"
           />
           <div class="tooltip-content">
-            🔒 Username changes will be available in a future update
+            🔒 {{ _("Username changes will be available in a future update") }}
             <div class="tooltip-arrow"></div>
           </div>
         </div>
-        <p class="form-disabled-hint">Usernames cannot be changed at this time.</p>
+        <p class="form-disabled-hint">{{ _("Usernames cannot be changed at this time.") }}</p>
       </div>
 
       {% else %}
@@ -71,7 +71,7 @@
         aria-describedby="{{ 'username-error' if errors.username else 'username-hint' }}"
         class="form-input {% if errors.username %}form-input--error{% endif %}"
       />
-      <p id="username-hint" class="form-hint">Between 3 and 32 characters.</p>
+      <p id="username-hint" class="form-hint">{{ _("Between 3 and 32 characters.") }}</p>
       {% if errors.username %}
         <p id="username-error" class="form-error" role="alert">
           {{ errors.username }}
@@ -84,10 +84,10 @@
     <div class="form-field">
       <label class="form-label" for="password">
         {% if player %}
-          New Password
-          <span class="form-label-optional">(leave blank to keep current)</span>
+          {{ _("New Password") }}
+          <span class="form-label-optional">{{ _("(leave blank to keep current)") }}</span>
         {% else %}
-          Password <span class="form-label-required" aria-hidden="true">*</span>
+          {{ _("Password") }} <span class="form-label-required" aria-hidden="true">*</span>
         {% endif %}
       </label>
       <div class="form-field-with-icon">
@@ -110,7 +110,7 @@
           class="btn-toggle-password"
         >👁</button>
       </div>
-      <p id="password-hint" class="form-hint">Minimum 8 characters.</p>
+      <p id="password-hint" class="form-hint">{{ _("Minimum 8 characters.") }}</p>
       {% if errors.password %}
         <p id="password-error" class="form-error" role="alert">{{ errors.password }}</p>
       {% endif %}
@@ -120,9 +120,9 @@
     <div class="form-field">
       <label class="form-label" for="confirm_password">
         {% if player %}
-          Confirm New Password
+          {{ _("Confirm New Password") }}
         {% else %}
-          Confirm Password <span class="form-label-required" aria-hidden="true">*</span>
+          {{ _("Confirm Password") }} <span class="form-label-required" aria-hidden="true">*</span>
         {% endif %}
       </label>
       <input
@@ -146,7 +146,7 @@
     {# ── Form Actions ──────────────────────────────────────────── #}
     <div class="form-actions">
       <button type="submit" class="btn-submit">
-        {{ "Save Changes" if player else "Create Player" }}
+        {{ _("Save Changes") if player else _("Create Player") }}
       </button>
     </div>
 

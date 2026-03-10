@@ -667,3 +667,385 @@ msgstr "Назад к кампании"
 # Mobile Navigation
 msgid "Bag"
 msgstr "Сумка"
+
+# Auth - additional
+msgid "Sign in to continue"
+msgstr "Войдите, чтобы продолжить"
+
+msgid "Enter your username"
+msgstr "Введите имя пользователя"
+
+msgid "Enter your password"
+msgstr "Введите пароль"
+
+# Campaign list
+msgid "New Campaign"
+msgstr "Новая кампания"
+
+msgid "No description"
+msgstr "Нет описания"
+
+msgid "Created"
+msgstr "Создана"
+
+msgid "View"
+msgstr "Просмотр"
+
+msgid "No campaigns yet"
+msgstr "Кампаний пока нет"
+
+msgid "Create your first campaign to get started."
+msgstr "Создайте первую кампанию, чтобы начать."
+
+# Campaign detail
+msgid "Add Character"
+msgstr "Добавить персонажа"
+
+msgid "Remove"
+msgstr "Убрать"
+
+msgid "No characters assigned"
+msgstr "Персонажи не назначены"
+
+msgid "Add characters from the character pool."
+msgstr "Добавьте персонажей из пула персонажей."
+
+msgid "Available Characters"
+msgstr "Доступные персонажи"
+
+msgid "All characters assigned"
+msgstr "Все персонажи назначены"
+
+msgid "You're all set for this campaign!"
+msgstr "Всё готово для этой кампании!"
+
+msgid "Delete this campaign? Characters will stay in the pool."
+msgstr "Удалить эту кампанию? Персонажи останутся в пуле."
+
+msgid "by"
+msgstr "от"
+
+# Campaign detail - unassigned
+msgid "Unassigned"
+msgstr "Не назначен"
+
+# Campaign form
+msgid "Campaign"
+msgstr "Кампания"
+
+msgid "Edit Campaign"
+msgstr "Изменить кампанию"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "(optional)"
+msgstr "(необязательно)"
+
+msgid "Save Changes"
+msgstr "Сохранить изменения"
+
+# Campaign add characters
+msgid "Add Characters to"
+msgstr "Добавить персонажей в"
+
+msgid "No unassigned characters available"
+msgstr "Нет доступных свободных персонажей"
+
+msgid "Upload a new character first from the Character Pool."
+msgstr "Сначала загрузите нового персонажа из пула персонажей."
+
+# Character pool
+msgid "Character Pool"
+msgstr "Пул персонажей"
+
+msgid "No characters yet"
+msgstr "Персонажей пока нет"
+
+msgid "Upload a JSON character sheet to get started."
+msgstr "Загрузите JSON-файл листа персонажа, чтобы начать."
+
+# Character upload
+msgid "Upload Character Sheet"
+msgstr "Загрузить лист персонажа"
+
+msgid "Upload failed — fix these errors:"
+msgstr "Загрузка не удалась — исправьте ошибки:"
+
+msgid "Character JSON File"
+msgstr "JSON-файл персонажа"
+
+msgid "Upload & Create"
+msgstr "Загрузить и создать"
+
+# Character edit - tabs
+msgid "Identity"
+msgstr "Личность"
+
+msgid "Stats & Abilities"
+msgstr "Статистика и способности"
+
+msgid "Vitals"
+msgstr "Жизненные показатели"
+
+msgid "Skills"
+msgstr "Навыки"
+
+msgid "Biography"
+msgstr "Биография"
+
+# Character edit - Identity
+msgid "Basic Information"
+msgstr "Основная информация"
+
+msgid "Class"
+msgstr "Класс"
+
+msgid "Class Name"
+msgstr "Название класса"
+
+msgid "Subclass"
+msgstr "Подкласс"
+
+msgid "Species"
+msgstr "Раса"
+
+msgid "Species Name"
+msgstr "Название расы"
+
+msgid "Subtype"
+msgstr "Подтип"
+
+msgid "Level & Experience"
+msgstr "Уровень и опыт"
+
+msgid "XP"
+msgstr "Опыт"
+
+# Character edit - Stats
+msgid "Basic Stats"
+msgstr "Основные характеристики"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Proficiency Bonus"
+msgstr "Бонус мастерства"
+
+msgid "Heroic Inspiration"
+msgstr "Героическое вдохновение"
+
+msgid "Score"
+msgstr "Значение"
+
+msgid "Modifier"
+msgstr "Модификатор"
+
+msgid "Save Proficient"
+msgstr "Владение спасброском"
+
+# Character edit - Vitals
+msgid "Current HP"
+msgstr "Текущие ОЗ"
+
+msgid "Total"
+msgstr "Всего"
+
+msgid "Spent"
+msgstr "Потрачено"
+
+msgid "Resistances & Immunities"
+msgstr "Сопротивления и иммунитеты"
+
+# Character edit - Skills
+msgid "Bonus"
+msgstr "Бонус"
+
+msgid "Proficient"
+msgstr "Владение"
+
+# Character edit - Proficiencies
+msgid "Proficiencies"
+msgstr "Владения"
+
+msgid "Armor Training"
+msgstr "Обучение броне"
+
+# Character edit - Spells
+msgid "Add Spell"
+msgstr "Добавить заклинание"
+
+msgid "No spells added yet."
+msgstr "Заклинания пока не добавлены."
+
+msgid "Spell Name"
+msgstr "Название заклинания"
+
+msgid "Level (0-9)"
+msgstr "Уровень (0-9)"
+
+msgid "Attack / Save"
+msgstr "Атака / Спасбросок"
+
+msgid "Casting Time"
+msgstr "Время сотворения"
+
+msgid "Range"
+msgstr "Дальность"
+
+msgid "Components"
+msgstr "Компоненты"
+
+msgid "Duration"
+msgstr "Длительность"
+
+msgid "Concentration"
+msgstr "Концентрация"
+
+msgid "Ritual"
+msgstr "Ритуал"
+
+msgid "Bonus Action"
+msgstr "Бонусное действие"
+
+msgid "Optional spell notes"
+msgstr "Заметки о заклинании"
+
+# Character edit - Attacks
+msgid "Add Attack"
+msgstr "Добавить атаку"
+
+msgid "No attacks added yet."
+msgstr "Атаки пока не добавлены."
+
+msgid "Attack Bonus / DC"
+msgstr "Бонус атаки / СЛ"
+
+# Character edit - Equipment
+msgid "Equipment List"
+msgstr "Список снаряжения"
+
+msgid "Coins"
+msgstr "Монеты"
+
+msgid "Throwable Cases"
+msgstr "Метательные контейнеры"
+
+msgid "Add Case"
+msgstr "Добавить контейнер"
+
+msgid "No throwable cases added yet."
+msgstr "Метательные контейнеры пока не добавлены."
+
+msgid "Case"
+msgstr "Контейнер"
+
+msgid "Remove Case"
+msgstr "Удалить контейнер"
+
+msgid "Case Name"
+msgstr "Название контейнера"
+
+msgid "Items"
+msgstr "Предметы"
+
+msgid "Add Item"
+msgstr "Добавить предмет"
+
+msgid "Item Name"
+msgstr "Название предмета"
+
+msgid "Quantity"
+msgstr "Количество"
+
+msgid "Note"
+msgstr "Заметка"
+
+# Players
+msgid "New Player"
+msgstr "Новый игрок"
+
+msgid "Edit Player"
+msgstr "Изменить игрока"
+
+msgid "Back to Players"
+msgstr "Назад к игрокам"
+
+msgid "Member Since"
+msgstr "Дата регистрации"
+
+msgid "No players yet"
+msgstr "Игроков пока нет"
+
+msgid "Create the first player account to get the campaign started."
+msgstr "Создайте первый аккаунт игрока, чтобы начать кампанию."
+
+msgid "Create Player"
+msgstr "Создать игрока"
+
+msgid "New Password"
+msgstr "Новый пароль"
+
+msgid "Confirm Password"
+msgstr "Подтвердите пароль"
+
+msgid "Confirm New Password"
+msgstr "Подтвердите новый пароль"
+
+msgid "(leave blank to keep current)"
+msgstr "(оставьте пустым, чтобы сохранить текущий)"
+
+msgid "Between 3 and 32 characters."
+msgstr "От 3 до 32 символов."
+
+msgid "Minimum 8 characters."
+msgstr "Минимум 8 символов."
+
+msgid "Username changes will be available in a future update"
+msgstr "Изменение имени пользователя будет доступно в будущем обновлении"
+
+msgid "Usernames cannot be changed at this time."
+msgstr "Имена пользователей нельзя изменить в данное время."
+
+# Share page
+msgid "Back to home"
+msgstr "На главную"
+
+msgid "Read-only shared sheet."
+msgstr "Общий лист только для чтения."
+
+msgid "This link was shared by the player or Dungeon Master."
+msgstr "Эта ссылка была предоставлена игроком или Мастером подземелий."
+
+msgid "Expires"
+msgstr "Истекает"
+
+msgid "This link does not expire."
+msgstr "Эта ссылка не имеет срока действия."
+
+# Error page
+msgid "Go Back"
+msgstr "Назад"
+
+msgid "Home"
+msgstr "Главная"
+
+# Layout
+msgid "DM"
+msgstr "Мастер"
+
+msgid "Player"
+msgstr "Игрок"
+
+# Vitals
+msgid "Hit Dice"
+msgstr "Кости хитов"
+
+msgid "spent"
+msgstr "потрачено"
+
+msgid "Advantage"
+msgstr "Преимущество"
+
+msgid "Disadvantage"
+msgstr "Помеха"

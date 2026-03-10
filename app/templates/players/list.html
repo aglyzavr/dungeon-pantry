@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Players{% endblock %}
+{% block title %}{{ _("Players") }}{% endblock %}
 {% block meta_description %}Manage all registered players and their assigned characters.{% endblock %}
 
 {% block extra_head %}
@@ -13,24 +13,24 @@
   {# ── Page Header ──────────────────────────────────────────────── #}
   <div class="page-header">
     <div>
-      <h1 class="page-title">Players</h1>
+      <h1 class="page-title">{{ _("Players") }}</h1>
       <p class="page-subtitle">
         {{ players | length }} player{{ 's' if players | length != 1 }} registered
       </p>
     </div>
     <a href="/players/new" class="btn-primary">
-      + New Player
+      + {{ _("New Player") }}
     </a>
   </div>
 
-  {# ── Player Table ─────────────────────────────────────────────── #}
+  {# ── Player Table ───────────────────────────────────────────────────── #}
   {% if players %}
   <div class="table-container" role="region" aria-label="Players list" tabindex="0">
     <table class="table">
       <thead class="table-head">
         <tr>
-          <th scope="col" class="table-header">Username</th>
-          <th scope="col" class="table-header">Member Since</th>
+          <th scope="col" class="table-header">{{ _("Username") }}</th>
+          <th scope="col" class="table-header">{{ _("Member Since") }}</th>
           <th scope="col" class="table-header table-header--right">
             <span class="sr-only">Actions</span>
           </th>
@@ -63,7 +63,7 @@
                 href="/players/{{ player.id }}/edit"
                 class="btn-table btn-table--edit"
                 aria-label="Edit {{ player.username }}"
-              >✏️ Edit</a>
+              >✏️ {{ _("Edit") }}</a>
 
               <form
                 method="POST"
@@ -76,7 +76,7 @@
                   type="submit"
                   class="btn-table btn-table--delete"
                   aria-label="Delete {{ player.username }}"
-                >🗑 Delete</button>
+                >🗑 {{ _("Delete") }}</button>
               </form>
             </div>
           </td>
@@ -91,10 +91,10 @@
   {% else %}
   <div class="empty-state-container" role="status">
     <p class="empty-state-icon" aria-hidden="true">🧙</p>
-    <p class="empty-state-title">No players yet</p>
-    <p class="empty-state-text">Create the first player account to get the campaign started.</p>
+    <p class="empty-state-title">{{ _("No players yet") }}</p>
+    <p class="empty-state-text">{{ _("Create the first player account to get the campaign started.") }}</p>
     <a href="/players/new" class="btn-primary">
-      + New Player
+      + {{ _("New Player") }}
     </a>
   </div>
 </div>

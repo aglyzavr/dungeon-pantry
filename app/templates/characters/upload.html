@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Upload Character — Campaign Manager{% endblock %}
+{% block title %}{{ _("Upload Character") }} — Campaign Manager{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/forms.css" />
@@ -8,13 +8,13 @@
 {% block content %}
 <div class="form-container">
   <nav class="breadcrumb">
-    <a href="/characters" class="breadcrumb-link">Character Pool</a>
+    <a href="/characters" class="breadcrumb-link">{{ _("Character Pool") }}</a>
     <span class="breadcrumb-separator">›</span>
-    <span class="breadcrumb-current">Upload Character</span>
+    <span class="breadcrumb-current">{{ _("Upload Character") }}</span>
   </nav>
 
   <div class="form-card">
-    <h1 class="form-title">Upload Character Sheet</h1>
+    <h1 class="form-title">{{ _("Upload Character Sheet") }}</h1>
     <p class="upload-description">
       Upload a JSON file following the DnD 2024 character schema.
       Required fields: <code>character_name</code>,
@@ -27,7 +27,7 @@
     {% if errors or error %}
     <div class="error-box">
       <p class="error-box-title">
-        Upload failed — fix these errors:
+        {{ _("Upload failed — fix these errors:") }}
       </p>
       <ul class="error-box-list">
         {% if errors %}
@@ -46,16 +46,16 @@
       <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
       <div class="form-field">
         <label class="form-label" for="file">
-          Character JSON File <span class="form-label-required">*</span>
+          {{ _("Character JSON File") }} <span class="form-label-required">*</span>
         </label>
         <input type="file" id="file" name="file" accept=".json" required class="form-file" />
       </div>
       <div class="form-actions">
         <button type="submit" class="btn-form-primary">
-          Upload & Create
+          {{ _("Upload & Create") }}
         </button>
         <a href="/characters" class="btn-form-secondary">
-          Cancel
+          {{ _("Cancel") }}
         </a>
       </div>
     </form>

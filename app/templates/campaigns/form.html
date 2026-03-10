@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}{{ 'Edit' if campaign else 'New' }} Campaign — Campaign Manager{% endblock %}
+{% block title %}{{ _('Edit') if campaign else _('New') }} {{ _("Campaign") }} — Campaign Manager{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/forms.css" />
@@ -10,18 +10,18 @@
 
   <!-- Breadcrumb -->
   <nav class="breadcrumb">
-    <a href="/campaigns" class="breadcrumb-link">Campaigns</a>
+    <a href="/campaigns" class="breadcrumb-link">{{ _("Campaigns") }}</a>
     {% if campaign %}
     <span class="breadcrumb-separator">›</span>
     <a href="/campaigns/{{ campaign.id }}" class="breadcrumb-link">{{ campaign.name }}</a>
     {% endif %}
     <span class="breadcrumb-separator">›</span>
-    <span class="breadcrumb-current">{{ 'Edit' if campaign else 'New Campaign' }}</span>
+    <span class="breadcrumb-current">{{ _('Edit') if campaign else _('New Campaign') }}</span>
   </nav>
 
   <div class="form-card">
     <h1 class="form-title">
-      {{ 'Edit Campaign' if campaign else 'New Campaign' }}
+      {{ _('Edit Campaign') if campaign else _('New Campaign') }}
     </h1>
 
     {% if error %}
@@ -36,7 +36,7 @@
 
       <div class="form-field">
         <label for="name" class="form-label">
-          Campaign Name <span class="form-label-required">*</span>
+          {{ _("Campaign Name") }} <span class="form-label-required">*</span>
         </label>
         <input type="text" id="name" name="name" required
                value="{{ campaign.name if campaign else '' }}"
@@ -46,7 +46,7 @@
 
       <div class="form-field">
         <label for="description" class="form-label">
-          Description <span class="form-label-optional">(optional)</span>
+          {{ _("Description") }} <span class="form-label-optional">{{ _("(optional)") }}</span>
         </label>
         <textarea id="description" name="description" rows="4"
                   class="form-textarea"
@@ -55,11 +55,11 @@
 
       <div class="form-actions">
         <button type="submit" class="btn-form-primary">
-          {{ 'Save Changes' if campaign else 'Create Campaign' }}
+          {{ _('Save Changes') if campaign else _('Create Campaign') }}
         </button>
         <a href="{{ '/campaigns/' + campaign.id|string if campaign else '/campaigns' }}"
            class="btn-form-secondary">
-          Cancel
+          {{ _("Cancel") }}
         </a>
       </div>
 

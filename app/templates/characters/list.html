@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Character Pool — Campaign Manager{% endblock %}
+{% block title %}{{ _("Character Pool") }} — Campaign Manager{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/characters.css" />
@@ -10,11 +10,11 @@
 <div class="page-container">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Character Pool</h1>
+      <h1 class="page-title">{{ _("Character Pool") }}</h1>
       <p class="page-subtitle">{{ characters | length }} character{{ 's' if characters | length != 1 }}</p>
     </div>
     <a href="/characters/upload" class="btn-primary">
-      + Upload Character
+      + {{ _("Upload Character") }}
     </a>
   </div>
 
@@ -38,16 +38,16 @@
         </div>
         <div class="character-actions">
           <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">
-            View
+            {{ _("View") }}
           </a>
           <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary">
-            Edit
+            {{ _("Edit") }}
           </a>
           <form method="post" action="/characters/{{ character.id }}/delete"
                 onsubmit="return confirm('Delete this character permanently?')">
             <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
             <button type="submit" class="btn-sm btn-sm--danger">
-              Delete
+              {{ _("Delete") }}
             </button>
           </form>
         </div>
@@ -73,8 +73,8 @@
     {% endfor %}
   </div>
   {% else %}
-  {% with icon="🧙", message="No characters yet",
-          subtext="Upload a JSON character sheet to get started." %}
+  {% with icon="🧙", message=_("No characters yet"),
+          subtext=_("Upload a JSON character sheet to get started.") %}
     {% include "shared/_empty_state.html" %}
   {% endwith %}
   {% endif %}

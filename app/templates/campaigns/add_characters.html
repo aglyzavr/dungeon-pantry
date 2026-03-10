@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Add Characters — {{ campaign.name }}{% endblock %}
+{% block title %}{{ _("Add Characters") }} — {{ campaign.name }}{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/campaigns-add.css" />
@@ -10,16 +10,16 @@
 
   {# ── Breadcrumb ────────────────────────────────────────────────── #}
   <nav class="breadcrumb">
-    <a href="/campaigns" class="breadcrumb-link">Campaigns</a>
+    <a href="/campaigns" class="breadcrumb-link">{{ _("Campaigns") }}</a>
     <span class="breadcrumb-separator">›</span>
     <a href="/campaigns/{{ campaign.id }}" class="breadcrumb-link">{{ campaign.name }}</a>
     <span class="breadcrumb-separator">›</span>
-    <span class="breadcrumb-current">Add Characters</span>
+    <span class="breadcrumb-current">{{ _("Add Characters") }}</span>
   </nav>
 
   {# ── Page Title ────────────────────────────────────────────────── #}
   <h1 class="page-title">
-    Add Characters to <span class="page-title-highlight">{{ campaign.name }}</span>
+    {{ _("Add Characters to") }} <span class="page-title-highlight">{{ campaign.name }}</span>
   </h1>
 
   {# ── Character Grid or Empty State ────────────────────────────── #}
@@ -42,7 +42,7 @@
               Lv.{{ sheet.character_level.level }}
             </p>
           </div>
-          <span class="character-action">Add →</span>
+          <span class="character-action">{{ _("Add") }} →</span>
         </div>
       </button>
     </form>
@@ -50,15 +50,15 @@
   </div>
 
   {% else %}
-  {% with icon="🧙", message="No unassigned characters available",
-          subtext="Upload a new character first from the Character Pool." %}
+  {% with icon="🧙", message=_("No unassigned characters available"),
+          subtext=_("Upload a new character first from the Character Pool.") %}
     {% include "shared/_empty_state.html" %}
   {% endwith %}
   {% endif %}
 
   {# ── Back Link ─────────────────────────────────────────────────── #}
   <a href="/campaigns/{{ campaign.id }}" class="back-link">
-    ← Back to campaign
+    ← {{ _("Back to campaign") }}
   </a>
 
 </div>

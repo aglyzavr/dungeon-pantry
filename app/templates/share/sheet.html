@@ -15,7 +15,7 @@
     <div class="error-box">
       <p class="error-message">{{ error }}</p>
       <a href="/" class="error-link">
-        ← Back to home
+        ← {{ _("Back to home") }}
       </a>
     </div>
   </div>
@@ -28,16 +28,16 @@
       <div class="share-banner-content">
         <span class="share-banner-icon">🔗</span>
         <span class="share-banner-text">
-          <strong>Read-only shared sheet.</strong>
-          This link was shared by the player or Dungeon Master.
+          <strong>{{ _("Read-only shared sheet.") }}</strong>
+          {{ _("This link was shared by the player or Dungeon Master.") }}
           {% if link.expires_at %}
             <span class="share-banner-expiry">
-              Expires <time datetime="{{ link.expires_at.isoformat() }}">
+              {{ _("Expires") }} <time datetime="{{ link.expires_at.isoformat() }}">
                 {{ link.expires_at.strftime("%b %d, %Y") }}
               </time>.
             </span>
           {% else %}
-            This link does not expire.
+            {{ _("This link does not expire.") }}
           {% endif %}
         </span>
       </div>
