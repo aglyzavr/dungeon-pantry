@@ -13,9 +13,11 @@ from app.i18n import render_template
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.character import HPUpdate, DeathSaveUpdate, SpellSlotUpdate, validate_mandatory_fields
+from jinja2 import TemplateError
 from app.services.character_service import (
     CharacterNotFound,
     CharacterPermissionError,
+    CharacterValidationError,
     CharacterService,
 )
 from app.services.player_service import PlayerService
@@ -189,7 +191,7 @@ async def character_sheet(
             language=current_user.language,
         )
         return resp
-    except Exception as e:
+    except TemplateError as e:
         return render_template(
             templates,
             "characters/error.html",
@@ -297,7 +299,7 @@ async def edit_character_submit(
             url=f"/characters/{character_id}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
-    except Exception as e:
+    except (CharacterValidationError, CharacterNotFound, ValueError, KeyError) as e:
         return render_template(
             templates,
             "characters/edit.html",
@@ -309,7 +311,7 @@ async def edit_character_submit(
                 "error": f"Error updating character: {str(e)}",
             },
             language=current_user.language,
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
 
@@ -789,7 +791,7 @@ async def upload_portrait(
             },
             language=current_user.language,
         )
-    except Exception as e:
+    except CharacterNotFound as e:
         return render_template(
             templates,
             "characters/_portrait_upload_modal.html",
@@ -799,7 +801,7 @@ async def upload_portrait(
                 "error": f"Error uploading portrait: {str(e)}",
             },
             language=current_user.language,
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_404_NOT_FOUND,
         )
 
 
