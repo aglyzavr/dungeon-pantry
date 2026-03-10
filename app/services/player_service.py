@@ -17,6 +17,10 @@ class PlayerNotFound(Exception):
     pass
 
 
+class CharacterNotFound(Exception):
+    pass
+
+
 class PlayerService:
     def __init__(self, db: AsyncSession):
         self._db = db
@@ -71,6 +75,18 @@ class PlayerService:
     async def assign_character(
         self, player_id: UUID, character_id: UUID | None
     ) -> None:
+        # Verify the player exists
+        await self.get_player(player_id)
+
+        # Verify the character exists before doing any mutations
+        if character_id is not None:
+            result = await self._db.execute(
+                select(Character).where(Character.id == character_id)
+            )
+            new_character = result.scalar_one_or_none()
+            if new_character is None:
+                raise CharacterNotFound(f"Character {character_id} not found")
+
         # Unassign any character currently owned by this player
         result = await self._db.execute(
             select(Character).where(Character.owner_id == player_id)
@@ -78,14 +94,9 @@ class PlayerService:
         for character in result.scalars().all():
             character.owner_id = None
 
-        # Assign the new character if provided
+        # Assign the new character
         if character_id is not None:
-            result = await self._db.execute(
-                select(Character).where(Character.id == character_id)
-            )
-            character = result.scalar_one_or_none()
-            if character:
-                character.owner_id = player_id
+            new_character.owner_id = player_id
 
         await self._db.flush()
 

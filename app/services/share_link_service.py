@@ -45,8 +45,18 @@ class ShareLinkService:
             expires_at=expires_at,
         )
 
-    async def revoke_link(self, token: str) -> None:
+    async def revoke_link(self, token: str, expected_character_id: UUID) -> None:
+        link = await self._repo.get_by_token(token)
+        if link is None:
+            raise ShareLinkNotFound("Share link not found")
+        if str(link.character_id) != str(expected_character_id):
+            raise ShareLinkNotFound("Share link does not belong to this character")
         await self._repo.revoke(token)
 
-    async def delete_link(self, token: str) -> None:
+    async def delete_link(self, token: str, expected_character_id: UUID) -> None:
+        link = await self._repo.get_by_token(token)
+        if link is None:
+            raise ShareLinkNotFound("Share link not found")
+        if str(link.character_id) != str(expected_character_id):
+            raise ShareLinkNotFound("Share link does not belong to this character")
         await self._repo.delete(token)

@@ -11,6 +11,7 @@ from app.middleware.auth import require_dm
 from app.schemas.auth import UserSession
 from app.schemas.player import PlayerCreate
 from app.services.player_service import (
+    CharacterNotFound,
     PlayerNotFound,
     PlayerService,
     UsernameAlreadyExists,
@@ -109,7 +110,7 @@ async def assign_character(
 ):
     try:
         await service.assign_character(player_id, character_id)
-    except PlayerNotFound:
+    except (PlayerNotFound, CharacterNotFound):
         pass
     return RedirectResponse(url="/players", status_code=status.HTTP_303_SEE_OTHER)
 

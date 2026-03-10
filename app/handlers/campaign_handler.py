@@ -9,7 +9,7 @@ from app.database import get_db
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.campaign import CampaignCreate, CampaignUpdate
-from app.services.campaign_service import CampaignNotFound, CampaignService
+from app.services.campaign_service import CampaignNotFound, CampaignService, CharacterNotFound
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
 templates = Jinja2Templates(directory="app/templates")
@@ -200,7 +200,7 @@ async def assign_character(
 ):
     try:
         await service.assign_character(campaign_id, character_id)
-    except CampaignNotFound:
+    except (CampaignNotFound, CharacterNotFound):
         pass
     return RedirectResponse(
         url=f"/campaigns/{campaign_id}", status_code=status.HTTP_303_SEE_OTHER
@@ -216,7 +216,7 @@ async def remove_character(
 ):
     try:
         await service.remove_character(campaign_id, character_id)
-    except CampaignNotFound:
+    except (CampaignNotFound, CharacterNotFound):
         pass
     return RedirectResponse(
         url=f"/campaigns/{campaign_id}", status_code=status.HTTP_303_SEE_OTHER

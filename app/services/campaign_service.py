@@ -1,5 +1,8 @@
 from uuid import UUID
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.campaign import Campaign
 from app.models.character import Character
 from app.repositories.campaign_repository import CampaignRepository
@@ -10,8 +13,13 @@ class CampaignNotFound(Exception):
     pass
 
 
+class CharacterNotFound(Exception):
+    pass
+
+
 class CampaignService:
     def __init__(self, db: AsyncSession):
+        self._db = db
         self._repo = CampaignRepository(db)
 
     async def list_campaigns(
@@ -64,7 +72,18 @@ class CampaignService:
         return await self._repo.get_unassigned_characters(campaign_id)
 
     async def assign_character(self, campaign_id: UUID, character_id: UUID) -> None:
+        campaign = await self._repo.get_by_id(campaign_id)
+        if campaign is None:
+            raise CampaignNotFound(f"Campaign {campaign_id} not found")
+        result = await self._db.execute(
+            select(Character).where(Character.id == character_id)
+        )
+        if result.scalar_one_or_none() is None:
+            raise CharacterNotFound(f"Character {character_id} not found")
         await self._repo.assign_character(campaign_id, character_id)
 
     async def remove_character(self, campaign_id: UUID, character_id: UUID) -> None:
+        campaign = await self._repo.get_by_id(campaign_id)
+        if campaign is None:
+            raise CampaignNotFound(f"Campaign {campaign_id} not found")
         await self._repo.remove_character(campaign_id, character_id)

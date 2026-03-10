@@ -103,7 +103,10 @@ async def revoke_share_link(
     current_user: UserSession = Depends(require_dm),
     service: ShareLinkService = Depends(_service),
 ):
-    await service.revoke_link(token)
+    try:
+        await service.revoke_link(token, expected_character_id=character_id)
+    except ShareLinkNotFound:
+        pass
     return RedirectResponse(
         url=f"/characters/{character_id}",
         status_code=status.HTTP_303_SEE_OTHER,
@@ -119,7 +122,10 @@ async def delete_share_link(
     current_user: UserSession = Depends(require_dm),
     service: ShareLinkService = Depends(_service),
 ):
-    await service.delete_link(token)
+    try:
+        await service.delete_link(token, expected_character_id=character_id)
+    except ShareLinkNotFound:
+        pass
     return RedirectResponse(
         url=f"/characters/{character_id}",
         status_code=status.HTTP_303_SEE_OTHER,
