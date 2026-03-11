@@ -95,3 +95,12 @@ class CampaignRepository:
             )
         )
         await self._db.flush()
+
+    async def remove_character_from_all(self, character_id: UUID) -> None:
+        """Remove a character from every campaign it belongs to."""
+        await self._db.execute(
+            delete(campaign_characters).where(
+                campaign_characters.c.character_id == character_id,
+            )
+        )
+        await self._db.flush()

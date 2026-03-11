@@ -5,6 +5,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.character import Character
+from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.character_repository import CharacterRepository
 from app.schemas.character import validate_mandatory_fields
 from sqlalchemy import select
@@ -27,6 +28,7 @@ class CharacterValidationError(Exception):
 class CharacterService:
     def __init__(self, db: AsyncSession):
         self._repo = CharacterRepository(db)
+        self._campaign_repo = CampaignRepository(db)
     
     @staticmethod
     def _calculate_spell_slots(character_class: str, character_level: int) -> dict:
@@ -241,6 +243,8 @@ class CharacterService:
         if character is None:
             raise CharacterNotFound(f"Character {character_id} not found")
         character.owner_id = player_id
+        if player_id is None:
+            await self._campaign_repo.remove_character_from_all(character_id)
         await self._repo._db.flush()
 
     async def create(self, sheet_data: dict, owner_id: UUID) -> Character:
