@@ -108,10 +108,12 @@
   </div>
 
   {% else %}
-  {% with icon="🧙", message=_("No characters assigned"),
-  subtext=_("Add characters from the character pool.") %}
-  {% include "shared/_empty_state.html" %}
-  {% endwith %}
+  <div class="characters-grid">
+    {% with icon="🧙", message=_("No characters assigned"),
+    subtext=_("Add characters from the character pool.") %}
+    {% include "shared/_empty_state.html" %}
+    {% endwith %}
+  </div>
   {% endif %}
 
   <!-- Unassigned Characters Section (DM only) -->
