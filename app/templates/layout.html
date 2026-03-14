@@ -40,7 +40,11 @@
       <span class="navbar-user">
         {{ current_user.username }}
         <span class="navbar-role {% if current_user.is_dm %}navbar-role--dm{% else %}navbar-role--player{% endif %}">
-          {{ _("DM") if _ is defined else "DM" if current_user.is_dm else _("Player") if _ is defined else "Player" }}
+          {% if current_user.is_dm %}
+            {{ _("DM") if _ is defined else "DM" }}
+          {% else %}
+            {{ _("Player") if _ is defined else "Player" }}
+          {% endif %}
         </span>
       </span>
 
