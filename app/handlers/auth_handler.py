@@ -44,16 +44,20 @@ async def login_submit(
     db: AsyncSession = Depends(get_db),
 ):
     """Process login form. Set session cookie on success."""
-    session = await authenticate_user(db, username, password)
 
-    if session is None:
-        # Generic error message — never reveal whether username or password was wrong
-        return render_template(
-            templates,
-            "auth/login.html",
-            {"request": request, "error": "Invalid username or password"},
-            status_code=status.HTTP_401_UNAUTHORIZED,
-        )
+    try:
+        session = await authenticate_user(db, username, password)
+    except Exception as exc:
+        # Only catch InvalidCredentials, let others propagate
+        from app.services.auth_service import InvalidCredentials
+        if isinstance(exc, InvalidCredentials):
+            return render_template(
+                templates,
+                "auth/login.html",
+                {"request": request, "error": "Invalid username or password"},
+                status_code=status.HTTP_401_UNAUTHORIZED,
+            )
+        raise
 
     token = create_session_token(session)
     settings = get_settings()

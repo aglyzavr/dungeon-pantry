@@ -17,9 +17,7 @@
     </div>
 
     {% if error %}
-    <div class="login-error">
-      {{ error }}
-    </div>
+      <div class="login-error">{{ error }}</div>
     {% endif %}
 
     <form method="post" action="/login" class="login-form">
