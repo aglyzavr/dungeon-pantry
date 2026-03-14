@@ -41,7 +41,7 @@ const spellSchema = {
   components: '',
   duration: '',
   notes: '',
-  bonus_action: false,
+  action_type: 'none',
   crrm: {
     concentration: false,
     ritual: false,
@@ -55,8 +55,25 @@ const attackSchema = {
   name: '',
   atk_bonus_or_dc: '',
   damage_and_type: '',
+  range: '',
   notes: '',
-  bonus_action: false,
+  action_type: 'action',
+  source_type: 'manual',
+  source_name: '',
+};
+
+/**
+ * Schema defining the structure and default values for weapon entries
+ */
+const weaponSchema = {
+  name: '',
+  damage: '',
+  damage_type: '',
+  properties: '',
+  range: '',
+  atk_bonus: '',
+  weight: '',
+  action_type: 'none',
 };
 
 /**
@@ -95,6 +112,11 @@ window.CharacterEditor = {
    * Ensures consistent data structure and type conversion
    */
   normalizeAttack: createNormalizer(attackSchema),
+
+  /**
+   * Normalizer function for weapon entries
+   */
+  normalizeWeapon: createNormalizer(weaponSchema),
 
   /**
    * Normalizer function for throwable case entries

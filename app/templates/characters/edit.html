@@ -25,6 +25,7 @@
       spellEntries: {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
       attackEntries: {{ (sheet.weapons_damage_cantrips or []) | tojson | forceescape }},
       caseEntries: {{ (sheet.equipment.get('throwable_cases', []) or []) | tojson | forceescape }},
+      weaponEntries: {{ (sheet.equipment.get('weapons', []) or []) | tojson | forceescape }},
       addSpell() {
         this.spellEntries.push(CharacterEditor.normalizeSpell({}));
       },
@@ -49,6 +50,12 @@
       removeCaseItem(caseIndex, itemIndex) {
         this.caseEntries[caseIndex].items.splice(itemIndex, 1);
       },
+      addWeapon() {
+        this.weaponEntries.push(CharacterEditor.normalizeWeapon({}));
+      },
+      removeWeapon(index) {
+        this.weaponEntries.splice(index, 1);
+      },
       init() {
         this.spellEntries = (Array.isArray(this.spellEntries) ? this.spellEntries : [])
           .map(spell => CharacterEditor.normalizeSpell(spell));
@@ -56,6 +63,8 @@
           .map(attack => CharacterEditor.normalizeAttack(attack));
         this.caseEntries = (Array.isArray(this.caseEntries) ? this.caseEntries : [])
           .map(c => CharacterEditor.normalizeCase(c));
+        this.weaponEntries = (Array.isArray(this.weaponEntries) ? this.weaponEntries : [])
+          .map(w => CharacterEditor.normalizeWeapon(w));
       }
     }" x-init="init()">
     <div class="tab-navigation">
@@ -93,6 +102,7 @@
     <input type="hidden" name="spells_json" :value="JSON.stringify(spellEntries)">
     <input type="hidden" name="attacks_json" :value="JSON.stringify(attackEntries)">
     <input type="hidden" name="throwable_cases_json" :value="JSON.stringify(caseEntries)">
+    <input type="hidden" name="weapons_json" :value="JSON.stringify(weaponEntries)">
     
     {# ── TAB: IDENTITY ────────────────────────────────────────────────────────── #}
     <div class="tab-content" x-show="activeTab === 'identity'" x-cloak>
@@ -483,9 +493,14 @@
                 <input type="checkbox" :id="'spell_ritual_' + index" x-model="spell.crrm.ritual">
                 <label :for="'spell_ritual_' + index">{{ _("Ritual") }}</label>
               </div>
-              <div class="checkbox-group">
-                <input type="checkbox" :id="'spell_bonus_action_' + index" x-model="spell.bonus_action">
-                <label :for="'spell_bonus_action_' + index">{{ _("Bonus Action") }}</label>
+              <div class="form-group" style="margin: 0;">
+                <label :for="'spell_action_type_' + index">{{ _("Action Type") }}</label>
+                <select :id="'spell_action_type_' + index" x-model="spell.action_type" class="form-select">
+                  <option value="none">{{ _("None") }}</option>
+                  <option value="action">{{ _("Action") }}</option>
+                  <option value="bonus_action">{{ _("Bonus Action") }}</option>
+                  <option value="reaction">{{ _("Reaction") }}</option>
+                </select>
               </div>
             </div>
 
@@ -517,6 +532,66 @@
               <button type="button" class="btn-sm btn-sm--secondary" @click="removeAttack(index)">{{ _("Remove") }}</button>
             </div>
 
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>{{ _("Action Type") }}</label>
+                <select x-model="attack.action_type" class="form-select">
+                  <option value="action">{{ _("Action") }}</option>
+                  <option value="bonus_action">{{ _("Bonus Action") }}</option>
+                  <option value="reaction">{{ _("Reaction") }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>{{ _("Source") }}</label>
+                <select x-model="attack.source_type" class="form-select" @change="attack.source_name = ''">
+                  <option value="manual">{{ _("Manual") }}</option>
+                  <option value="spell">{{ _("From Spell") }}</option>
+                  <option value="equipment">{{ _("From Equipment") }}</option>
+                </select>
+              </div>
+              <div class="form-group" x-show="attack.source_type === 'spell'">
+                <label>{{ _("Spell") }}</label>
+                <select x-model="attack.source_name" class="form-select"
+                  @change="
+                    if (attack.source_name) {
+                      let spell = spellEntries.find(s => s.name === attack.source_name);
+                      if (spell) {
+                        attack.name = spell.name;
+                        attack.atk_bonus_or_dc = spell.attack_save;
+                        attack.range = spell.range;
+                        attack.notes = spell.notes || [spell.casting_time, spell.components].filter(Boolean).join(', ');
+                      }
+                    }
+                  ">
+                  <option value="">-- {{ _("Select Spell") }} --</option>
+                  <template x-for="spell in spellEntries.filter(s => s.name)" :key="spell.name">
+                    <option :value="spell.name" x-text="spell.name"></option>
+                  </template>
+                </select>
+              </div>
+              <div class="form-group" x-show="attack.source_type === 'equipment'">
+                <label>{{ _("Weapon") }}</label>
+                <select x-model="attack.source_name" class="form-select"
+                  @change="
+                    if (attack.source_name) {
+                      let wpn = weaponEntries.find(w => w.name === attack.source_name);
+                      if (wpn) {
+                        attack.name = wpn.name;
+                        attack.atk_bonus_or_dc = wpn.atk_bonus;
+                        attack.damage_and_type = [wpn.damage, wpn.damage_type].filter(Boolean).join(' ');
+                        attack.range = wpn.range;
+                        attack.notes = wpn.properties;
+                      }
+                    }
+                  ">
+                  <option value="">-- {{ _("Select Weapon") }} --</option>
+                  <template x-for="wpn in weaponEntries.filter(w => w.name)" :key="wpn.name">
+                    <option :value="wpn.name" x-text="wpn.name"></option>
+                  </template>
+                </select>
+              </div>
+            </div>
+
             <div class="form-grid-2">
               <div class="form-group">
                 <label>{{ _("Name") }}</label>
@@ -528,20 +603,19 @@
               </div>
             </div>
 
-            <div class="form-grid-2">
+            <div class="form-grid-3">
               <div class="form-group">
                 <label>{{ _("Damage & Type") }}</label>
                 <input type="text" x-model="attack.damage_and_type" placeholder="e.g. 1d8+3 Slashing, 1d10 Fire">
               </div>
               <div class="form-group">
+                <label>{{ _("Range") }}</label>
+                <input type="text" x-model="attack.range" placeholder="e.g. 5 ft, 60 ft">
+              </div>
+              <div class="form-group">
                 <label>{{ _("Notes") }}</label>
                 <input type="text" x-model="attack.notes" placeholder="e.g. V/S, Versatile">
               </div>
-            </div>
-
-            <div class="checkbox-group" style="margin-top: 0.5rem;">
-              <input type="checkbox" :id="'attack_bonus_action_' + index" x-model="attack.bonus_action">
-                <label :for="'attack_bonus_action_' + index">{{ _("Bonus Action") }}</label>
             </div>
           </div>
         </template>
@@ -641,6 +715,72 @@
                 </div>
               </div>
             </template>
+          </div>
+        </template>
+      </div>
+
+      <div class="form-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.75rem; flex-wrap: wrap;">
+          <h2 class="form-section-title" style="margin: 0;">{{ _("Weapons") }}</h2>
+          <button type="button" class="btn-sm btn-sm--secondary" @click="addWeapon()">{{ _("Add Weapon") }}</button>
+        </div>
+
+        <template x-if="weaponEntries.length === 0">
+          <p style="margin: 0; opacity: 0.8;">{{ _("No weapons added yet.") }}</p>
+        </template>
+
+        <template x-for="(weapon, weaponIdx) in weaponEntries" :key="weaponIdx">
+          <div class="form-section" style="padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.75rem;">
+              <h3 style="margin: 0; font-size: 1rem;">{{ _("Weapon") }} <span x-text="weaponIdx + 1"></span></h3>
+              <button type="button" class="btn-sm btn-sm--secondary" @click="removeWeapon(weaponIdx)">{{ _("Remove") }}</button>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>{{ _("Name") }}</label>
+                <input type="text" x-model="weapon.name" placeholder="e.g. Longsword">
+              </div>
+              <div class="form-group">
+                <label>{{ _("Damage") }}</label>
+                <input type="text" x-model="weapon.damage" placeholder="e.g. 1d8">
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>{{ _("Damage Type") }}</label>
+                <input type="text" x-model="weapon.damage_type" placeholder="e.g. Slashing">
+              </div>
+              <div class="form-group">
+                <label>{{ _("Range") }}</label>
+                <input type="text" x-model="weapon.range" placeholder="e.g. 5 ft, 30/120 ft">
+              </div>
+              <div class="form-group">
+                <label>{{ _("Attack Bonus") }}</label>
+                <input type="text" x-model="weapon.atk_bonus" placeholder="e.g. +5">
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>{{ _("Properties") }}</label>
+                <input type="text" x-model="weapon.properties" placeholder="e.g. Versatile (1d10), Finesse">
+              </div>
+              <div class="form-group">
+                <label>{{ _("Weight") }}</label>
+                <input type="text" x-model="weapon.weight" placeholder="e.g. 3 lb">
+              </div>
+              <div class="form-group">
+                <label>{{ _("Action Type") }}</label>
+                <select x-model="weapon.action_type" class="form-select">
+                  <option value="none">{{ _("None") }}</option>
+                  <option value="action">{{ _("Action") }}</option>
+                  <option value="bonus_action">{{ _("Bonus Action") }}</option>
+                  <option value="reaction">{{ _("Reaction") }}</option>
+                </select>
+              </div>
+            </div>
           </div>
         </template>
       </div>

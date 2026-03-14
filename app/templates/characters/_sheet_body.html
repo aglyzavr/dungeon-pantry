@@ -358,27 +358,107 @@
         {# ── TAB: ACTIONS ──────────────────────────────────────── #}
         <div x-show="tab === 'actions'" x-cloak class="actions-tab-content">
 
-            {# Bonus Actions Section #}
+            {# ── Helper: collect entries by action_type ── #}
+            {% set actions_list = [] %}
             {% set bonus_actions = [] %}
+            {% set reactions = [] %}
+
             {% if sheet.weapons_damage_cantrips %}
             {% for w in sheet.weapons_damage_cantrips %}
-            {% if w.name and w.bonus_action %}
-            {% set _ = bonus_actions.append(w) %}
+            {% if w.name %}
+                {% set atype = w.get("action_type", "action") %}
+                {% if atype == "bonus_action" or (atype not in ("action","bonus_action","reaction") and w.get("bonus_action")) %}
+                    {% set _ = bonus_actions.append(w) %}
+                {% elif atype == "reaction" %}
+                    {% set _ = reactions.append(w) %}
+                {% else %}
+                    {% set _ = actions_list.append(w) %}
+                {% endif %}
             {% endif %}
             {% endfor %}
             {% endif %}
+
             {% if sheet.cantrips_and_prepared_spells %}
             {% for spell in sheet.cantrips_and_prepared_spells %}
-            {% if spell.name and spell.bonus_action %}
-            {% set _ = bonus_actions.append({
-                "name": spell.name,
-                "atk_bonus_or_dc": spell.attack_save,
-                "damage_and_type": _("Spell"),
-                "notes": spell.notes or spell.casting_time or spell.range or ""
-            }) %}
+            {% if spell.name %}
+                {% set atype = spell.get("action_type", "none") %}
+                {% if atype in ("action", "bonus_action", "reaction") %}
+                {% set spell_entry = {
+                    "name": spell.name,
+                    "atk_bonus_or_dc": spell.attack_save,
+                    "damage_and_type": _("Spell"),
+                    "range": spell.range or "",
+                    "notes": spell.notes or spell.casting_time or ""
+                } %}
+                {% if atype == "bonus_action" %}
+                    {% set _ = bonus_actions.append(spell_entry) %}
+                {% elif atype == "reaction" %}
+                    {% set _ = reactions.append(spell_entry) %}
+                {% else %}
+                    {% set _ = actions_list.append(spell_entry) %}
+                {% endif %}
+                {% endif %}
             {% endif %}
             {% endfor %}
             {% endif %}
+
+            {% for wpn in sheet.equipment.get("weapons", []) %}
+            {% if wpn.name %}
+                {% set watype = wpn.get("action_type", "none") %}
+                {% if watype in ("action", "bonus_action", "reaction") %}
+                {% set wpn_entry = {
+                    "name": wpn.name,
+                    "atk_bonus_or_dc": wpn.atk_bonus or "",
+                    "damage_and_type": [wpn.damage, wpn.damage_type]|select|join(" "),
+                    "range": wpn.range or "",
+                    "notes": wpn.properties or ""
+                } %}
+                {% if watype == "bonus_action" %}
+                    {% set _ = bonus_actions.append(wpn_entry) %}
+                {% elif watype == "reaction" %}
+                    {% set _ = reactions.append(wpn_entry) %}
+                {% else %}
+                    {% set _ = actions_list.append(wpn_entry) %}
+                {% endif %}
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {# ── Actions Section ── #}
+            {% if actions_list %}
+            <div class="actions-section">
+                <div class="actions-section-header">
+                    <h3 class="actions-section-title">{{ _("Actions") }}</h3>
+                </div>
+                <div class="attacks-table-wrapper">
+                    <table class="attacks-table">
+                        <thead class="attacks-table-head">
+                            <tr>
+                                <th class="attacks-table-head-cell">{{ _("Name") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Atk / DC") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Damage & Type") }}</th>
+                                <th class="attacks-table-head-cell hidden sm:table-cell">{{ _("Notes") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="attacks-table-body">
+                            {% for w in actions_list %}
+                            <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
+                                <td class="attacks-table-cell attacks-table-name">
+                                    {{ w.name }}
+                                    {% if w.get("range") %}<span class="action-range">{{ w.range }}</span>{% endif %}
+                                </td>
+                                <td class="attacks-table-cell attacks-table-bonus">{{ w.atk_bonus_or_dc }}</td>
+                                <td class="attacks-table-cell attacks-table-damage">{{ w.damage_and_type }}</td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            {# ── Bonus Actions Section ── #}
             {% if bonus_actions %}
             <div class="actions-section">
                 <div class="actions-section-header">
@@ -397,11 +477,13 @@
                         <tbody class="attacks-table-body">
                             {% for w in bonus_actions %}
                             <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
-                                <td class="attacks-table-cell attacks-table-name">{{ w.name }}</td>
+                                <td class="attacks-table-cell attacks-table-name">
+                                    {{ w.name }}
+                                    {% if w.get("range") %}<span class="action-range">{{ w.range }}</span>{% endif %}
+                                </td>
                                 <td class="attacks-table-cell attacks-table-bonus">{{ w.atk_bonus_or_dc }}</td>
                                 <td class="attacks-table-cell attacks-table-damage">{{ w.damage_and_type }}</td>
-                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}
-                                </td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -410,18 +492,11 @@
             </div>
             {% endif %}
 
-            {# Regular Attacks & Cantrips Section (non-bonus actions) #}
-            {% if sheet.weapons_damage_cantrips %}
-            {% set regular_attacks = [] %}
-            {% for w in sheet.weapons_damage_cantrips %}
-            {% if w.name and not w.bonus_action %}
-            {% set _ = regular_attacks.append(w) %}
-            {% endif %}
-            {% endfor %}
-            {% if regular_attacks %}
+            {# ── Reactions Section ── #}
+            {% if reactions %}
             <div class="actions-section">
                 <div class="actions-section-header">
-                    <h3 class="actions-section-title">{{ _("Attacks & Cantrips") }}</h3>
+                    <h3 class="actions-section-title">{{ _("Reactions") }}</h3>
                 </div>
                 <div class="attacks-table-wrapper">
                     <table class="attacks-table">
@@ -434,20 +509,21 @@
                             </tr>
                         </thead>
                         <tbody class="attacks-table-body">
-                            {% for w in regular_attacks %}
+                            {% for w in reactions %}
                             <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
-                                <td class="attacks-table-cell attacks-table-name">{{ w.name }}</td>
+                                <td class="attacks-table-cell attacks-table-name">
+                                    {{ w.name }}
+                                    {% if w.get("range") %}<span class="action-range">{{ w.range }}</span>{% endif %}
+                                </td>
                                 <td class="attacks-table-cell attacks-table-bonus">{{ w.atk_bonus_or_dc }}</td>
                                 <td class="attacks-table-cell attacks-table-damage">{{ w.damage_and_type }}</td>
-                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}
-                                </td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-            {% endif %}
             {% endif %}
 
             {# Combat Actions #}

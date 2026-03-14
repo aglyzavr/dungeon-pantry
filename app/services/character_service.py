@@ -273,6 +273,8 @@ class CharacterService:
             data["equipment"] = {"equipment_list": [], "magic_item_attunement": []}
         if not isinstance(data["equipment"].get("throwable_cases"), list):
             data["equipment"]["throwable_cases"] = []
+        if not isinstance(data["equipment"].get("weapons"), list):
+            data["equipment"]["weapons"] = []
         if not isinstance(data.get("spell_slots"), dict):
             data["spell_slots"] = {}
         # coins structure expected by _sheet_body.html
@@ -577,10 +579,42 @@ class CharacterService:
         else:
             throwable_cases = sheet.get("equipment", {}).get("throwable_cases", [])
 
+        # Weapons (submitted as JSON from the edit form)
+        weapons = []
+        weapons_raw = str(get_form("weapons_json", "")).strip()
+        if weapons_raw:
+            try:
+                submitted_weapons = json.loads(weapons_raw)
+            except (json.JSONDecodeError, TypeError):
+                submitted_weapons = None
+            if isinstance(submitted_weapons, list):
+                for weapon in submitted_weapons:
+                    if not isinstance(weapon, dict):
+                        continue
+                    weapon_name = str(weapon.get("name", "")).strip()
+                    if not weapon_name:
+                        continue
+                    w_action_type = str(weapon.get("action_type", "")).strip()
+                    if w_action_type not in ("action", "bonus_action", "reaction", "none"):
+                        w_action_type = "none"
+                    weapons.append({
+                        "name": weapon_name,
+                        "damage": str(weapon.get("damage", "")).strip(),
+                        "damage_type": str(weapon.get("damage_type", "")).strip(),
+                        "properties": str(weapon.get("properties", "")).strip(),
+                        "range": str(weapon.get("range", "")).strip(),
+                        "atk_bonus": str(weapon.get("atk_bonus", "")).strip(),
+                        "weight": str(weapon.get("weight", "")).strip(),
+                        "action_type": w_action_type,
+                    })
+        else:
+            weapons = sheet.get("equipment", {}).get("weapons", [])
+
         sheet["equipment"] = {
             "equipment_list": equipment_list,
             "magic_item_attunement": sheet.get("equipment", {}).get("magic_item_attunement", []),
             "throwable_cases": throwable_cases,
+            "weapons": weapons,
         }
         
         # Coins
@@ -614,6 +648,9 @@ class CharacterService:
                     level = int(raw_level) if raw_level.isdigit() else (raw_level.lower() or "0")
 
                     crrm = spell.get("crrm") if isinstance(spell.get("crrm"), dict) else {}
+                    action_type = str(spell.get("action_type", "")).strip()
+                    if action_type not in ("action", "bonus_action", "reaction", "none"):
+                        action_type = "bonus_action" if spell.get("bonus_action") else "none"
                     normalized_spells.append(
                         {
                             "name": name,
@@ -624,7 +661,7 @@ class CharacterService:
                             "components": str(spell.get("components", "")).strip(),
                             "duration": str(spell.get("duration", "")).strip(),
                             "notes": str(spell.get("notes", "")).strip(),
-                            "bonus_action": bool(spell.get("bonus_action", False)),
+                            "action_type": action_type,
                             "crrm": {
                                 "concentration": bool(crrm.get("concentration", False)),
                                 "ritual": bool(crrm.get("ritual", False)),
@@ -652,13 +689,24 @@ class CharacterService:
                     if not name:
                         continue
 
+                    action_type = str(attack.get("action_type", "")).strip()
+                    if action_type not in ("action", "bonus_action", "reaction"):
+                        action_type = "bonus_action" if attack.get("bonus_action") else "action"
+
+                    source_type = str(attack.get("source_type", "")).strip()
+                    if source_type not in ("manual", "spell", "equipment"):
+                        source_type = "manual"
+
                     normalized_attacks.append(
                         {
                             "name": name,
                             "atk_bonus_or_dc": str(attack.get("atk_bonus_or_dc", "")).strip(),
                             "damage_and_type": str(attack.get("damage_and_type", "")).strip(),
+                            "range": str(attack.get("range", "")).strip(),
                             "notes": str(attack.get("notes", "")).strip(),
-                            "bonus_action": bool(attack.get("bonus_action", False)),
+                            "action_type": action_type,
+                            "source_type": source_type,
+                            "source_name": str(attack.get("source_name", "")).strip(),
                         }
                     )
 
