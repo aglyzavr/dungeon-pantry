@@ -2,23 +2,19 @@
 <script src="/static/js/vitals.js"></script>
 
 <div id="vitals-section">
-  {% set hp  = sheet.vitality.hit_points %}
-  {% set ds  = sheet.vitality.death_saves %}
-  {% set shield   = sheet.get("shield_equipped", false) %}
+  {% set hp = sheet.vitality.hit_points %}
+  {% set ds = sheet.vitality.death_saves %}
+  {% set shield = sheet.get("shield_equipped", false) %}
   {% set total_ac = sheet.armor_class + (2 if shield else 0) %}
-  {% set hp_pct   = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
+  {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
 
   {# ── Combat Stats Strip ─────────────────────────────────────── #}
   <div class="vitals-stats-grid">
 
     {# AC — shield toggle #}
     {% if can_edit %}
-    <button
-      hx-post="/characters/{{ character.id }}/vitals/shield"
-      hx-target="#vitals-section"
-      hx-swap="outerHTML"
-      class="btn-ac {% if shield %}btn-ac--active{% else %}btn-ac--inactive{% endif %}"
-    >
+    <button hx-post="/characters/{{ character.id }}/vitals/shield" hx-target="#vitals-section" hx-swap="outerHTML"
+      class="btn-ac {% if shield %}btn-ac--active{% else %}btn-ac--inactive{% endif %}">
       <div class="vitals-stat-label">{{ _("AC") }} {{ '🛡️' if shield else '' }}</div>
       <div class="vitals-stat-value">{{ total_ac }}</div>
       <div class="btn-ac-status {% if shield %}btn-ac-status--active{% else %}btn-ac-status--inactive{% endif %}">
@@ -34,9 +30,9 @@
 
     {# Initiative, Speed, Prof. Bonus #}
     {% for label, value in [
-      (_("Initiative"), sheet.initiative),
-      (_("Speed"),      sheet.speed),
-      (_("Prof."),      "+" ~ sheet.proficiency_bonus)
+    (_("Initiative"), sheet.initiative),
+    (_("Speed"), sheet.speed),
+    (_("Prof."), "+" ~ sheet.proficiency_bonus)
     ] %}
     <div class="vitals-stat-box">
       <div class="vitals-stat-label">{{ label }}</div>
@@ -44,17 +40,7 @@
     </div>
     {% endfor %}
 
-    {# Hit Dice #}
-    {% set hd = sheet.vitality.get("hit_dice", {}) %}
-    {% if hd and hd.get("total") %}
-    <div class="vitals-stat-box">
-      <div class="vitals-stat-label">{{ _("Hit Dice") }}</div>
-      <div class="vitals-stat-value vitals-stat-value--small">{{ hd.total }}</div>
-      {% if hd.get("spent") and hd.spent != "0" %}
-      <div class="vitals-stat-sub">{{ hd.spent }} {{ _("spent") }}</div>
-      {% endif %}
-    </div>
-    {% endif %}
+
 
   </div>
 
@@ -64,8 +50,7 @@
     <div class="hp-bar-fill
       {% if hp_pct > 50 %}hp-bar-fill--healthy
       {% elif hp_pct > 25 %}hp-bar-fill--injured
-      {% else %}hp-bar-fill--critical{% endif %}"
-      style="width: {{ hp_pct }}%">
+      {% else %}hp-bar-fill--critical{% endif %}" style="width: {{ hp_pct }}%">
     </div>
 
     <div class="hp-bar-content">
@@ -88,82 +73,73 @@
 
       {# HP Controls - Mobile Friendly Layout #}
       {% if can_edit %}
-      <div class="hp-controls-container">
-        {# Heal/Damage Controls #}
+      <button type="button" class="hp-toggle-btn" onclick="toggleHpControls(this)" style="color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem;">
+        {{ _('Adjust HP') }}
+      </button>
+      <div class="hp-controls-container" style="display: none;">
+        <!-- Heal/Damage Controls -->
         <div class="hp-control-group">
           <span class="hp-control-label">{{ _("Adjust HP") }}</span>
           <div class="hp-adjust-controls">
-            <input
-              type="number"
-              id="hp-input-{{ character.id }}"
-              value="0"
-              min="0"
-              class="hp-input"
-              placeholder="0"
-            />
-            <button
-              data-hp-action="heal"
-              data-character-id="{{ character.id }}"
-              class="btn-heal"
-            >
+            <input type="number" id="hp-input-{{ character.id }}" value="0" min="0" class="hp-input" placeholder="0" />
+            <button data-hp-action="heal" data-character-id="{{ character.id }}" class="btn-heal">
               {{ _("Heal") }}
             </button>
-            <button
-              data-hp-action="damage"
-              data-character-id="{{ character.id }}"
-              class="btn-damage"
-            >
+            <button data-hp-action="damage" data-character-id="{{ character.id }}" class="btn-damage">
               {{ _("Dmg") }}
             </button>
           </div>
         </div>
 
-        {# Temp HP #}
-        <div class="hp-control-group">
-          <form
-            hx-post="/characters/{{ character.id }}/vitals/temp-hp"
-            hx-target="#vitals-section"
-            hx-swap="outerHTML"
-            class="hp-form-group"
-          >
+        <!-- Max and Temp HP (DM only) -->
+        {% if current_user and current_user.is_dm %}
+        <div class="hp-control-group" style="padding-top: 1em;">
+          <form hx-post="/characters/{{ character.id }}/vitals/temp-hp" hx-target="#vitals-section" hx-swap="outerHTML"
+            class="hp-form-group">
             <span class="hp-control-label">{{ _("Temp HP") }}</span>
             <div class="hp-form-controls">
-              <input
-                type="number"
-                name="value"
-                value="{{ hp.temp or 0 }}"
-                min="0"
-                class="hp-form-input"
-              />
+              <input type="number" name="value" value="{{ hp.temp or 0 }}" min="0" class="hp-form-input" />
               <button type="submit" class="hp-form-submit">{{ _("Set") }}</button>
             </div>
           </form>
         </div>
-
-        {# Max HP (DM only) #}
-        {% if current_user and current_user.is_dm %}
-        <div class="hp-control-group">
-          <form
-            hx-post="/characters/{{ character.id }}/vitals/max-hp"
-            hx-target="#vitals-section"
-            hx-swap="outerHTML"
-            class="hp-form-group"
-          >
-            <span class="hp-control-label hp-control-label--max">{{ _("Max HP") }}</span>
+        <div class="hp-control-group" style="padding-top: 1em;">
+          <form hx-post="/characters/{{ character.id }}/vitals/max-hp" hx-target="#vitals-section" hx-swap="outerHTML"
+            class="hp-form-group">
+            <span class="hp-control-label">{{ _("Max HP") }}</span>
             <div class="hp-form-controls">
-              <input
-                type="number"
-                name="value"
-                value="{{ hp.max }}"
-                min="1"
-                class="hp-form-input hp-form-input--max"
-              />
+              <input type="number" name="value" value="{{ hp.max }}" min="1" class="hp-form-input hp-form-input--max" />
               <button type="submit" class="hp-form-submit">{{ _("Set") }}</button>
             </div>
           </form>
         </div>
         {% endif %}
+          <!-- Hit Dice Row -->
+          {% set hd = sheet.vitality.get("hit_dice", {}) %}
+          {% if hd and hd.get("total") %}
+          <div class="hp-control-group" style="padding-top: 1em;">
+            <span class="hp-control-label">{{ _("Hit Dice") }}</span>
+            <div class="hp-form-controls">
+              <span class="hp-hit-dice-total">{{ hd.total }}</span>
+              {% if hd.get("spent") and hd.spent != "0" %}
+                <span class="hp-hit-dice-spent">({{ hd.spent }} {{ _("spent") }})</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
       </div>
+      <script>
+        function toggleHpControls(btn) {
+          var container = btn.nextElementSibling;
+          if (container.style.display === 'none' || container.style.display === '') {
+            container.style.display = 'block';
+            btn.classList.add('active');
+          } else {
+            container.style.display = 'none';
+            btn.classList.remove('active');
+          }
+        }
+      </script>
       {% endif %}
 
     </div>
