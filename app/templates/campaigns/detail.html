@@ -3,6 +3,7 @@
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/detail.css" />
+  <link rel="stylesheet" href="/static/css/character-actions-modal.css" />
 {% endblock %}
 
 {% block content %}
@@ -84,23 +85,56 @@
             Lv.{{ sheet.character_level.level }}
           </p>
         </div>
-        <div class="character-actions">
-          <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">
-            {{ _("View") }}
-          </a>
-          {% if current_user.is_dm or (character.owner and character.owner.id == current_user.user_id) %}
-          <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary">
-            {{ _("Edit") }}
-          </a>
-          {% endif %}
-          {% if current_user.is_dm %}
-          <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove">
-            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
-            <button type="submit" class="btn-sm btn-sm--secondary">
-              {{ _("Remove") }}
-            </button>
-          </form>
-          {% endif %}
+        {% set can_edit = current_user.is_dm %}
+        {% set can_remove = current_user.is_dm %}
+        <div class="character-actions" x-data="{ showModal: false }">
+          {# Desktop: show all actions #}
+          <div class="character-actions-desktop" style="display: flex; gap: 0.5rem;" x-show="window.innerWidth > 640">
+            <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">{{ _('View') }}</a>
+            {% if can_edit %}
+              <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary">{{ _('Edit') }}</a>
+            {% endif %}
+            {% if can_remove %}
+              <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove">
+                <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+                <button type="submit" class="btn-sm btn-sm--secondary">{{ _('Remove') }}</button>
+              </form>
+            {% endif %}
+          </div>
+          {# Mobile: show modal if more than 1 action, else show single #}
+          <template x-if="window.innerWidth <= 640">
+            <div>
+              {% set action_count = 1 + (1 if can_edit else 0) + (1 if can_remove else 0) %}
+              {% if action_count == 1 %}
+                <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('View') }}</a>
+                {% if can_edit %}
+                  <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Edit') }}</a>
+                {% elif can_remove %}
+                  <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove" style="width: 100%">
+                    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+                    <button type="submit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Remove') }}</button>
+                  </form>
+                {% endif %}
+              {% else %}
+                <button class="btn-sm btn-sm--secondary" @click="showModal = true">{{ _('Actions') }}</button>
+                <div class="character-actions-modal" :class="{ 'active': showModal }" x-show="showModal" @click.self="showModal = false">
+                  <div class="character-actions-modal-content">
+                    <button class="character-actions-modal-close" @click="showModal = false">&times;</button>
+                    <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('View') }}</a>
+                    {% if can_edit %}
+                      <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Edit') }}</a>
+                    {% endif %}
+                    {% if can_remove %}
+                      <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove" style="width: 100%">
+                        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+                        <button type="submit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Remove') }}</button>
+                      </form>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </template>
         </div>
       </div>
     </div>
