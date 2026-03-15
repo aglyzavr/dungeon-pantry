@@ -1,0 +1,77 @@
+/* Burger menu styles */
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  z-index: 100;
+}
+.burger span {
+  height: 0.25rem;
+  width: 100%;
+  background: var(--color-text-primary);
+  margin-bottom: 0.3rem;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.burger span:last-child {
+  margin-bottom: 0;
+}
+
+/* Overlay for burger menu */
+.burger-overlay {
+  display: none;
+}
+@media (max-width: 768px) {
+  .burger-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 98;
+  }
+  .navbar-menu {
+    display: none;
+    position: absolute;
+    top: 3.5rem;
+    right: 1.5rem;
+    background: var(--color-bg-primary);
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: var(--shadow-md);
+    border-radius: 0.5rem;
+    padding: 1rem 1.5rem;
+    min-width: 180px;
+    z-index: 99;
+  }
+  .navbar-menu.active {
+    display: flex;
+  }
+  .burger {
+    display: flex;
+  }
+  .navbar-menu {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 80vw;
+    max-width: 320px;
+    right: 0;
+    left: auto;
+    top: 0;
+    min-height: 100vh;
+    box-shadow: var(--shadow-lg);
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding-top: 2.5rem;
+  }
+  .navbar-link, .navbar-user, .navbar-logout {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 0;
+    font-size: 1.1rem;
+  }
+}
