@@ -14,13 +14,13 @@
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  transition: all 0.2s;
   letter-spacing: 0.025em;
+  transition: background-color 180ms ease, box-shadow 180ms ease;
 }
 
 .btn-primary:hover {
   background-color: var(--color-button-hover);
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+  box-shadow: 0 2px 8px oklch(from var(--color-button-bg) l c h / 0.3);
 }
 
 /* Small Buttons */
@@ -32,7 +32,7 @@
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
-  transition: all 0.2s;
+  transition: background-color 180ms ease, color 180ms ease;
 }
 
 .btn-sm--secondary {
