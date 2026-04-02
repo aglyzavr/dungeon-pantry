@@ -62,19 +62,42 @@ class CampaignService:
         await self._repo.delete(campaign)
 
     async def get_unassigned_characters(self) -> list[Character]:
-        """Return characters with no campaign assignment at all."""
+        """Return all available characters for assignment to campaigns.
+        
+        Characters can be assigned to multiple campaigns with independent data,
+        so this returns ALL characters (not just those without any campaign).
+        """
         return await self._repo.get_unassigned_characters()
 
+    async def get_available_characters_for_campaign(self, campaign_id: UUID) -> list[Character]:
+        """Return characters not already assigned to a specific campaign.
+        
+        This filters out characters already in THIS campaign, while still allowing
+        them to be shown in other campaigns for multi-campaign assignment.
+        """
+        campaign = await self._repo.get_by_id(campaign_id)
+        if campaign is None:
+            raise CampaignNotFound(f"Campaign {campaign_id} not found")
+        return await self._repo.get_characters_not_in_campaign(campaign_id)
+
     async def assign_character(self, campaign_id: UUID, character_id: UUID) -> None:
+        """Assign a character to a campaign.
+        
+        Creates a CampaignCharacter with an independent copy of the character's
+        current sheet_data and portrait fields.
+        """
         campaign = await self._repo.get_by_id(campaign_id)
         if campaign is None:
             raise CampaignNotFound(f"Campaign {campaign_id} not found")
         result = await self._db.execute(
             select(Character).where(Character.id == character_id)
         )
-        if result.scalar_one_or_none() is None:
+        character = result.scalar_one_or_none()
+        if character is None:
             raise CharacterNotFound(f"Character {character_id} not found")
-        await self._repo.assign_character(campaign_id, character_id)
+        
+        # Copy the character's current sheet_data as the starting point
+        await self._repo.assign_character(campaign_id, character_id, character.sheet_data)
 
     async def remove_character(self, campaign_id: UUID, character_id: UUID) -> None:
         campaign = await self._repo.get_by_id(campaign_id)

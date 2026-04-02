@@ -5,22 +5,22 @@
 
 /* Root - Default to Dark Theme (SaaS-style) */
 :root {
-  /* Surfaces — warm dark parchment */
+/* Surfaces — warm dark parchment */
   --color-bg-primary:    #1a1612;
   --color-bg-secondary:  #211d18;
   --color-bg-tertiary:   #2a2520;
   --color-bg-light:      #35302a;
-
-  /* Text */
+  
+   /* Text */
   --color-text-primary:   #e8e0d0;
   --color-text-secondary: #c4b9a8;
   --color-text-tertiary:  #8a7f70;
   --color-text-muted:     #5a5248;
-
+  
   /* Borders */
   --color-border:       #2e2920;
   --color-border-light: #3d3830;
-
+  
   /* Accent — aged gold instead of neon purple */
   --color-accent:             #c8922a;
   --color-accent-hover:       #e0a83a;
@@ -31,26 +31,115 @@
   /* Primary button — deep crimson */
   --color-button-bg:    #7a3020;
   --color-button-hover: #8f3a26;
-
-  /* Cards */
+  
+  --color-message-success: #052e16;
+  --color-message-success-border: #166534;
+  --color-message-success-text: #86efac;
+  
+  --color-message-error: #450a0a;
+  --color-message-error-border: #dc2626;
+  --color-message-error-text: #fca5a5;
+  
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  
+  --color-message-warning: #422006;
+  --color-message-warning-border: #d97706;
+  --color-message-warning-text: #fbbf24;
+  
+  --color-warning-bg: rgba(217, 119, 6, 0.1);
+  --color-warning-border: #fbbf24;
+  --color-warning-text: #fbbf24;
+  
+  --color-message-info: #0c1a2e;
+  --color-message-info-border: #7c3aed;
+  --color-message-info-text: #c4b5fd;
+  
+  --color-role-dm-bg: #581c87;
+  --color-role-dm-text: #e9d5ff;
+  --color-role-player-bg: #27272a;
+  --color-role-player-text: #d4d4d8;
+  
+    /* Cards */
   --color-card-bg:    #211d18;
   --color-card-hover: #2a2520;
-  --color-form-bg:    #211d18;
+  
+    --color-form-bg:    #211d18;
   --color-form-border: #3d3830;
   --color-form-accent: #c8922a;
+  --color-form-text: #ffffff;
+  --color-form-placeholder: #71717a;
 
-  /* Role badges */
-  --color-role-dm-bg:     #4a1a0a;
-  --color-role-dm-text:   #f5c98a;
-  --color-role-player-bg: #1e1c18;
-  --color-role-player-text: #c4b9a8;
+  --color-vitals-accent: #a855f7;
+  --color-vitals-accent-soft: #e9d5ff;
+  --color-vitals-warning: #eab308;
+  --color-vitals-health-high: #4ade80;
+  --color-vitals-health-mid: #facc15;
+  --color-vitals-health-low: #f87171;
+  --color-vitals-info: #c4b5fd;
+  --color-vitals-info-strong: #a855f7;
+  --color-vitals-heal-hover: #166534;
+  --color-vitals-heal-active: #14532d;
+  --color-vitals-damage-active: #450a0a;
+  --color-vitals-slot-border: #c084fc;
+  --color-vitals-slot-fill: #9333ea;
+  --color-vitals-slot-text: #e9d5ff;
+  --color-vitals-slot-restore-hover: #7e22ce;
+  --color-vitals-slot-restore-active: #581c87;
 
-  /* Vitals */
-  --color-vitals-accent:       #c8922a;
-  --color-vitals-accent-soft:  #f5dfa0;
-  --color-vitals-slot-border:  #d4a840;
-  --color-vitals-slot-fill:    #7a3020;
-  --color-vitals-slot-text:    #f5dfa0;
+  --color-positive: #4ade80;
+  --color-negative: #f87171;
+
+  --color-marker-unproficient: #3f3f46;
+
+  --color-danger-text: #fca5a5;
+  --color-avatar-bg: #581c87;
+  --color-interactive: #a855f7;
+  --color-interactive-hover: #9333ea;
+
+  --color-currency-copper: #ea580c;
+  --color-currency-electrum: #c4b5fd;
+  --color-currency-gold: #facc15;
+  --color-currency-platinum: #e9d5ff;
+
+  --color-tag-spell-bg: rgba(168, 85, 247, 0.4);
+  --color-tag-concentration-text: #fcd34d;
+  --color-tag-ritual-text: #e9d5ff;
+
+  --color-banner-info-bg: rgba(88, 28, 135, 0.4);
+  --color-banner-info-border: #7e22ce;
+  --color-banner-info-text: #e9d5ff;
+
+  --color-overlay-shadow-sm: rgba(0, 0, 0, 0.5);
+  --color-bg-secondary-20: rgba(12, 12, 14, 0.2);
+  --color-bg-secondary-30: rgba(12, 12, 14, 0.3);
+  --color-bg-secondary-40: rgba(12, 12, 14, 0.4);
+  --color-bg-secondary-50: rgba(12, 12, 14, 0.5);
+  --color-bg-secondary-60: rgba(12, 12, 14, 0.6);
+  --color-bg-secondary-70: rgba(12, 12, 14, 0.7);
+  --color-bg-primary-95: rgba(0, 0, 0, 0.95);
+
+  --color-status-blue-bg: rgba(168, 85, 247, 0.4);
+  --color-status-green-bg: rgba(34, 197, 94, 0.4);
+  --color-status-red-bg: rgba(239, 68, 68, 0.4);
+  --color-status-purple-bg: rgba(168, 85, 247, 0.4);
+  --color-status-purple-glow: rgba(192, 132, 252, 0.4);
+
+  --color-tag-indigo-bg: rgba(168, 85, 247, 0.4);
+  --color-tag-amber-bg-40: rgba(180, 83, 9, 0.4);
+  --color-tag-purple-bg-40: rgba(88, 28, 135, 0.4);
+
+  --color-currency-orange-bg: rgba(234, 88, 12, 0.3);
+  --color-currency-blue-bg: rgba(168, 85, 247, 0.3);
+  --color-currency-amber-bg: rgba(180, 83, 9, 0.3);
+  --color-currency-purple-bg: rgba(147, 51, 234, 0.3);
+
+  --color-danger-bg-40: rgba(127, 29, 29, 0.4);
+  --color-focus-success-ring: rgba(168, 85, 247, 0.15);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 24px rgba(168, 85, 247, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Light Theme */

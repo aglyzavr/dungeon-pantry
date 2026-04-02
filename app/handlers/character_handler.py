@@ -135,7 +135,6 @@ async def character_sheet(
     current_user: UserSession = Depends(require_login),
     service: CharacterService = Depends(_service),
     player_service: PlayerService = Depends(_player_service),
-    db: AsyncSession = Depends(get_db),
 ):
     try:
         character = await service.get_character(
@@ -143,11 +142,6 @@ async def character_sheet(
         )
     except CharacterNotFound:
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
-
-    if current_user.is_dm:
-        await db.refresh(character, ["share_links", "campaigns"])
-    else:
-        await db.refresh(character, ["campaigns"])
 
     # Load players for assignment dropdown (DM only)
     players = await player_service.list_players() if current_user.is_dm else []
@@ -159,6 +153,12 @@ async def character_sheet(
     # Pass full sheet data to template - template conditionals handle visibility
     # No backend filtering needed, all 'is_readonly' sections are hidden in views
 
+    # Extract campaigns from campaign_associations (already eagerly loaded)
+    campaigns = [assoc.campaign for assoc in character.campaign_associations]
+
+    # Normalize sheet_data to ensure all fields are in expected format
+    normalized_sheet = service._normalize_sheet(character.sheet_data)
+
     try:
         resp = render_template(
             templates,
@@ -167,9 +167,9 @@ async def character_sheet(
                 "request": request,
                 "current_user": current_user,
                 "character": character,
-                "sheet": character.sheet_data,
+                "sheet": normalized_sheet,
                 "players": players,
-                "campaigns": character.campaigns,
+                "campaigns": campaigns,
                 "can_edit": can_edit,
                 "is_readonly": is_readonly,
             },
@@ -217,11 +217,16 @@ async def edit_character_form(
         )
     except CharacterNotFound:
         return RedirectResponse(url="/characters", status_code=status.HTTP_303_SEE_OTHER)
+    
+    campaigns = [assoc.campaign for assoc in character.campaign_associations]
 
     # Check if user can edit (DM or character owner)
     can_edit = _can_edit(current_user, character)
     if not can_edit:
         return RedirectResponse(url=f"/characters/{character_id}", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Normalize sheet_data to ensure all fields are in expected format
+    normalized_sheet = service._normalize_sheet(character.sheet_data)
 
     return render_template(
         templates,
@@ -230,7 +235,8 @@ async def edit_character_form(
             "request": request,
             "current_user": current_user,
             "character": character,
-            "sheet": character.sheet_data,
+            "sheet": normalized_sheet,
+            "campaigns": campaigns,
         },
         language=current_user.language,
     )
@@ -255,6 +261,9 @@ async def edit_character_submit(
     if not can_edit:
         return RedirectResponse(url=f"/characters/{character_id}", status_code=status.HTTP_303_SEE_OTHER)
 
+    # Extract campaigns from associations (already eagerly loaded)
+    campaigns = [assoc.campaign for assoc in character.campaign_associations]
+
     form = await request.form()
     
     try:
@@ -265,6 +274,7 @@ async def edit_character_submit(
             status_code=status.HTTP_303_SEE_OTHER,
         )
     except CharacterValidationError as e:
+        normalized_sheet = service._normalize_sheet(character.sheet_data)
         return render_template(
             templates,
             "characters/edit.html",
@@ -272,13 +282,15 @@ async def edit_character_submit(
                 "request": request,
                 "current_user": current_user,
                 "character": character,
-                "sheet": character.sheet_data,
+                "sheet": normalized_sheet,
+                "campaigns": campaigns,
                 "error": "Validation failed: " + "; ".join(e.errors),
             },
             language=current_user.language,
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
     except (CharacterNotFound, ValueError, KeyError) as e:
+        normalized_sheet = service._normalize_sheet(character.sheet_data)
         return render_template(
             templates,
             "characters/edit.html",
@@ -286,7 +298,8 @@ async def edit_character_submit(
                 "request": request,
                 "current_user": current_user,
                 "character": character,
-                "sheet": character.sheet_data,
+                "sheet": normalized_sheet,
+                "campaigns": campaigns,
                 "error": f"Error updating character: {str(e)}",
             },
             language=current_user.language,
@@ -353,7 +366,8 @@ async def update_death_save(
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
 
-    await db.refresh(character, ["campaigns"])
+    await db.refresh(character, ["campaign_associations"])
+    campaigns = [assoc.campaign for assoc in character.campaign_associations]
 
     return render_template(
         templates,
@@ -363,7 +377,7 @@ async def update_death_save(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "campaigns": character.campaigns,
+            "campaigns": campaigns,
             "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,
@@ -387,7 +401,8 @@ async def toggle_inspiration(
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)
 
-    await db.refresh(character, ["campaigns"])
+    await db.refresh(character, ["campaign_associations"])
+    campaigns = [assoc.campaign for assoc in character.campaign_associations]
 
     return render_template(
         templates,
@@ -397,7 +412,7 @@ async def toggle_inspiration(
             "current_user": current_user,
             "character": character,
             "sheet": character.sheet_data,
-            "campaigns": character.campaigns,
+            "campaigns": campaigns,
             "can_edit": _can_edit(current_user, character),
         },
         language=current_user.language,

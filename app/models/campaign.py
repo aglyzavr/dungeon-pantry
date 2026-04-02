@@ -33,8 +33,8 @@ class Campaign(UUIDMixin, Base):
     creator: Mapped["User"] = relationship(
         "User", back_populates="campaigns"
     )
-    characters: Mapped[list["Character"]] = relationship(
-        "Character",
-        secondary="campaign_characters",
-        back_populates="campaigns",
+    character_associations: Mapped[list["CampaignCharacter"]] = relationship(
+        "CampaignCharacter",
+        back_populates="campaign",
+        cascade="all, delete-orphan",
     )

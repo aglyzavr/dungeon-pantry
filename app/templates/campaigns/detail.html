@@ -45,7 +45,7 @@
     <h2 class="section-title">
       {{ _("Characters") }}
       <span class="section-count">
-        ({{ campaign.characters | length }})
+        ({{ campaign.character_associations | length }})
       </span>
     </h2>
     {% if current_user.is_dm %}
@@ -55,15 +55,16 @@
     {% endif %}
   </div>
 
-  {% if campaign.characters %}
+  {% if campaign.character_associations %}
   <div class="characters-grid">
-    {% for character in campaign.characters %}
-    {% set sheet = character.sheet_data %}
+    {% for association in campaign.character_associations %}
+    {% set character = association.character %}
+    {% set sheet = association.sheet_data %}
     {% set hp = sheet.vitality.hit_points %}
     {% set hp_pct = ((hp.current / hp.max) * 100) | int if hp.max > 0 else 0 %}
     <div class="character-card">
       <div class="sheet-header-avatar-icon">
-        {% if character.portrait_data %}
+        {% if association.portrait_data %}
         <img src="/characters/{{ character.id }}/portrait" alt="{{ sheet.character_identity.character_name }}" class="portrait-image" />
         {% else %}
         🧙
@@ -90,9 +91,9 @@
         <div class="character-actions" x-data="{ showModal: false }">
           {# Desktop: show all actions #}
           <div class="character-actions-desktop" style="display: flex; gap: 0.5rem;" x-show="window.innerWidth > 640">
-            <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">{{ _('View') }}</a>
+            <a href="/campaigns/{{ campaign.id }}/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">{{ _('View') }}</a>
             {% if can_edit %}
-              <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary">{{ _('Edit') }}</a>
+              <a href="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary">{{ _('Edit') }}</a>
             {% endif %}
             {% if can_remove %}
               <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove">
@@ -106,9 +107,9 @@
             <div>
               {% set action_count = 1 + (1 if can_edit else 0) + (1 if can_remove else 0) %}
               {% if action_count == 1 %}
-                <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('View') }}</a>
+                <a href="/campaigns/{{ campaign.id }}/characters/{{ character.id }}" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('View') }}</a>
                 {% if can_edit %}
-                  <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Edit') }}</a>
+                  <a href="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Edit') }}</a>
                 {% elif can_remove %}
                   <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove" style="width: 100%">
                     <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
@@ -120,9 +121,9 @@
                 <div class="character-actions-modal" :class="{ 'active': showModal }" x-show="showModal" @click.self="showModal = false">
                   <div class="character-actions-modal-content">
                     <button class="character-actions-modal-close" @click="showModal = false">&times;</button>
-                    <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('View') }}</a>
+                    <a href="/campaigns/{{ campaign.id }}/characters/{{ character.id }}" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('View') }}</a>
                     {% if can_edit %}
-                      <a href="/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Edit') }}</a>
+                      <a href="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/edit" class="btn-sm btn-sm--secondary" style="width: 100%">{{ _('Edit') }}</a>
                     {% endif %}
                     {% if can_remove %}
                       <form method="post" action="/campaigns/{{ campaign.id }}/characters/{{ character.id }}/remove" style="width: 100%">
@@ -197,7 +198,7 @@
             </p>
           </div>
           <div class="character-actions">
-            <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">
+            <a href="/campaigns/{{ campaign.id }}/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">
               {{ _("View") }}
             </a>
             <form method="post" action="/campaigns/{{ campaign.id }}/characters">

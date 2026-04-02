@@ -132,6 +132,54 @@ class CharacterService:
         if not is_dm and character.owner_id != user_id:
             raise CharacterPermissionError("You do not have permission to modify this character")
 
+    async def _get_sheet_data(
+        self, character_id: UUID, campaign_id: UUID | None = None
+    ) -> dict:
+        """Get sheet_data for a character, optionally from a campaign context.
+        
+        Args:
+            character_id: The character's ID
+            campaign_id: Optional campaign ID. If provided, returns CampaignCharacter.sheet_data.
+                        If None, returns Character.sheet_data.
+        
+        Returns:
+            The sheet_data dict
+        
+        Raises:
+            CharacterNotFound if the character or (campaign-)character association doesn't exist
+        """
+        if campaign_id is not None:
+            cc = await self._repo.get_campaign_character(campaign_id, character_id)
+            if cc is None:
+                raise CharacterNotFound(
+                    f"Character {character_id} not found in campaign {campaign_id}"
+                )
+            return copy.deepcopy(cc.sheet_data)
+        else:
+            character = await self._repo.get_by_id(character_id)
+            if character is None:
+                raise CharacterNotFound(f"Character {character_id} not found")
+            return copy.deepcopy(character.sheet_data)
+
+    async def _save_sheet_data(
+        self, character_id: UUID, sheet_data: dict, campaign_id: UUID | None = None
+    ) -> None:
+        """Save sheet_data for a character, optionally to a campaign context.
+        
+        Args:
+            character_id: The character's ID
+            sheet_data: The new sheet_data to save
+            campaign_id: Optional campaign ID. If provided, updates CampaignCharacter.sheet_data.
+                        If None, updates Character.sheet_data.
+        """
+        if campaign_id is not None:
+            await self._repo.update_campaign_character_sheet(campaign_id, character_id, sheet_data)
+        else:
+            character = await self._repo.get_by_id(character_id)
+            if character is None:
+                raise CharacterNotFound(f"Character {character_id} not found")
+            await self._repo.save_sheet_data(character, sheet_data)
+
     async def create_from_json_string(self, raw_json: str, owner_id: UUID) -> Character:
         try:
             data = json.loads(raw_json)
@@ -294,6 +342,30 @@ class CharacterService:
             data["vitality"]["hit_points"] = {"current": 0, "max": 0, "temp": 0}
         if not isinstance(data["vitality"].get("death_saves"), dict):
             data["vitality"]["death_saves"] = {"successes": 0, "failures": 0}
+
+        # Normalize ability scores — ensure all skills in ability_scores are dicts with proper structure
+        for ability_name in ("strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"):
+            ability = data.get(ability_name, {})
+            if isinstance(ability, dict) and "ability_scores" in ability:
+                ability_scores = ability["ability_scores"]
+                if isinstance(ability_scores, dict):
+                    for skill_name, skill_data in ability_scores.items():
+                        # If skill_data is not a dict, convert it
+                        if not isinstance(skill_data, dict):
+                            # If it's an int/number, treat it as the bonus value
+                            ability_scores[skill_name] = {
+                                "bonus": int(skill_data) if isinstance(skill_data, (int, float)) else 0,
+                                "proficient": False,
+                                "advantage": "none",
+                            }
+                        else:
+                            # Ensure all required keys exist
+                            if "bonus" not in skill_data:
+                                skill_data["bonus"] = 0
+                            if "proficient" not in skill_data:
+                                skill_data["proficient"] = False
+                            if "advantage" not in skill_data:
+                                skill_data["advantage"] = "none"
 
         return data
 

@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, DateTime, ForeignKey, LargeBinary, Table
+from sqlalchemy import DateTime, ForeignKey, LargeBinary, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -9,22 +9,47 @@ from app.database import Base
 from app.models.base import UUIDMixin
 
 
-campaign_characters = Table(
-    "campaign_characters",
-    Base.metadata,
-    Column(
-        "campaign_id",
+class CampaignCharacter(UUIDMixin, Base):
+    """Association object storing per-campaign character data.
+    
+    Each CampaignCharacter represents a unique character instance within a campaign.
+    The sheet_data, portrait_data, and portrait_mime_type are completely independent
+    from those on the base Character — changes in one campaign do not affect others.
+    """
+    __tablename__ = "campaign_characters"
+
+    campaign_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("campaigns.id", ondelete="CASCADE"),
-        primary_key=True,
-    ),
-    Column(
-        "character_id",
+        nullable=False,
+    )
+    character_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("characters.id", ondelete="CASCADE"),
-        primary_key=True,
-    ),
-)
+        nullable=False,
+    )
+
+    # Per-campaign snapshot — fully independent from Character.sheet_data
+    sheet_data: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    portrait_data: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    portrait_mime_type: Mapped[str | None] = mapped_column(nullable=True)
+
+    joined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    character: Mapped["Character"] = relationship(
+        "Character", back_populates="campaign_associations"
+    )
+    campaign: Mapped["Campaign"] = relationship(
+        "Campaign", back_populates="character_associations"
+    )
+
+    __table_args__ = (
+        UniqueConstraint("campaign_id", "character_id", name="uq_campaign_characters_campaign_character"),
+    )
 
 
 class Character(UUIDMixin, Base):
@@ -57,10 +82,10 @@ class Character(UUIDMixin, Base):
         back_populates="characters",
         lazy="selectin",                                   
     )
-    campaigns: Mapped[list["Campaign"]] = relationship(
-        "Campaign",
-        secondary=campaign_characters,
-        back_populates="characters",
+    campaign_associations: Mapped[list["CampaignCharacter"]] = relationship(
+        "CampaignCharacter",
+        back_populates="character",
+        cascade="all, delete-orphan",
     )
     share_links: Mapped[list["ShareLink"]] = relationship(
         "ShareLink",

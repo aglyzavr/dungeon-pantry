@@ -11,6 +11,7 @@ from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.campaign import CampaignCreate, CampaignUpdate
 from app.services.campaign_service import CampaignNotFound, CampaignService, CharacterNotFound
+from app.services.character_service import CharacterService
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
 templates = Jinja2Templates(directory="app/templates")
@@ -18,6 +19,10 @@ templates = Jinja2Templates(directory="app/templates")
 
 def _service(db: AsyncSession = Depends(get_db)) -> CampaignService:
     return CampaignService(db)
+
+
+def _character_service(db: AsyncSession = Depends(get_db)) -> CharacterService:
+    return CharacterService(db)
 
 
 # ── List ─────────────────────────────────────────────────────────────────────
@@ -91,7 +96,8 @@ async def campaign_detail(
 ):
     try:
         campaign = await service.get_campaign(campaign_id)
-        unassigned_characters = await service.get_unassigned_characters()
+        # Show only characters not already in THIS campaign
+        unassigned_characters = await service.get_available_characters_for_campaign(campaign_id)
     except CampaignNotFound:
         return error_response(
             request, 404,
@@ -185,7 +191,8 @@ async def add_characters_form(
 ):
     try:
         campaign = await service.get_campaign(campaign_id)
-        available = await service.get_unassigned_characters()
+        # Get characters not already in THIS campaign (but can be in other campaigns)
+        available = await service.get_available_characters_for_campaign(campaign_id)
     except CampaignNotFound:
         return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -226,4 +233,88 @@ async def remove_character(
         pass
     return RedirectResponse(
         url=f"/campaigns/{campaign_id}", status_code=status.HTTP_303_SEE_OTHER
+    )
+
+
+# ── Campaign-specific character view ──────────────────────────────────────────
+
+@router.get("/{campaign_id}/characters/{character_id}", response_class=HTMLResponse)
+async def campaign_character_sheet(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CampaignService = Depends(_service),
+    character_service: CharacterService = Depends(_character_service),
+):
+    """View a character as part of a specific campaign (campaign-specific data)."""
+    try:
+        campaign = await service.get_campaign(campaign_id)
+        campaign_char = await service._repo.get_campaign_character_with_association(
+            campaign_id, character_id
+        )
+        if campaign_char is None:
+            raise CharacterNotFound(f"Character {character_id} not found in campaign {campaign_id}")
+        
+        character = campaign_char.character
+    except (CampaignNotFound, CharacterNotFound):
+        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Use campaign-specific sheet_data, not base character sheet
+    normalized_sheet = character_service._normalize_sheet(campaign_char.sheet_data)
+    
+    can_edit = current_user.is_dm or character.owner_id == current_user.user_id
+    
+    return render_template(
+        templates,
+        "characters/sheet.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "campaign": campaign,  # Include campaign for breadcrumb
+            "sheet": normalized_sheet,
+            "can_edit": can_edit,
+            "is_readonly": not can_edit,
+        },
+        language=current_user.language,
+    )
+
+
+@router.get("/{campaign_id}/characters/{character_id}/edit", response_class=HTMLResponse)
+async def campaign_character_edit_form(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_dm),
+    service: CampaignService = Depends(_service),
+    character_service: CharacterService = Depends(_character_service),
+):
+    """Edit a character as part of a specific campaign (campaign-specific data)."""
+    try:
+        campaign = await service.get_campaign(campaign_id)
+        campaign_char = await service._repo.get_campaign_character_with_association(
+            campaign_id, character_id
+        )
+        if campaign_char is None:
+            raise CharacterNotFound(f"Character {character_id} not found in campaign {campaign_id}")
+        
+        character = campaign_char.character
+    except (CampaignNotFound, CharacterNotFound):
+        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Use campaign-specific sheet_data
+    normalized_sheet = character_service._normalize_sheet(campaign_char.sheet_data)
+    
+    return render_template(
+        templates,
+        "characters/edit.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "campaign": campaign,  # Include campaign context
+            "sheet": normalized_sheet,
+        },
+        language=current_user.language,
     )

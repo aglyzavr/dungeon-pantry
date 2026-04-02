@@ -3,4 +3,4 @@
 from app.database import Base  # noqa: F401
 from app.models.user import User  # noqa: F401
 from app.models.campaign import Campaign  # noqa: F401
-from app.models.character import Character  # noqa: F401
+from app.models.character import Character, CampaignCharacter  # noqa: F401

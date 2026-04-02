@@ -4,8 +4,9 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import flag_modified
+from sqlalchemy.orm import selectinload
 
-from app.models.character import Character
+from app.models.character import Character, CampaignCharacter
 
 
 class CharacterRepository:
@@ -28,7 +29,9 @@ class CharacterRepository:
 
     async def get_by_id(self, character_id: UUID) -> Character | None:
         result = await self._db.execute(
-            select(Character).where(Character.id == character_id)
+            select(Character)
+            .where(Character.id == character_id)
+            .options(selectinload(Character.campaign_associations).selectinload(CampaignCharacter.campaign))
         )
         return result.scalar_one_or_none()
 
@@ -52,3 +55,48 @@ class CharacterRepository:
     async def delete(self, character: Character) -> None:
         await self._db.delete(character)
         await self._db.flush()
+
+    # ── Per-campaign character data ────────────────────────────────────────────
+
+    async def get_campaign_character(
+        self, campaign_id: UUID, character_id: UUID
+    ) -> CampaignCharacter | None:
+        """Fetch the CampaignCharacter association for a specific campaign/character pair."""
+        result = await self._db.execute(
+            select(CampaignCharacter)
+            .where(CampaignCharacter.campaign_id == campaign_id)
+            .where(CampaignCharacter.character_id == character_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def update_campaign_character_sheet(
+        self, campaign_id: UUID, character_id: UUID, sheet_data: dict
+    ) -> CampaignCharacter:
+        """Update the sheet_data for a campaign-specific character instance."""
+        cc = await self.get_campaign_character(campaign_id, character_id)
+        if cc is None:
+            raise ValueError(
+                f"CampaignCharacter not found for campaign {campaign_id}, character {character_id}"
+            )
+        cc.sheet_data = sheet_data
+        flag_modified(cc, "sheet_data")
+        await self._db.flush()
+        return cc
+
+    async def update_campaign_character_portrait(
+        self,
+        campaign_id: UUID,
+        character_id: UUID,
+        portrait_data: bytes | None,
+        mime_type: str | None,
+    ) -> CampaignCharacter:
+        """Update portrait_data and mime_type for a campaign-specific character instance."""
+        cc = await self.get_campaign_character(campaign_id, character_id)
+        if cc is None:
+            raise ValueError(
+                f"CampaignCharacter not found for campaign {campaign_id}, character {character_id}"
+            )
+        cc.portrait_data = portrait_data
+        cc.portrait_mime_type = mime_type
+        await self._db.flush()
+        return cc
