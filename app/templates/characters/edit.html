@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}{{ _("Edit") }} {{ sheet.character_identity.character_name }} — Campaign Manager{% endblock %}
+{% block title %}{% if character %}{{ _("Edit") }} {{ sheet.character_identity.character_name }}{% else %}{{ _("Create Character") }}{% endif %} — Campaign Manager{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="/static/css/edit.css" />
@@ -7,13 +7,13 @@
 {% endblock %}
 
 {% block content %}
-{% set char_base = "/campaigns/" ~ campaign.id ~ "/characters/" ~ character.id if campaign else "/characters/" ~ character.id %}
+{% set char_base = "/campaigns/" ~ campaign.id ~ "/characters/" ~ character.id if campaign else ("/characters/" ~ character.id if character else "") %}
 <div class="edit-container">
   <div class="edit-header">
-    <h1 class="edit-title">{{ _("Edit Character") }}</h1>
+    <h1 class="edit-title">{% if character %}{{ _("Edit Character") }}{% else %}{{ _("Create Character") }}{% endif %}</h1>
     <div class="edit-actions">
-      <a href="{{ char_base }}" class="btn-sm btn-sm--secondary">{{ _("Cancel") }}</a>
-      <button type="submit" form="edit-form" class="btn-sm btn-sm--primary">{{ _("Save Changes") }}</button>
+      <a href="{{ char_base if character else '/characters' }}" class="btn-sm btn-sm--secondary">{{ _("Cancel") }}</a>
+      <button type="submit" form="edit-form" class="btn-sm btn-sm--primary">{% if character %}{{ _("Save Changes") }}{% else %}{{ _("Create Character") }}{% endif %}</button>
     </div>
   </div>
 
@@ -98,7 +98,7 @@
       </button>
     </div>
 
-    <form id="edit-form" method="post" action="{{ char_base }}/edit">
+    <form id="edit-form" method="post" action="{{ char_base ~ '/edit' if character else '/characters/new' }}">
     <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
     <input type="hidden" name="spells_json" :value="JSON.stringify(spellEntries)">
     <input type="hidden" name="attacks_json" :value="JSON.stringify(attackEntries)">

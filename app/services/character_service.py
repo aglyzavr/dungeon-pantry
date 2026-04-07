@@ -32,6 +32,67 @@ class CharacterService:
         self._campaign_repo = CampaignRepository(db)
     
     @staticmethod
+    def _blank_sheet() -> dict:
+        """Return a blank character sheet skeleton with empty/default values.
+
+        Each call returns an independent copy so callers can mutate freely.
+        The returned dict intentionally does NOT pass ``validate_mandatory_fields``
+        (empty name, zero max-HP) so the form enforces all required fields.
+        """
+        return {
+            "character_identity": {
+                "character_name": "",
+                "background": "",
+                "class": {"name": "", "subclass": ""},
+                "species": {"name": "", "subtype": ""},
+            },
+            "character_level": {"level": 1, "xp": "0"},
+            "armor_class": 10,
+            "initiative": "+0",
+            "speed": "30 ft",
+            "size": "Medium",
+            "proficiency_bonus": 2,
+            "heroic_inspiration": False,
+            "passive_perception": 10,
+            "passive_investigation": 10,
+            "passive_insight": 10,
+            "vitality": {
+                "hit_points": {"current": 0, "max": 0, "temp": 0},
+                "hit_dice": {"total": "1d8", "spent": "0"},
+                "death_saves": {"successes": 0, "failures": 0},
+            },
+            "strength": {"score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False},
+            "dexterity": {"score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False},
+            "constitution": {"score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False},
+            "intelligence": {"score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False},
+            "wisdom": {"score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False},
+            "charisma": {"score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False},
+            "equipment_training_proficiencies": {"armor_training": [], "weapons": [], "tools": []},
+            "languages": "",
+            "defenses": "",
+            "class_features": "",
+            "species_traits": "",
+            "feats": "",
+            "appearance": "",
+            "backstory_and_personality": {
+                "backstory": "",
+                "personality": "",
+                "alignment": "",
+                "ideals": "",
+                "bonds": "",
+                "flaws": "",
+            },
+            "equipment": {
+                "equipment_list": [],
+                "throwable_cases": [],
+                "weapons": [],
+                "magic_item_attunement": [],
+            },
+            "spell_slots": {},
+            "coins": {"cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0},
+        }
+
+    @staticmethod
     def _calculate_spell_slots(character_class: str, character_level: int) -> dict:
         """
         Calculate spell slots based on character class and level according to D&D 5e rules.
