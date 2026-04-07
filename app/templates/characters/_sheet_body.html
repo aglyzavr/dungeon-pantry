@@ -731,6 +731,49 @@
             {% endif %}
             {% endfor %}
 
+                        {# ── Class Resources Block ─────────────────────────────────────────────── #}
+            {% if sheet.class_resources %}
+            <div class="spell-slots-container">
+                <div class="spell-slots-header">
+                    <span class="spell-slots-title">{{ _("Class Resources") }}</span>
+                </div>
+                <div class="spell-slots-content">
+                    {% for res in sheet.class_resources %}
+                    {% if res.name %}
+                    {% set res_index = loop.index0 %}
+                    <div class="spell-slot-row">
+                        <span class="spell-slot-level-label">{{ res.name }}</span>
+                        <div class="spell-slot-dots">
+                            {% for i in range(1, res.uses_max + 1) %}
+                            <div class="spell-slot-dot
+                      {% if i <= res.uses_current %}spell-slot-dot--available
+                      {% else %}spell-slot-dot--expended{% endif %}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if can_edit %}
+                        <div class="spell-slot-controls">
+                            <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                hx-post="{{ char_base }}/vitals/class-resource"
+                                hx-vals='{"resource_index": {{ res_index }}, "delta": -1}' hx-target="#sheet-body" hx-swap="outerHTML"
+                                class="spell-slot-btn spell-slot-btn--use">
+                                {{ _("Use") }}
+                            </button>
+                            <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                hx-post="{{ char_base }}/vitals/class-resource"
+                                hx-vals='{"resource_index": {{ res_index }}, "delta": 1}' hx-target="#sheet-body" hx-swap="outerHTML"
+                                class="spell-slot-btn spell-slot-btn--restore">
+                                {{ _("Restore") }}
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             {# ── SPELLS SECTION (Requires Spell Slots) ── #}
             {% if leveled_spells | length > 0 %}
             <div class="spells-list-container">
@@ -835,49 +878,6 @@
             <div class="spells-empty-state">
                 <div class="spells-empty-icon">✨</div>
                 <p class="spells-empty-message">{{ _("No spells prepared") }}</p>
-            </div>
-            {% endif %}
-
-            {# ── Class Resources Block ─────────────────────────────────────────────── #}
-            {% if sheet.class_resources %}
-            <div class="spell-slots-container">
-                <div class="spell-slots-header">
-                    <span class="spell-slots-title">{{ _("Class Resources") }}</span>
-                </div>
-                <div class="spell-slots-content">
-                    {% for res in sheet.class_resources %}
-                    {% if res.name %}
-                    {% set res_index = loop.index0 %}
-                    <div class="spell-slot-row">
-                        <span class="spell-slot-level-label">{{ res.name }}</span>
-                        <div class="spell-slot-dots">
-                            {% for i in range(1, res.uses_max + 1) %}
-                            <div class="spell-slot-dot
-                      {% if i <= res.uses_current %}spell-slot-dot--available
-                      {% else %}spell-slot-dot--expended{% endif %}">
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% if can_edit %}
-                        <div class="spell-slot-controls">
-                            <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                hx-post="{{ char_base }}/vitals/class-resource"
-                                hx-vals='{"resource_index": {{ res_index }}, "delta": -1}' hx-target="#sheet-body" hx-swap="outerHTML"
-                                class="spell-slot-btn spell-slot-btn--use">
-                                {{ _("Use") }}
-                            </button>
-                            <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                hx-post="{{ char_base }}/vitals/class-resource"
-                                hx-vals='{"resource_index": {{ res_index }}, "delta": 1}' hx-target="#sheet-body" hx-swap="outerHTML"
-                                class="spell-slot-btn spell-slot-btn--restore">
-                                {{ _("Restore") }}
-                            </button>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
             </div>
             {% endif %}
         </div>
