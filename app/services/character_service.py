@@ -441,10 +441,11 @@ class CharacterService:
         hit_dice = data.get("vitality", {}).get("hit_dice", {})
         if isinstance(hit_dice, dict):
             total_str = str(hit_dice.get("total", "1d8"))
-            # Parse "XdY" → X; if no 'd' treat the whole string as the count
+            # Parse "XdY" → X (e.g. "4d8" → 4, "d8" → 1, "1d8" → 1)
             parts = total_str.lower().split("d")
             try:
-                total_count = int(parts[0]) if parts[0] else 1
+                count_str = parts[0].strip()
+                total_count = int(count_str) if count_str else 1
             except (ValueError, IndexError):
                 total_count = 1
             recovery = max(1, total_count // 2)

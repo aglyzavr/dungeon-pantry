@@ -802,7 +802,7 @@ class TestApplyLongRest:
         data["vitality"]["hit_dice"]["total"] = "1d8"
         data["vitality"]["hit_dice"]["spent"] = "1"
         CharacterService._apply_long_rest(data)
-        # spent was 1, recover max(1, 1//2)=1, result = 0
+        # spent was 1, recover max(1, 1//2) = max(1, 0) = 1, result = 0
         assert data["vitality"]["hit_dice"]["spent"] == 0
 
     def test_hit_dice_spent_never_goes_below_zero(self):
