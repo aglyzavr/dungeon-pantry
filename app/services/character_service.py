@@ -124,6 +124,7 @@ class CharacterService:
             "class_features": "",
             "species_traits": "",
             "feats": "",
+            "class_resources": [],
             "appearance": "",
             "backstory_and_personality": {
                 "backstory": "",
@@ -392,6 +393,34 @@ class CharacterService:
         data["spell_slots"][key] = slot
         return await self._repo.save_sheet_data(character, data)
 
+    async def use_class_resource(
+        self, character_id: UUID, user_id: UUID, is_dm: bool, resource_index: int, delta: int
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        resources = data.get("class_resources", [])
+        if 0 <= resource_index < len(resources):
+            res = resources[resource_index]
+            uses_max = int(res.get("uses_max", 1))
+            uses_current = int(res.get("uses_current", uses_max))
+            res["uses_current"] = max(0, min(uses_max, uses_current + delta))
+        return await self._repo.save_sheet_data(character, data)
+
+    async def update_campaign_class_resource(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool,
+        resource_index: int, delta: int
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        resources = data.get("class_resources", [])
+        if 0 <= resource_index < len(resources):
+            res = resources[resource_index]
+            uses_max = int(res.get("uses_max", 1))
+            uses_current = int(res.get("uses_current", uses_max))
+            res["uses_current"] = max(0, min(uses_max, uses_current + delta))
+        return await self._flush_campaign_cc(cc, data)
+
     async def delete_character(self, character_id: UUID) -> None:
         character = await self._repo.get_by_id(character_id)
         if character is None:
@@ -442,6 +471,21 @@ class CharacterService:
         # coins structure expected by _sheet_body.html
         if not isinstance(data.get("coins"), dict):
             data["coins"] = {"cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0}
+
+        # class_resources list with per-entry normalization
+        if not isinstance(data.get("class_resources"), list):
+            data["class_resources"] = []
+        for res in data["class_resources"]:
+            if isinstance(res, dict):
+                res.setdefault("name", "")
+                res.setdefault("action_type", "none")
+                atype = res["action_type"]
+                if atype not in ("action", "bonus_action", "reaction", "none"):
+                    res["action_type"] = "none"
+                res.setdefault("uses_max", 1)
+                res.setdefault("uses_current", res["uses_max"])
+                res.setdefault("recharge", "")
+                res.setdefault("description", "")
 
         # spellcasting ability may be null/absent, that's fine
 
@@ -730,6 +774,44 @@ class CharacterService:
         sheet["class_features"] = get_form("class_features", "")
         sheet["species_traits"] = get_form("species_traits", "")
         sheet["feats"] = get_form("feats", "")
+
+        # Class resources (submitted as JSON from the edit form)
+        resources_raw = str(get_form("class_resources_json", "")).strip()
+        if resources_raw:
+            try:
+                submitted_resources = json.loads(resources_raw)
+            except (json.JSONDecodeError, TypeError):
+                submitted_resources = None
+            if isinstance(submitted_resources, list):
+                normalized_resources = []
+                for res in submitted_resources:
+                    if not isinstance(res, dict):
+                        continue
+                    res_name = str(res.get("name", "")).strip()
+                    if not res_name:
+                        continue
+                    atype = str(res.get("action_type", "")).strip()
+                    if atype not in ("action", "bonus_action", "reaction", "none"):
+                        atype = "none"
+                    try:
+                        uses_max = max(1, int(res.get("uses_max", 1)))
+                    except (TypeError, ValueError):
+                        uses_max = 1
+                    try:
+                        uses_current = max(0, min(uses_max, int(res.get("uses_current", uses_max))))
+                    except (TypeError, ValueError):
+                        uses_current = uses_max
+                    normalized_resources.append({
+                        "name": res_name,
+                        "action_type": atype,
+                        "uses_max": uses_max,
+                        "uses_current": uses_current,
+                        "recharge": str(res.get("recharge", "")).strip(),
+                        "description": str(res.get("description", "")).strip(),
+                    })
+                sheet["class_resources"] = normalized_resources
+        else:
+            sheet["class_resources"] = sheet_data.get("class_resources", [])
         
         # Appearance and backstory
         sheet["appearance"] = get_form("appearance", "")

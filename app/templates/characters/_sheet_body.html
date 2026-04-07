@@ -527,6 +527,65 @@
             </div>
             {% endif %}
 
+            {# ── Class & Racial Features Section ── #}
+            {% set class_feature_actions = [] %}
+            {% set class_feature_bonus = [] %}
+            {% set class_feature_reactions = [] %}
+            {% for res in sheet.class_resources %}
+            {% if res.name %}
+                {% set resource_action_type = res.get("action_type", "none") %}
+                {% if resource_action_type == "action" %}
+                    {% set _ = class_feature_actions.append(res) %}
+                {% elif resource_action_type == "bonus_action" %}
+                    {% set _ = class_feature_bonus.append(res) %}
+                {% elif resource_action_type == "reaction" %}
+                    {% set _ = class_feature_reactions.append(res) %}
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% if class_feature_actions or class_feature_bonus or class_feature_reactions %}
+            <div class="actions-section">
+                <div class="actions-section-header">
+                    <h3 class="actions-section-title">{{ _("Class & Racial Features") }}</h3>
+                </div>
+                <div class="attacks-table-wrapper">
+                    <table class="attacks-table">
+                        <thead class="attacks-table-head">
+                            <tr>
+                                <th class="attacks-table-head-cell">{{ _("Name") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Type") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Uses") }}</th>
+                                <th class="attacks-table-head-cell hidden sm:table-cell">{{ _("Notes") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="attacks-table-body">
+                            {% for res in class_feature_actions + class_feature_bonus + class_feature_reactions %}
+                            {% set res_atype = res.get("action_type", "none") %}
+                            <tr class="attacks-table-row" data-notes="{{ res.description | e }}" data-item-name="{{ res.name | e }}" onclick="openNotesModal(this)">
+                                <td class="attacks-table-cell attacks-table-name">
+                                    {{ res.name }}
+                                    {% if res.recharge %}<span class="action-range">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
+                                </td>
+                                <td class="attacks-table-cell">
+                                    {% if res_atype == "action" %}
+                                    <span class="class-resource-badge class-resource-badge--action">{{ _("Action") }}</span>
+                                    {% elif res_atype == "bonus_action" %}
+                                    <span class="class-resource-badge class-resource-badge--bonus">{{ _("Bonus Action") }}</span>
+                                    {% elif res_atype == "reaction" %}
+                                    <span class="class-resource-badge class-resource-badge--reaction">{{ _("Reaction") }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="attacks-table-cell attacks-table-damage">{{ res.uses_current }}/{{ res.uses_max }}</td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ res.description }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
             {# Combat Actions #}
             <div class="actions-section">
                 <div class="actions-section-header">
@@ -673,6 +732,49 @@
             {% set _ = leveled_spells.append(spell) %}
             {% endif %}
             {% endfor %}
+
+                        {# ── Class Resources Block ─────────────────────────────────────────────── #}
+            {% if sheet.class_resources %}
+            <div class="spell-slots-container">
+                <div class="spell-slots-header">
+                    <span class="spell-slots-title">{{ _("Class Resources") }}</span>
+                </div>
+                <div class="spell-slots-content">
+                    {% for res in sheet.class_resources %}
+                    {% if res.name %}
+                    {% set res_index = loop.index0 %}
+                    <div class="spell-slot-row">
+                        <span class="spell-slot-level-label">{{ res.name }}</span>
+                        <div class="spell-slot-dots">
+                            {% for i in range(1, res.uses_max + 1) %}
+                            <div class="spell-slot-dot
+                      {% if i <= res.uses_current %}spell-slot-dot--available
+                      {% else %}spell-slot-dot--expended{% endif %}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if can_edit %}
+                        <div class="spell-slot-controls">
+                            <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                hx-post="{{ char_base }}/vitals/class-resource"
+                                hx-vals='{"resource_index": {{ res_index }}, "delta": -1}' hx-target="#sheet-body" hx-swap="outerHTML"
+                                class="spell-slot-btn spell-slot-btn--use">
+                                {{ _("Use") }}
+                            </button>
+                            <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                hx-post="{{ char_base }}/vitals/class-resource"
+                                hx-vals='{"resource_index": {{ res_index }}, "delta": 1}' hx-target="#sheet-body" hx-swap="outerHTML"
+                                class="spell-slot-btn spell-slot-btn--restore">
+                                {{ _("Restore") }}
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
 
             {# ── SPELLS SECTION (Requires Spell Slots) ── #}
             {% if leveled_spells | length > 0 %}
@@ -1449,6 +1551,62 @@ document.addEventListener('keydown', function(e) {
     </div>
     {% endif %}
 
+    {# Class & Racial Features Section #}
+    {% set class_feature_actions = [] %}
+    {% set class_feature_bonus = [] %}
+    {% set class_feature_reactions = [] %}
+    {% for res in sheet.class_resources %}
+    {% if res.name %}
+        {% set resource_action_type = res.get("action_type", "none") %}
+        {% if resource_action_type == "action" %}{% set _ = class_feature_actions.append(res) %}
+        {% elif resource_action_type == "bonus_action" %}{% set _ = class_feature_bonus.append(res) %}
+        {% elif resource_action_type == "reaction" %}{% set _ = class_feature_reactions.append(res) %}
+        {% endif %}
+    {% endif %}
+    {% endfor %}
+
+    {% if class_feature_actions or class_feature_bonus or class_feature_reactions %}
+    <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Class &amp; Racial Features
+            </h3>
+        </div>
+        <div class="divide-y divide-gray-800">
+            {% for res in class_feature_actions %}
+            <div class="px-4 py-3 hover:bg-gray-800/40 transition-colors">
+                <div class="flex items-center gap-2 flex-wrap mb-1">
+                    <span class="font-medium text-white text-sm">{{ res.name }}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-blue-900/50 text-blue-300">Action</span>
+                    {% if res.recharge %}<span class="text-xs text-gray-500">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
+                </div>
+                {% if res.description %}<p class="text-xs text-gray-500 leading-relaxed">{{ res.description }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            {% for res in class_feature_bonus %}
+            <div class="px-4 py-3 hover:bg-gray-800/40 transition-colors">
+                <div class="flex items-center gap-2 flex-wrap mb-1">
+                    <span class="font-medium text-white text-sm">{{ res.name }}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-green-900/50 text-green-300">Bonus Action</span>
+                    {% if res.recharge %}<span class="text-xs text-gray-500">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
+                </div>
+                {% if res.description %}<p class="text-xs text-gray-500 leading-relaxed">{{ res.description }}</p>{% endif %}
+            </div>
+            {% endfor %}
+            {% for res in class_feature_reactions %}
+            <div class="px-4 py-3 hover:bg-gray-800/40 transition-colors">
+                <div class="flex items-center gap-2 flex-wrap mb-1">
+                    <span class="font-medium text-white text-sm">{{ res.name }}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-orange-900/50 text-orange-300">Reaction</span>
+                    {% if res.recharge %}<span class="text-xs text-gray-500">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
+                </div>
+                {% if res.description %}<p class="text-xs text-gray-500 leading-relaxed">{{ res.description }}</p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Combat Actions -->
     <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
         <div class="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
@@ -1616,6 +1774,59 @@ document.addEventListener('keydown', function(e) {
     <div class="text-center py-16 text-gray-600">
         <div class="text-4xl mb-3">✨</div>
         <p class="text-gray-500">No spells prepared</p>
+    </div>
+    {% endif %}
+
+    {# ── Class Resources Section ── #}
+    {% if sheet.class_resources %}
+    <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Class Resources
+            </h3>
+        </div>
+        <div class="divide-y divide-gray-800">
+            {% for res in sheet.class_resources %}
+            {% if res.name %}
+            {% set res_index = loop.index0 %}
+            <div class="px-4 py-3">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span class="text-sm font-medium text-white sm:min-w-[8rem]">{{ res.name }}</span>
+                    <div class="flex gap-1.5 flex-wrap flex-1">
+                        {% for i in range(1, res.uses_max + 1) %}
+                        <div class="w-5 h-5 rounded-full border-2 transition-all
+                            {% if i <= res.uses_current %}border-violet-500 bg-violet-600/60 shadow-[0_0_6px_theme(colors.violet.500/50%)]
+                            {% else %}border-gray-700 bg-transparent{% endif %}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if can_edit %}
+                    <div class="flex gap-2 sm:ml-auto">
+                        <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                            hx-post="{{ char_base }}/vitals/class-resource"
+                            hx-vals='{"resource_index": {{ res_index }}, "delta": -1}' hx-target="#sheet-body" hx-swap="outerHTML"
+                            class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md bg-red-900/50 text-red-300 hover:bg-red-800/60 transition-colors uppercase tracking-wide">
+                            Use
+                        </button>
+                        <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                            hx-post="{{ char_base }}/vitals/class-resource"
+                            hx-vals='{"resource_index": {{ res_index }}, "delta": 1}' hx-target="#sheet-body" hx-swap="outerHTML"
+                            class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md bg-violet-900/50 text-violet-300 hover:bg-violet-800/60 transition-colors uppercase tracking-wide">
+                            Restore
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if res.recharge or res.description %}
+                <div class="mt-1.5 flex flex-wrap gap-3 text-xs text-gray-500">
+                    {% if res.recharge %}<span>↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
+                    {% if res.description %}<span class="text-gray-600">{{ res.description }}</span>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
     </div>
     {% endif %}
 </div>

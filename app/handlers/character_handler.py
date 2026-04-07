@@ -12,7 +12,7 @@ from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.character import (
     HPUpdate, DeathSaveUpdate, SpellSlotUpdate,
-    TempHPUpdate, MaxHPUpdate, ThrowableCaseQtyUpdate,
+    TempHPUpdate, MaxHPUpdate, ThrowableCaseQtyUpdate, ClassResourceUpdate,
 )
 from jinja2 import TemplateError
 from app.services.character_service import (
@@ -695,6 +695,43 @@ async def update_throwable_case_qty(
         character = await service.update_throwable_case_quantity(
             character_id, current_user.user_id, current_user.is_dm,
             payload.case_index, payload.item_index, payload.delta,
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": character.sheet_data,
+            "can_edit": _can_edit(current_user, character),
+        },
+        language=current_user.language,
+    )
+
+
+# ── Vitals: Class Resource ────────────────────────────────────────────────
+
+@router.post("/{character_id}/vitals/class-resource", response_class=HTMLResponse)
+async def update_class_resource(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    form = await request.form()
+    payload = ClassResourceUpdate(
+        resource_index=form.get("resource_index", 0),
+        delta=form.get("delta", 0),
+    )
+
+    try:
+        character = await service.use_class_resource(
+            character_id, current_user.user_id, current_user.is_dm,
+            payload.resource_index, payload.delta,
         )
     except (CharacterNotFound, CharacterPermissionError):
         return error_response(request, 403, language=current_user.language)

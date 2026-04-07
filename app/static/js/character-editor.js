@@ -77,6 +77,18 @@ const weaponSchema = {
 };
 
 /**
+ * Schema defining the structure and default values for class resource entries
+ */
+const classResourceSchema = {
+  name: '',
+  action_type: 'none',
+  uses_max: 1,
+  uses_current: 1,
+  recharge: '',
+  description: '',
+};
+
+/**
  * Schema defining the structure and default values for case item entries
  */
 const caseItemSchema = {
@@ -117,6 +129,11 @@ window.CharacterEditor = {
    * Normalizer function for weapon entries
    */
   normalizeWeapon: createNormalizer(weaponSchema),
+
+  /**
+   * Normalizer function for class resource entries
+   */
+  normalizeClassResource: createNormalizer(classResourceSchema),
 
   /**
    * Normalizer function for throwable case entries
