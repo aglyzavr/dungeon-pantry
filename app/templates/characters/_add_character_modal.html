@@ -1,0 +1,33 @@
+{# Choice modal: lets the DM pick between creating a character manually
+   or uploading a JSON file.  Opened by clicking the "+ Add Character" button
+   on the character list page.  Initially hidden; shown by openAddCharacterModal(). #}
+<div id="add-character-modal" class="modal-overlay add-character-modal--hidden" onclick="event.target === this && closeAddCharacterModal()" role="dialog" aria-modal="true" aria-labelledby="add-character-modal-title">
+  <div class="modal-container add-character-modal-container">
+    <div class="modal-header">
+      <h2 id="add-character-modal-title">{{ _("Add Character") }}</h2>
+      <button class="modal-close" onclick="closeAddCharacterModal()" type="button" aria-label="{{ _('Close') }}">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <p class="add-character-modal-subtitle">{{ _("How would you like to add a character?") }}</p>
+
+      <div class="add-character-options">
+        <a href="/characters/new" class="add-character-option">
+          <span class="add-character-option-icon">✏️</span>
+          <div class="add-character-option-text">
+            <strong>{{ _("Create Manually") }}</strong>
+            <span>{{ _("Fill in the character sheet directly in the browser.") }}</span>
+          </div>
+        </a>
+
+        <a href="/characters/upload" class="add-character-option">
+          <span class="add-character-option-icon">📄</span>
+          <div class="add-character-option-text">
+            <strong>{{ _("Upload JSON") }}</strong>
+            <span>{{ _("Import a character sheet from a JSON file.") }}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

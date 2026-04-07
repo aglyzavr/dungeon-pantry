@@ -30,7 +30,119 @@ class CharacterService:
     def __init__(self, db: AsyncSession):
         self._repo = CharacterRepository(db)
         self._campaign_repo = CampaignRepository(db)
+
+    # D&D 5e canonical skills per ability. Keys must match the dot-access names
+    # used in _sheet_body.html (e.g. sheet.dexterity.ability_scores.sleight_of_hand).
+    _DEFAULT_SKILLS: dict[str, list[str]] = {
+        "strength":     ["athletics"],
+        "dexterity":    ["acrobatics", "sleight_of_hand", "stealth"],
+        "constitution": [],
+        "intelligence": ["arcana", "history", "investigation", "nature", "religion"],
+        "wisdom":       ["animal_handling", "insight", "medicine", "perception", "survival"],
+        "charisma":     ["deception", "intimidation", "performance", "persuasion"],
+    }
+
+    @staticmethod
+    def _default_skill_entry() -> dict:
+        return {"bonus": 0, "proficient": False, "advantage": "none"}
     
+    @staticmethod
+    def _blank_sheet() -> dict:
+        """Return a blank character sheet skeleton with empty/default values.
+
+        Each call returns an independent copy so callers can mutate freely.
+        The returned dict intentionally does NOT pass ``validate_mandatory_fields``
+        (empty name, zero max-HP) so the form enforces all required fields.
+        """
+        return {
+            "character_identity": {
+                "character_name": "",
+                "background": "",
+                "class": {"name": "", "subclass": ""},
+                "species": {"name": "", "subtype": ""},
+            },
+            "character_level": {"level": 1, "xp": "0"},
+            "armor_class": 10,
+            "initiative": "+0",
+            "speed": "30 ft",
+            "size": "Medium",
+            "proficiency_bonus": 2,
+            "heroic_inspiration": False,
+            "passive_perception": 10,
+            "passive_investigation": 10,
+            "passive_insight": 10,
+            "vitality": {
+                "hit_points": {"current": 0, "max": 0, "temp": 0},
+                "hit_dice": {"total": "1d8", "spent": "0"},
+                "death_saves": {"successes": 0, "failures": 0},
+            },
+            "strength": {
+                "score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False,
+                "ability_scores": {"athletics": {"bonus": 0, "proficient": False, "advantage": "none"}},
+            },
+            "dexterity": {
+                "score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False,
+                "ability_scores": {
+                    "acrobatics": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "sleight_of_hand": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "stealth": {"bonus": 0, "proficient": False, "advantage": "none"},
+                },
+            },
+            "constitution": {"score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False},
+            "intelligence": {
+                "score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False,
+                "ability_scores": {
+                    "arcana": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "history": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "investigation": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "nature": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "religion": {"bonus": 0, "proficient": False, "advantage": "none"},
+                },
+            },
+            "wisdom": {
+                "score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False,
+                "ability_scores": {
+                    "animal_handling": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "insight": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "medicine": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "perception": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "survival": {"bonus": 0, "proficient": False, "advantage": "none"},
+                },
+            },
+            "charisma": {
+                "score": 10, "modifier": 0, "saving_throw": 0, "saving_throw_proficient": False,
+                "ability_scores": {
+                    "deception": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "intimidation": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "performance": {"bonus": 0, "proficient": False, "advantage": "none"},
+                    "persuasion": {"bonus": 0, "proficient": False, "advantage": "none"},
+                },
+            },
+            "equipment_training_proficiencies": {"armor_training": [], "weapons": [], "tools": []},
+            "languages": "",
+            "defenses": "",
+            "class_features": "",
+            "species_traits": "",
+            "feats": "",
+            "appearance": "",
+            "backstory_and_personality": {
+                "backstory": "",
+                "personality": "",
+                "alignment": "",
+                "ideals": "",
+                "bonds": "",
+                "flaws": "",
+            },
+            "equipment": {
+                "equipment_list": [],
+                "throwable_cases": [],
+                "weapons": [],
+                "magic_item_attunement": [],
+            },
+            "spell_slots": {},
+            "coins": {"cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0},
+        }
+
     @staticmethod
     def _calculate_spell_slots(character_class: str, character_level: int) -> dict:
         """
@@ -347,27 +459,38 @@ class CharacterService:
 
         # Normalize ability scores — ensure all skills in ability_scores are dicts with proper structure
         for ability_name in ("strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"):
-            ability = data.get(ability_name, {})
-            if isinstance(ability, dict) and "ability_scores" in ability:
-                ability_scores = ability["ability_scores"]
-                if isinstance(ability_scores, dict):
-                    for skill_name, skill_data in ability_scores.items():
-                        # If skill_data is not a dict, convert it
-                        if not isinstance(skill_data, dict):
-                            # If it's an int/number, treat it as the bonus value
-                            ability_scores[skill_name] = {
-                                "bonus": int(skill_data) if isinstance(skill_data, (int, float)) else 0,
-                                "proficient": False,
-                                "advantage": "none",
-                            }
-                        else:
-                            # Ensure all required keys exist
-                            if "bonus" not in skill_data:
-                                skill_data["bonus"] = 0
-                            if "proficient" not in skill_data:
-                                skill_data["proficient"] = False
-                            if "advantage" not in skill_data:
-                                skill_data["advantage"] = "none"
+            ability = data.setdefault(ability_name, {})
+            if not isinstance(ability, dict):
+                ability = {}
+                data[ability_name] = ability
+
+            default_skills = self._DEFAULT_SKILLS.get(ability_name, [])
+
+            # If no ability_scores key yet, seed it with the canonical D&D 5e skills
+            if "ability_scores" not in ability and default_skills:
+                ability["ability_scores"] = {
+                    skill: self._default_skill_entry() for skill in default_skills
+                }
+
+            ability_scores = ability.get("ability_scores")
+            if isinstance(ability_scores, dict):
+                # Ensure every canonical skill exists (add missing ones)
+                for skill in default_skills:
+                    if skill not in ability_scores:
+                        ability_scores[skill] = self._default_skill_entry()
+
+                # Normalise each skill entry
+                for skill_name, skill_data in ability_scores.items():
+                    if not isinstance(skill_data, dict):
+                        ability_scores[skill_name] = {
+                            "bonus": int(skill_data) if isinstance(skill_data, (int, float)) else 0,
+                            "proficient": False,
+                            "advantage": "none",
+                        }
+                    else:
+                        skill_data.setdefault("bonus", 0)
+                        skill_data.setdefault("proficient", False)
+                        skill_data.setdefault("advantage", "none")
 
         return data
 

@@ -126,6 +126,61 @@ async def upload_character(
     )
 
 
+# ── Create character (form) ───────────────────────────────────────────────
+
+@router.get("/new", response_class=HTMLResponse)
+async def create_character_form(
+    request: Request,
+    current_user: UserSession = Depends(require_dm),
+    service: CharacterService = Depends(_service),
+):
+    blank_sheet = service._normalize_sheet(CharacterService._blank_sheet())
+    return render_template(
+        templates,
+        "characters/edit.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": None,
+            "sheet": blank_sheet,
+            "campaigns": [],
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/new", response_class=HTMLResponse)
+async def create_character_submit(
+    request: Request,
+    current_user: UserSession = Depends(require_dm),
+    service: CharacterService = Depends(_service),
+):
+    form = await request.form()
+    try:
+        new_sheet = await service.build_sheet_from_form({}, form)
+        character = await service.create(sheet_data=new_sheet, owner_id=current_user.user_id)
+        return RedirectResponse(
+            url=f"/characters/{character.id}",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+    except CharacterValidationError as e:
+        blank_sheet = service._normalize_sheet(CharacterService._blank_sheet())
+        return render_template(
+            templates,
+            "characters/edit.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "character": None,
+                "sheet": blank_sheet,
+                "campaigns": [],
+                "error": "Validation failed: " + "; ".join(e.errors),
+            },
+            language=current_user.language,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+
 # ── Sheet view ────────────────────────────────────────────────────────────
 
 @router.get("/{character_id}", response_class=HTMLResponse)
