@@ -897,6 +897,7 @@
                 {% set tw.value = tw.value + (wpn.get("weight", 0) | int) %}
             {% endfor %}
             {% for tcase in sheet.equipment.get("throwable_cases", []) %}
+                {% set tw.value = tw.value + (tcase.get("weight", 0) | int) %}
                 {% for item in tcase.get("items", []) if item.get("name") %}
                     {% set tw.value = tw.value + ((item.get("weight", 0) | int) * (item.get("quantity", 1) | int)) %}
                 {% endfor %}
@@ -1037,7 +1038,12 @@
             {% set case_idx = loop.index0 %}
             {% if tcase.name %}
             <div class="content-section">
-                <h3 class="content-section-title">{{ tcase.name }}</h3>
+                <div class="inventory-section-header">
+                    <h3 class="content-section-title">{{ tcase.name }}</h3>
+                    {% if tcase.get("weight", 0) | int > 0 %}
+                    <span class="inventory-total-weight">⚖ {{ tcase.get("weight", 0) | int }} lb</span>
+                    {% endif %}
+                </div>
                 {% if tcase["items"] %}
                 <div class="throwable-case-items">
                     {% for item in tcase["items"] %}

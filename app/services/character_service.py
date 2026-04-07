@@ -605,6 +605,7 @@ class CharacterService:
                 continue
             normalized_case = copy.deepcopy(case)
             normalized_case.setdefault("name", "")
+            normalized_case["weight"] = _safe_non_negative_int(normalized_case.get("weight", 0), 0)
             items = normalized_case.get("items", [])
             if not isinstance(items, list):
                 items = []
@@ -997,6 +998,10 @@ class CharacterService:
                     case_name = str(case.get("name", "")).strip()
                     if not case_name:
                         continue
+                    try:
+                        case_weight = max(0, int(case.get("weight", 0)))
+                    except (ValueError, TypeError):
+                        case_weight = 0
                     items = []
                     for item in (case.get("items") or []):
                         if not isinstance(item, dict):
@@ -1014,7 +1019,7 @@ class CharacterService:
                             "weight": item_weight,
                             "note": str(item.get("note", "")).strip(),
                         })
-                    throwable_cases.append({"name": case_name, "items": items})
+                    throwable_cases.append({"name": case_name, "weight": case_weight, "items": items})
         else:
             throwable_cases = sheet.get("equipment", {}).get("throwable_cases", [])
 

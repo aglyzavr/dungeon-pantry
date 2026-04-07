@@ -115,6 +115,7 @@ function normalizeCase(source) {
   const src = source || {};
   return {
     name: String(src.name ?? ''),
+    weight: src.weight ?? 0,
     items: (Array.isArray(src.items) ? src.items : []).map(item => createNormalizer(caseItemSchema)(item)),
   };
 }

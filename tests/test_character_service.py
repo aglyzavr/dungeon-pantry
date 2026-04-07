@@ -220,13 +220,15 @@ class TestNormalizeSheet:
 
         armor = result["equipment"]["armor"][0]
         weapon = result["equipment"]["weapons"][0]
-        thrown_item = result["equipment"]["throwable_cases"][0]["items"][0]
+        thrown_case = result["equipment"]["throwable_cases"][0]
+        thrown_item = thrown_case["items"][0]
 
         assert armor["weight"] == 0
         assert armor["armor_class"] == 0
         assert armor["notes"] == ""
         assert weapon["weight"] == 0
         assert weapon["properties"] == ""
+        assert thrown_case["weight"] == 0
         assert thrown_item["weight"] == 0
         assert thrown_item["quantity"] == 1
 
