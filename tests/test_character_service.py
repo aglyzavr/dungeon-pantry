@@ -205,6 +205,66 @@ class TestNormalizeSheet:
         result = self.service._normalize_sheet(data)
         assert result["equipment"]["weapons"] == []
 
+    def test_seeds_ability_scores_when_missing(self):
+        """Abilities without ability_scores must get the canonical D&D 5e skill list."""
+        result = self.service._normalize_sheet({})
+        assert "ability_scores" in result["strength"]
+        assert "athletics" in result["strength"]["ability_scores"]
+        assert "ability_scores" in result["dexterity"]
+        assert "acrobatics" in result["dexterity"]["ability_scores"]
+        assert "sleight_of_hand" in result["dexterity"]["ability_scores"]
+        assert "stealth" in result["dexterity"]["ability_scores"]
+
+    def test_constitution_gets_no_ability_scores(self):
+        """Constitution has no D&D 5e skills; ability_scores must not be created."""
+        result = self.service._normalize_sheet({})
+        assert "ability_scores" not in result.get("constitution", {})
+
+    def test_wisdom_skills_seeded(self):
+        result = self.service._normalize_sheet({})
+        scores = result["wisdom"]["ability_scores"]
+        for skill in ("animal_handling", "insight", "medicine", "perception", "survival"):
+            assert skill in scores
+            assert scores[skill] == {"bonus": 0, "proficient": False, "advantage": "none"}
+
+    def test_seeded_skills_have_correct_defaults(self):
+        result = self.service._normalize_sheet({})
+        entry = result["dexterity"]["ability_scores"]["stealth"]
+        assert entry["bonus"] == 0
+        assert entry["proficient"] is False
+        assert entry["advantage"] == "none"
+
+    def test_existing_skills_not_overwritten(self):
+        data = {
+            "dexterity": {
+                "score": 16,
+                "ability_scores": {
+                    "stealth": {"bonus": 5, "proficient": True, "advantage": "advantage"}
+                },
+            }
+        }
+        result = self.service._normalize_sheet(data)
+        stealth = result["dexterity"]["ability_scores"]["stealth"]
+        assert stealth["bonus"] == 5
+        assert stealth["proficient"] is True
+        assert stealth["advantage"] == "advantage"
+
+    def test_missing_canonical_skills_added_to_existing_ability_scores(self):
+        """If only some skills are present, the missing canonical ones should be added."""
+        data = {
+            "dexterity": {
+                "ability_scores": {
+                    "acrobatics": {"bonus": 3, "proficient": True, "advantage": "none"}
+                }
+            }
+        }
+        result = self.service._normalize_sheet(data)
+        scores = result["dexterity"]["ability_scores"]
+        assert "acrobatics" in scores
+        assert scores["acrobatics"]["bonus"] == 3  # unchanged
+        assert "sleight_of_hand" in scores  # added
+        assert "stealth" in scores  # added
+
 
 # ---------------------------------------------------------------------------
 # adjust_hp
