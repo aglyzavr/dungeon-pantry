@@ -556,12 +556,71 @@ class CharacterService:
             data["backstory_and_personality"] = {}
         if not isinstance(data.get("equipment"), dict):
             data["equipment"] = {"equipment_list": [], "magic_item_attunement": []}
-        if not isinstance(data["equipment"].get("throwable_cases"), list):
-            data["equipment"]["throwable_cases"] = []
-        if not isinstance(data["equipment"].get("weapons"), list):
-            data["equipment"]["weapons"] = []
-        if not isinstance(data["equipment"].get("armor"), list):
-            data["equipment"]["armor"] = []
+        equipment = data["equipment"]
+        if not isinstance(equipment.get("equipment_list"), list):
+            equipment["equipment_list"] = []
+        if not isinstance(equipment.get("magic_item_attunement"), list):
+            equipment["magic_item_attunement"] = []
+        if not isinstance(equipment.get("throwable_cases"), list):
+            equipment["throwable_cases"] = []
+        if not isinstance(equipment.get("weapons"), list):
+            equipment["weapons"] = []
+        if not isinstance(equipment.get("armor"), list):
+            equipment["armor"] = []
+
+        def _safe_non_negative_int(value, default=0):
+            try:
+                return max(0, int(value))
+            except (TypeError, ValueError):
+                return default
+
+        normalized_armor = []
+        for piece in equipment["armor"]:
+            if not isinstance(piece, dict):
+                continue
+            normalized_piece = copy.deepcopy(piece)
+            normalized_piece.setdefault("name", "")
+            normalized_piece["weight"] = _safe_non_negative_int(normalized_piece.get("weight", 0), 0)
+            normalized_piece["armor_class"] = _safe_non_negative_int(normalized_piece.get("armor_class", 0), 0)
+            normalized_piece.setdefault("notes", "")
+            normalized_armor.append(normalized_piece)
+        equipment["armor"] = normalized_armor
+
+        normalized_weapons = []
+        for weapon in equipment["weapons"]:
+            if not isinstance(weapon, dict):
+                continue
+            normalized_weapon = copy.deepcopy(weapon)
+            normalized_weapon.setdefault("name", "")
+            normalized_weapon["weight"] = _safe_non_negative_int(normalized_weapon.get("weight", 0), 0)
+            normalized_weapon.setdefault("damage", "")
+            normalized_weapon.setdefault("damage_type", "")
+            normalized_weapon.setdefault("properties", "")
+            normalized_weapons.append(normalized_weapon)
+        equipment["weapons"] = normalized_weapons
+
+        normalized_cases = []
+        for case in equipment["throwable_cases"]:
+            if not isinstance(case, dict):
+                continue
+            normalized_case = copy.deepcopy(case)
+            normalized_case.setdefault("name", "")
+            items = normalized_case.get("items", [])
+            if not isinstance(items, list):
+                items = []
+            normalized_items = []
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                normalized_item = copy.deepcopy(item)
+                normalized_item.setdefault("name", "")
+                normalized_item["weight"] = _safe_non_negative_int(normalized_item.get("weight", 0), 0)
+                normalized_item["quantity"] = _safe_non_negative_int(normalized_item.get("quantity", 1), 1)
+                normalized_items.append(normalized_item)
+            normalized_case["items"] = normalized_items
+            normalized_cases.append(normalized_case)
+        equipment["throwable_cases"] = normalized_cases
+
         if not isinstance(data.get("spell_slots"), dict):
             data["spell_slots"] = {}
         # coins structure expected by _sheet_body.html

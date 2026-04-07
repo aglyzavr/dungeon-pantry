@@ -205,6 +205,31 @@ class TestNormalizeSheet:
         result = self.service._normalize_sheet(data)
         assert result["equipment"]["weapons"] == []
 
+    def test_backfills_legacy_equipment_item_fields(self):
+        data = {
+            "equipment": {
+                "armor": [{"name": "Chain Mail"}],
+                "weapons": [{"name": "Longsword", "damage": "1d8"}],
+                "throwable_cases": [
+                    {"name": "Quiver", "items": [{"name": "Arrow"}]}
+                ],
+            }
+        }
+
+        result = self.service._normalize_sheet(data)
+
+        armor = result["equipment"]["armor"][0]
+        weapon = result["equipment"]["weapons"][0]
+        thrown_item = result["equipment"]["throwable_cases"][0]["items"][0]
+
+        assert armor["weight"] == 0
+        assert armor["armor_class"] == 0
+        assert armor["notes"] == ""
+        assert weapon["weight"] == 0
+        assert weapon["properties"] == ""
+        assert thrown_item["weight"] == 0
+        assert thrown_item["quantity"] == 1
+
     def test_seeds_ability_scores_when_missing(self):
         """Abilities without ability_scores must get the canonical D&D 5e skill list."""
         result = self.service._normalize_sheet({})

@@ -890,15 +890,15 @@
 
             {# Compute total weight across armor, weapons and throwable case items #}
             {% set tw = namespace(value=0) %}
-            {% for piece in sheet.equipment.get("armor", []) if piece.name %}
-                {% set tw.value = tw.value + (piece.weight | int) %}
+            {% for piece in sheet.equipment.get("armor", []) if piece.get("name") %}
+                {% set tw.value = tw.value + (piece.get("weight", 0) | int) %}
             {% endfor %}
-            {% for wpn in sheet.equipment.get("weapons", []) if wpn.name %}
-                {% set tw.value = tw.value + (wpn.weight | int) %}
+            {% for wpn in sheet.equipment.get("weapons", []) if wpn.get("name") %}
+                {% set tw.value = tw.value + (wpn.get("weight", 0) | int) %}
             {% endfor %}
             {% for tcase in sheet.equipment.get("throwable_cases", []) %}
-                {% for item in tcase.get("items", []) if item.name %}
-                    {% set tw.value = tw.value + ((item.weight | int) * (item.quantity | int)) %}
+                {% for item in tcase.get("items", []) if item.get("name") %}
+                    {% set tw.value = tw.value + ((item.get("weight", 0) | int) * (item.get("quantity", 1) | int)) %}
                 {% endfor %}
             {% endfor %}
 
@@ -990,9 +990,9 @@
                             {% for piece in armor_items %}
                             <tr class="armor-table-row">
                                 <td class="armor-table-cell armor-table-name">{{ piece.name }}</td>
-                                <td class="armor-table-cell armor-table-weight">{{ piece.weight | int }}</td>
-                                <td class="armor-table-cell armor-table-ac">{{ piece.armor_class | int }}</td>
-                                <td class="armor-table-cell armor-table-notes">{{ piece.notes }}</td>
+                                <td class="armor-table-cell armor-table-weight">{{ piece.get("weight", 0) | int }}</td>
+                                <td class="armor-table-cell armor-table-ac">{{ piece.get("armor_class", 0) | int }}</td>
+                                <td class="armor-table-cell armor-table-notes">{{ piece.get("notes", "") }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -1020,9 +1020,9 @@
                             {% for wpn in inv_weapons %}
                             <tr class="armor-table-row">
                                 <td class="armor-table-cell armor-table-name">{{ wpn.name }}</td>
-                                <td class="armor-table-cell armor-table-weight">{{ wpn.weight | int }}</td>
-                                <td class="armor-table-cell armor-table-damage">{{ [wpn.damage, wpn.damage_type] | select | join(" ") }}</td>
-                                <td class="armor-table-cell armor-table-notes">{{ wpn.properties }}</td>
+                                <td class="armor-table-cell armor-table-weight">{{ wpn.get("weight", 0) | int }}</td>
+                                <td class="armor-table-cell armor-table-damage">{{ [wpn.get("damage", ""), wpn.get("damage_type", "")] | select | join(" ") }}</td>
+                                <td class="armor-table-cell armor-table-notes">{{ wpn.get("properties", "") }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -1046,8 +1046,8 @@
                         <div class="throwable-case-item-info">
                             <span class="throwable-case-item-name">{{ item.name }}</span>
                             <div class="throwable-case-item-right">
-                                {% if item.weight | int > 0 %}
-                                <span class="throwable-case-item-weight">⚖ {{ item.weight | int }} lb</span>
+                                {% if item.get("weight", 0) | int > 0 %}
+                                <span class="throwable-case-item-weight">⚖ {{ item.get("weight", 0) | int }} lb</span>
                                 {% endif %}
                                 <div class="throwable-case-item-qty">
                                     {% if can_edit %}
@@ -1060,7 +1060,7 @@
                                         hx-swap="outerHTML"
                                         aria-label="{{ _('Decrease quantity') }}">−</button>
                                     {% endif %}
-                                    <span class="throwable-case-qty-value">{{ item.quantity }}</span>
+                                    <span class="throwable-case-qty-value">{{ item.get("quantity", 1) }}</span>
                                     {% if can_edit %}
                                     <button class="throwable-case-qty-btn"
                                         @click="sessionStorage.setItem('sheetCurrentTab', tab)"
