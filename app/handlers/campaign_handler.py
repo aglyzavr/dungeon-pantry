@@ -1,7 +1,8 @@
+from pathlib import Path
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Form, Request, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import APIRouter, Depends, File, Form, Request, UploadFile, status
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,8 +11,16 @@ from app.i18n import error_response, render_template
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.campaign import CampaignCreate, CampaignUpdate
+from app.schemas.character import (
+    DeathSaveUpdate, HPUpdate, MaxHPUpdate,
+    SpellSlotUpdate, TempHPUpdate, ThrowableCaseQtyUpdate,
+)
 from app.services.campaign_service import CampaignNotFound, CampaignService, CharacterNotFound
-from app.services.character_service import CharacterService
+from app.services.character_service import (
+    CharacterPermissionError,
+    CharacterService,
+    CharacterValidationError,
+)
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
 templates = Jinja2Templates(directory="app/templates")
@@ -273,6 +282,7 @@ async def campaign_character_sheet(
             "current_user": current_user,
             "character": character,
             "campaign": campaign,  # Include campaign for breadcrumb
+            "cc_portrait_data": campaign_char.portrait_data,
             "sheet": normalized_sheet,
             "can_edit": can_edit,
             "is_readonly": not can_edit,
@@ -315,6 +325,549 @@ async def campaign_character_edit_form(
             "character": character,
             "campaign": campaign,  # Include campaign context
             "sheet": normalized_sheet,
+        },
+        language=current_user.language,
+    )
+
+
+# ── Campaign character: save full edit ───────────────────────────────────────
+
+@router.post("/{campaign_id}/characters/{character_id}/edit", response_class=HTMLResponse)
+async def campaign_character_edit_submit(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CampaignService = Depends(_service),
+    character_service: CharacterService = Depends(_character_service),
+):
+    try:
+        campaign = await service.get_campaign(campaign_id)
+        campaign_char = await service._repo.get_campaign_character_with_association(
+            campaign_id, character_id
+        )
+        if campaign_char is None:
+            raise CharacterNotFound(f"Character {character_id} not found in campaign {campaign_id}")
+        character = campaign_char.character
+    except (CampaignNotFound, CharacterNotFound):
+        return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+    form = await request.form()
+    try:
+        updated_sheet = await character_service.build_sheet_from_form(campaign_char.sheet_data, form)
+        await character_service.update_campaign_sheet_data(
+            campaign_id, character_id, updated_sheet,
+            current_user.user_id, current_user.is_dm,
+        )
+        return RedirectResponse(
+            url=f"/campaigns/{campaign_id}/characters/{character_id}",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+    except CharacterValidationError as e:
+        normalized_sheet = character_service._normalize_sheet(campaign_char.sheet_data)
+        return render_template(
+            templates,
+            "characters/edit.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "character": character,
+                "campaign": campaign,
+                "sheet": normalized_sheet,
+                "error": "Validation failed: " + "; ".join(e.errors),
+            },
+            language=current_user.language,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+    except (CharacterNotFound, CharacterPermissionError, ValueError, KeyError) as e:
+        normalized_sheet = character_service._normalize_sheet(campaign_char.sheet_data)
+        return render_template(
+            templates,
+            "characters/edit.html",
+            {
+                "request": request,
+                "current_user": current_user,
+                "character": character,
+                "campaign": campaign,
+                "sheet": normalized_sheet,
+                "error": f"Error updating character: {str(e)}",
+            },
+            language=current_user.language,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+
+# ── Campaign character vitals ─────────────────────────────────────────────────
+
+def _cc_can_edit(current_user: UserSession, cc) -> bool:
+    return current_user.is_dm or cc.character.owner_id == current_user.user_id
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/hp", response_class=HTMLResponse)
+async def campaign_update_hp(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    form = await request.form()
+    payload = HPUpdate(delta=form.get("delta"), value=form.get("value"))
+    try:
+        cc = await character_service.update_campaign_hp(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm, payload
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            
+            "sheet": cc.sheet_data,
+            "can_edit": _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/death-save", response_class=HTMLResponse)
+async def campaign_update_death_save(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    form = await request.form()
+    payload = DeathSaveUpdate(save_type=form.get("save_type"), action=form.get("action"))
+    try:
+        cc = await character_service.update_campaign_death_save(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm, payload
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_header.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": cc.sheet_data,
+            "can_edit": _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/inspiration", response_class=HTMLResponse)
+async def campaign_toggle_inspiration(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    try:
+        cc = await character_service.toggle_campaign_inspiration(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_header.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": cc.sheet_data,
+            "can_edit": _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/spell-slot", response_class=HTMLResponse)
+async def campaign_update_spell_slot(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    form = await request.form()
+    payload = SpellSlotUpdate(level=int(form.get("level")), delta=int(form.get("delta")))
+    try:
+        cc = await character_service.update_campaign_spell_slot(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm, payload
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": character_service._normalize_sheet(cc.sheet_data),
+            "can_edit": _cc_can_edit(current_user, cc),
+            "is_readonly": not _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/temp-hp", response_class=HTMLResponse)
+async def campaign_update_temp_hp(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    form = await request.form()
+    payload = TempHPUpdate(delta=form.get("delta"), value=form.get("value"))
+    try:
+        cc = await character_service.update_campaign_temp_hp(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm,
+            payload.delta, payload.value,
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": cc.sheet_data,
+            "can_edit": _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/max-hp", response_class=HTMLResponse)
+async def campaign_update_max_hp(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_dm),
+    character_service: CharacterService = Depends(_character_service),
+):
+    form = await request.form()
+    payload = MaxHPUpdate(value=form.get("value", 1))
+    try:
+        cc = await character_service.update_campaign_max_hp(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm, payload.value
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": cc.sheet_data,
+            "can_edit": True,
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/shield", response_class=HTMLResponse)
+async def campaign_toggle_shield(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    try:
+        cc = await character_service.toggle_campaign_shield(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_vitals.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": cc.sheet_data,
+            "can_edit": _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/defenses", response_class=HTMLResponse)
+async def campaign_update_defenses(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    defenses: str = Form(""),
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    try:
+        cc = await character_service.update_campaign_defenses(
+            campaign_id, character_id, defenses, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": character_service._normalize_sheet(cc.sheet_data),
+            "can_edit": _cc_can_edit(current_user, cc),
+            "is_readonly": not _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/conditions", response_class=HTMLResponse)
+async def campaign_update_conditions(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    form = await request.form()
+    conditions = form.getlist("conditions")
+    try:
+        cc = await character_service.update_campaign_conditions(
+            campaign_id, character_id, conditions, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": character_service._normalize_sheet(cc.sheet_data),
+            "can_edit": _cc_can_edit(current_user, cc),
+            "is_readonly": not _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/inventory/throwable-case-qty", response_class=HTMLResponse)
+async def campaign_update_throwable_case_qty(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    form = await request.form()
+    payload = ThrowableCaseQtyUpdate(
+        case_index=form.get("case_index", 0),
+        item_index=form.get("item_index", 0),
+        delta=form.get("delta", 0),
+    )
+    try:
+        cc = await character_service.update_campaign_throwable_case_quantity(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm,
+            payload.case_index, payload.item_index, payload.delta,
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": character_service._normalize_sheet(cc.sheet_data),
+            "can_edit": _cc_can_edit(current_user, cc),
+            "is_readonly": not _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+# ── Campaign character portrait ───────────────────────────────────────────────
+
+ALLOWED_PORTRAIT_EXTENSIONS = {".jpg", ".jpeg", ".png"}
+ALLOWED_PORTRAIT_MIME_TYPES = {"image/jpeg", "image/png"}
+MAX_CAMPAIGN_PORTRAIT_SIZE = 5_242_880  # 5MB
+
+PORTRAIT_MIME_TYPE_MAP = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+}
+
+
+@router.get("/{campaign_id}/characters/{character_id}/portrait", response_class=Response)
+async def campaign_character_portrait(
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CampaignService = Depends(_service),
+):
+    """Serve campaign-specific portrait, falling back to base character portrait."""
+    try:
+        cc = await service._repo.get_campaign_character_with_association(campaign_id, character_id)
+        if cc is None:
+            raise CharacterNotFound()
+    except CharacterNotFound:
+        return Response(status_code=404)
+
+    if cc.portrait_data:
+        return Response(
+            content=cc.portrait_data,
+            media_type=cc.portrait_mime_type or "image/jpeg",
+        )
+    if cc.character.portrait_data:
+        return Response(
+            content=cc.character.portrait_data,
+            media_type=cc.character.portrait_mime_type or "image/jpeg",
+        )
+    return Response(status_code=404)
+
+
+@router.get("/{campaign_id}/characters/{character_id}/portrait/upload", response_class=HTMLResponse)
+async def campaign_portrait_upload_form(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CampaignService = Depends(_service),
+):
+    try:
+        campaign = await service.get_campaign(campaign_id)
+        cc = await service._repo.get_campaign_character_with_association(campaign_id, character_id)
+        if cc is None:
+            raise CharacterNotFound()
+    except (CampaignNotFound, CharacterNotFound):
+        return error_response(request, 404, language=current_user.language)
+
+    if not (current_user.is_dm or cc.character.owner_id == current_user.user_id):
+        return error_response(request, 403, language=current_user.language)
+
+    return render_template(
+        templates,
+        "characters/_portrait_upload_modal.html",
+        {
+            "request": request,
+            "character": cc.character,
+            "campaign": campaign,
+        },
+        language=current_user.language,
+    )
+
+
+@router.post("/{campaign_id}/characters/{character_id}/portrait/upload", response_class=HTMLResponse)
+async def campaign_upload_portrait(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    file: UploadFile = File(...),
+    current_user: UserSession = Depends(require_login),
+    service: CampaignService = Depends(_service),
+    character_service: CharacterService = Depends(_character_service),
+):
+    try:
+        campaign = await service.get_campaign(campaign_id)
+        cc = await service._repo.get_campaign_character_with_association(campaign_id, character_id)
+        if cc is None:
+            raise CharacterNotFound()
+    except (CampaignNotFound, CharacterNotFound):
+        return error_response(request, 404, language=current_user.language)
+
+    if not (current_user.is_dm or cc.character.owner_id == current_user.user_id):
+        return error_response(request, 403, language=current_user.language)
+
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in ALLOWED_PORTRAIT_EXTENSIONS:
+        return render_template(
+            templates,
+            "characters/_portrait_upload_modal.html",
+            {
+                "request": request,
+                "character": cc.character,
+                "campaign": campaign,
+                "error": "Only JPEG and PNG files are allowed.",
+            },
+            language=current_user.language,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+    contents = await file.read(MAX_CAMPAIGN_PORTRAIT_SIZE + 1)
+    if len(contents) > MAX_CAMPAIGN_PORTRAIT_SIZE:
+        return render_template(
+            templates,
+            "characters/_portrait_upload_modal.html",
+            {
+                "request": request,
+                "character": cc.character,
+                "campaign": campaign,
+                "error": "File too large. Maximum size is 5MB.",
+            },
+            language=current_user.language,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+    mime_type = PORTRAIT_MIME_TYPE_MAP.get(file_ext, "image/jpeg")
+    updated_cc = await character_service.update_campaign_portrait(
+        campaign_id, character_id, contents, mime_type,
+        current_user.user_id, current_user.is_dm,
+    )
+    return render_template(
+        templates,
+        "characters/_sheet_header.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": updated_cc.character,
+            "campaign": updated_cc.campaign,
+            "cc_portrait_data": updated_cc.portrait_data,
+            "sheet": updated_cc.sheet_data,
+            "can_edit": current_user.is_dm or updated_cc.character.owner_id == current_user.user_id,
         },
         language=current_user.language,
     )

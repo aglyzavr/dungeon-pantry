@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/static/css/sheet-header.css" />
+{% set char_base = "/campaigns/" ~ campaign.id ~ "/characters/" ~ character.id if campaign else "/characters/" ~ character.id %}
 
 <div id="sheet-header">
 
@@ -6,10 +7,10 @@
         {# ── Avatar Section ─────────────────────────────────────────── #}
         <div class="sheet-header-avatar">
             {% if can_edit %}
-            <button hx-get="/characters/{{ character.id }}/portrait/upload" hx-target="body" hx-swap="beforeend"
+            <button hx-get="{{ char_base }}/portrait/upload" hx-target="body" hx-swap="beforeend"
                 class="sheet-header-avatar-icon sheet-header-avatar-button" title="{{ _("Click to upload portrait") }}">
-                {% if character.portrait_data %}
-                <img src="/characters/{{ character.id }}/portrait" alt="{{ sheet.character_identity.character_name }}"
+                {% if cc_portrait_data or character.portrait_data %}
+                <img src="{{ char_base }}/portrait" alt="{{ sheet.character_identity.character_name }}"
                     class="portrait-image" />
                 {% else %}
                 🧙
@@ -17,8 +18,8 @@
             </button>
             {% else %}
             <div class="sheet-header-avatar-icon">
-                {% if character.portrait_data %}
-                <img src="/characters/{{ character.id }}/portrait" alt="{{ sheet.character_identity.character_name }}"
+                {% if cc_portrait_data or character.portrait_data %}
+                <img src="{{ char_base }}/portrait" alt="{{ sheet.character_identity.character_name }}"
                     class="portrait-image" />
                 {% else %}
                 🧙
@@ -27,7 +28,7 @@
             {% endif %}
 
             {% if can_edit %}
-            <button hx-post="/characters/{{ character.id }}/vitals/inspiration" hx-target="#sheet-header"
+            <button hx-post="{{ char_base }}/vitals/inspiration" hx-target="#sheet-header"
                 hx-swap="outerHTML"
                 class="btn-inspiration {% if sheet.heroic_inspiration %}btn-inspiration--active{% else %}btn-inspiration--inactive{% endif %}">
                 {{ "⭐" if sheet.heroic_inspiration else "☆" }}
@@ -84,7 +85,7 @@
                 <div class="death-saves-dots">
                     {% for i in range(1, 4) %}
                     {% if can_edit %}
-                    <button hx-post="/characters/{{ character.id }}/vitals/death-save"
+                    <button hx-post="{{ char_base }}/vitals/death-save"
                         hx-vals='{"save_type": "{{ save_type }}", "action": "{{ "remove" if i <= count else "add" }}"}'
                         hx-target="#sheet-header" hx-swap="outerHTML" class="death-save-dot
                             {% if i <= count %}death-save-dot--{{ save_type }}
@@ -106,14 +107,18 @@
 
     {# ── Edit Button & Campaign Navigation ─────────────────────── #}
     <div class="sheet-header-edit-section">
-        {% if campaigns %}
-        {% set campaign = campaigns[0] %}
+        {% if campaign %}
         <a href="/campaigns/{{ campaign.id }}" class="btn-campaign-back" title="{{ _("Back to campaign") }}">
             ← {{ campaign.name }}
         </a>
+        {% elif campaigns %}
+        {% set first_campaign = campaigns[0] %}
+        <a href="/campaigns/{{ first_campaign.id }}" class="btn-campaign-back" title="{{ _("Back to campaign") }}">
+            ← {{ first_campaign.name }}
+        </a>
         {% endif %}
         {% if can_edit %}
-        <a href="/characters/{{ character.id }}/edit" class="btn-edit-icon" title="{{ _("Edit character") }}">
+        <a href="{{ char_base }}/edit" class="btn-edit-icon" title="{{ _("Edit character") }}">
             ✏️
         </a>
         {% endif %}

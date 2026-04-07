@@ -7,11 +7,12 @@
 {% endblock %}
 
 {% block content %}
+{% set char_base = "/campaigns/" ~ campaign.id ~ "/characters/" ~ character.id if campaign else "/characters/" ~ character.id %}
 <div class="edit-container">
   <div class="edit-header">
     <h1 class="edit-title">{{ _("Edit Character") }}</h1>
     <div class="edit-actions">
-      <a href="/characters/{{ character.id }}" class="btn-sm btn-sm--secondary">{{ _("Cancel") }}</a>
+      <a href="{{ char_base }}" class="btn-sm btn-sm--secondary">{{ _("Cancel") }}</a>
       <button type="submit" form="edit-form" class="btn-sm btn-sm--primary">{{ _("Save Changes") }}</button>
     </div>
   </div>
@@ -97,7 +98,7 @@
       </button>
     </div>
 
-    <form id="edit-form" method="post" action="/characters/{{ character.id }}/edit">
+    <form id="edit-form" method="post" action="{{ char_base }}/edit">
     <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
     <input type="hidden" name="spells_json" :value="JSON.stringify(spellEntries)">
     <input type="hidden" name="attacks_json" :value="JSON.stringify(attackEntries)">

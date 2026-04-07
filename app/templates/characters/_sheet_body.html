@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/static/css/sheet-body.css" />
+{% set char_base = "/campaigns/" ~ campaign.id ~ "/characters/" ~ character.id if campaign else "/characters/" ~ character.id %}
 
 <div id="sheet-body" class="sheet-body-container">
 
@@ -132,7 +133,7 @@
                         {# Edit view #}
                         {% if can_edit %}
                         <div x-show="editing" x-cloak>
-                            <form hx-post="/characters/{{ character.id }}/vitals/conditions" hx-target="#sheet-body"
+                            <form hx-post="{{ char_base }}/vitals/conditions" hx-target="#sheet-body"
                                 hx-swap="outerHTML" class="conditions-form">
                                 <div class="conditions-toggles">
                                     {% set available_conditions = [
@@ -193,7 +194,7 @@
                         {# Edit view #}
                         {% if can_edit %}
                         <div x-show="editing" x-cloak>
-                            <form hx-post="/characters/{{ character.id }}/vitals/defenses" hx-target="#sheet-body"
+                            <form hx-post="{{ char_base }}/vitals/defenses" hx-target="#sheet-body"
                                 hx-swap="outerHTML" class="defenses-form">
                                 <textarea name="defenses" class="defenses-textarea"
                                     placeholder="{{ _('e.g., Fire resistance, Poison immunity') }}"
@@ -640,13 +641,13 @@
                         {% if can_edit %}
                         <div class="spell-slot-controls">
                             <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                hx-post="/characters/{{ character.id }}/vitals/spell-slot"
+                                hx-post="{{ char_base }}/vitals/spell-slot"
                                 hx-vals='{"level": {{ lvl }}, "delta": 1}' hx-target="#sheet-body" hx-swap="outerHTML"
                                 class="spell-slot-btn spell-slot-btn--use">
                                 {{ _("Use") }}
                             </button>
                             <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                hx-post="/characters/{{ character.id }}/vitals/spell-slot"
+                                hx-post="{{ char_base }}/vitals/spell-slot"
                                 hx-vals='{"level": {{ lvl }}, "delta": -1}' hx-target="#sheet-body" hx-swap="outerHTML"
                                 class="spell-slot-btn spell-slot-btn--restore">
                                 {{ _("Restore") }}
@@ -860,7 +861,7 @@
                                 {% if can_edit %}
                                 <button class="throwable-case-qty-btn"
                                     @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                    hx-post="/characters/{{ character.id }}/inventory/throwable-case-qty"
+                                    hx-post="{{ char_base }}/inventory/throwable-case-qty"
                                     hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": -1}'
                                     hx-target="#sheet-body"
                                     hx-select="#sheet-body"
@@ -870,7 +871,7 @@
                                 {% if can_edit %}
                                 <button class="throwable-case-qty-btn"
                                     @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                    hx-post="/characters/{{ character.id }}/inventory/throwable-case-qty"
+                                    hx-post="{{ char_base }}/inventory/throwable-case-qty"
                                     hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": 1}'
                                     hx-target="#sheet-body"
                                     hx-select="#sheet-body"
