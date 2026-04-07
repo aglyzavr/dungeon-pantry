@@ -1,4 +1,5 @@
 from collections.abc import AsyncGenerator
+import logging
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -8,6 +9,8 @@ from sqlalchemy.ext.asyncio import (
 from sqlalchemy.orm import DeclarativeBase
 
 from app.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):
@@ -24,8 +27,8 @@ def create_engine_and_session():
     engine = create_async_engine(
         settings.database_url,
         echo=settings.is_development,  # logs all SQL in dev, silent in prod
-        pool_size=10,
-        max_overflow=5,
+        pool_size=settings.db_pool_size,
+        max_overflow=settings.db_max_overflow,
         pool_pre_ping=True,  # detects stale connections before using them
     )
 
@@ -52,6 +55,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             yield session
             await session.commit()
         except Exception:
+            logger.error("Database session error; rolling back", exc_info=True)
             await session.rollback()
             raise
         finally:

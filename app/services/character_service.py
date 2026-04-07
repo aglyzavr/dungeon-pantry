@@ -68,23 +68,24 @@ class CharacterService:
             20: [4, 3, 3, 3, 3, 2, 2, 1, 1],
         }
         
-        # Class categorization
-        FULL_CASTERS = ['wizard', 'sorcerer', 'bard', 'cleric', 'druid']
-        HALF_CASTERS = ['paladin', 'ranger']
-        THIRD_CASTERS = ['artificer', 'eldritch knight', 'arcane trickster']
+        # Class categorization — use exact set membership to avoid false positives
+        # (e.g. "bard" matching inside "standard")
+        FULL_CASTERS = {'wizard', 'sorcerer', 'bard', 'cleric', 'druid'}
+        HALF_CASTERS = {'paladin', 'ranger'}
+        THIRD_CASTERS = {'artificer', 'eldritch knight', 'arcane trickster'}
         
         # Normalize class name for comparison
         class_lower = character_class.lower().strip()
         
         # Determine effective caster level
         effective_level = 0
-        if any(c in class_lower for c in FULL_CASTERS):
+        if class_lower in FULL_CASTERS:
             effective_level = character_level
-        elif any(c in class_lower for c in HALF_CASTERS):
+        elif class_lower in HALF_CASTERS:
             # Half casters start at level 2
             if character_level >= 2:
                 effective_level = (character_level + 1) // 2
-        elif any(c in class_lower for c in THIRD_CASTERS):
+        elif class_lower in THIRD_CASTERS:
             # Third casters start at level 3
             if character_level >= 3:
                 effective_level = (character_level + 2) // 3
@@ -294,7 +295,7 @@ class CharacterService:
         character.owner_id = player_id
         if player_id is None:
             await self._campaign_repo.remove_character_from_all(character_id)
-        await self._repo._db.flush()
+        await self._repo.flush()
 
     async def create(self, sheet_data: dict, owner_id: UUID) -> Character:
         errors = validate_mandatory_fields(sheet_data)
@@ -473,7 +474,7 @@ class CharacterService:
         character.portrait_data = portrait_data
         character.portrait_mime_type = mime_type
         character.portrait_path = None  # Clear legacy field
-        await self._repo._db.flush()
+        await self._repo.flush()
         return character
 
     async def update_sheet_data(self, character_id: UUID, sheet_data: dict) -> Character:
@@ -832,7 +833,7 @@ class CharacterService:
         """Persist updated sheet_data on a CampaignCharacter and return it."""
         cc.sheet_data = data
         flag_modified(cc, "sheet_data")
-        await self._repo._db.flush()
+        await self._repo.flush()
         return cc
 
     # ── Campaign-aware update methods ─────────────────────────────────────────
@@ -984,5 +985,5 @@ class CharacterService:
         cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
         cc.portrait_data = portrait_data
         cc.portrait_mime_type = mime_type
-        await self._repo._db.flush()
+        await self._repo.flush()
         return cc

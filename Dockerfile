@@ -20,5 +20,9 @@ EXPOSE 8080
 COPY start.sh .
 RUN chmod +x start.sh
 
+# run as a non-root user to limit blast radius of a container escape
+RUN useradd -m appuser
+USER appuser
+
 # use the script as the container entrypoint so migrations run on boot
 CMD ["./start.sh"]

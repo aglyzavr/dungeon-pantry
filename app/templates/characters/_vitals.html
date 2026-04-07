@@ -15,6 +15,7 @@
     {# AC — shield toggle #}
     {% if can_edit %}
     <button hx-post="{{ char_base }}/vitals/shield" hx-target="#vitals-section" hx-swap="outerHTML"
+      aria-label="{{ _('+2 shield equipped, click to unequip') if shield else _('No shield, click to equip') }}"
       class="btn-ac {% if shield %}btn-ac--active{% else %}btn-ac--inactive{% endif %}">
       <div class="vitals-stat-label">{{ _("AC") }} {{ '🛡️' if shield else '' }}</div>
       <div class="vitals-stat-value">{{ total_ac }}</div>

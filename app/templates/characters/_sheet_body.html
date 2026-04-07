@@ -865,7 +865,8 @@
                                     hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": -1}'
                                     hx-target="#sheet-body"
                                     hx-select="#sheet-body"
-                                    hx-swap="outerHTML">−</button>
+                                    hx-swap="outerHTML"
+                                    aria-label="{{ _('Decrease quantity') }}">−</button>
                                 {% endif %}
                                 <span class="throwable-case-qty-value">{{ item.quantity }}</span>
                                 {% if can_edit %}
@@ -875,7 +876,8 @@
                                     hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": 1}'
                                     hx-target="#sheet-body"
                                     hx-select="#sheet-body"
-                                    hx-swap="outerHTML">+</button>
+                                    hx-swap="outerHTML"
+                                    aria-label="{{ _('Increase quantity') }}">+</button>
                                 {% endif %}
                             </div>
                         </div>
@@ -997,10 +999,10 @@
 
 {# ── Notes Modal (mobile only) ──────────────────────────────────── #}
 <div id="notes-modal" class="notes-modal-overlay" onclick="event.target === this && closeNotesModal()" style="display: none;">
-    <div class="notes-modal-container">
+    <div class="notes-modal-container" role="dialog" aria-modal="true" aria-labelledby="notes-modal-title">
         <div class="notes-modal-header">
             <h3 id="notes-modal-title" class="notes-modal-title"></h3>
-            <button class="notes-modal-close" onclick="closeNotesModal()" type="button">✕</button>
+            <button class="notes-modal-close" onclick="closeNotesModal()" type="button" aria-label="{{ _('Close') }}">✕</button>
         </div>
         <div class="notes-modal-body">
             <p id="notes-modal-content" class="notes-modal-text"></p>
@@ -1016,12 +1018,29 @@ function openNotesModal(row) {
     if (!notes) return;
     document.getElementById('notes-modal-title').textContent = name;
     document.getElementById('notes-modal-content').textContent = notes;
-    document.getElementById('notes-modal').style.display = 'flex';
+    var modal = document.getElementById('notes-modal');
+    modal.style.display = 'flex';
+    window._notesModalTrigger = document.activeElement;
+    var closeBtn = modal.querySelector('button');
+    if (closeBtn) closeBtn.focus();
 }
 
 function closeNotesModal() {
     document.getElementById('notes-modal').style.display = 'none';
+    if (window._notesModalTrigger) {
+        window._notesModalTrigger.focus();
+        window._notesModalTrigger = null;
+    }
 }
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var modal = document.getElementById('notes-modal');
+        if (modal && modal.style.display !== 'none') {
+            closeNotesModal();
+        }
+    }
+});
 </script>
 
 <style>

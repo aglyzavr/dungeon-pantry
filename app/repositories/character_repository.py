@@ -100,3 +100,15 @@ class CharacterRepository:
         cc.portrait_mime_type = mime_type
         await self._db.flush()
         return cc
+
+    async def flush(self) -> None:
+        """Flush pending changes to the database without committing."""
+        await self._db.flush()
+
+    async def update_owner(self, character_id: UUID, owner_id: UUID | None) -> None:
+        """Directly update the owner of a character."""
+        character = await self.get_by_id(character_id)
+        if character is None:
+            raise ValueError(f"Character {character_id} not found")
+        character.owner_id = owner_id
+        await self._db.flush()

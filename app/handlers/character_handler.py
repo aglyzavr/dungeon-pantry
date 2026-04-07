@@ -692,6 +692,20 @@ MIME_TYPE_MAP = {
     ".png": "image/png",
 }
 
+# Magic byte signatures for supported image formats
+IMAGE_MAGIC_BYTES: list[tuple[bytes, str]] = [
+    (b"\xff\xd8\xff", "image/jpeg"),
+    (b"\x89PNG\r\n\x1a\n", "image/png"),
+]
+
+
+def _detect_image_mime(data: bytes) -> str | None:
+    """Return the MIME type based on magic bytes, or None if unrecognised."""
+    for magic, mime in IMAGE_MAGIC_BYTES:
+        if data.startswith(magic):
+            return mime
+    return None
+
 
 @router.get("/{character_id}/portrait/upload", response_class=HTMLResponse)
 async def portrait_upload_form(
@@ -773,8 +787,23 @@ async def upload_portrait(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         )
 
-    # Get MIME type
-    mime_type = MIME_TYPE_MAP.get(file_ext, "image/jpeg")
+    # Validate actual file content via magic bytes (extension alone is not trustworthy)
+    detected_mime = _detect_image_mime(contents)
+    if detected_mime not in ALLOWED_MIME_TYPES:
+        return render_template(
+            templates,
+            "characters/_portrait_upload_modal.html",
+            {
+                "request": request,
+                "character": character,
+                "error": "Only JPEG and PNG files are allowed.",
+            },
+            language=current_user.language,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
+    # Use MIME type detected from content (not from filename)
+    mime_type = detected_mime
 
     # Save portrait data to database
     try:

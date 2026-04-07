@@ -1,4 +1,5 @@
 from pathlib import Path
+import logging
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile, status
@@ -24,6 +25,7 @@ from app.services.character_service import (
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
 templates = Jinja2Templates(directory="app/templates")
+logger = logging.getLogger(__name__)
 
 
 def _service(db: AsyncSession = Depends(get_db)) -> CampaignService:
@@ -186,7 +188,7 @@ async def campaign_delete(
     try:
         await service.delete_campaign(campaign_id)
     except CampaignNotFound:
-        pass
+        logger.warning("Attempted to delete non-existent campaign %s", campaign_id)
     return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
 
 # ── Character assignment ──────────────────────────────────────────────────────
@@ -222,8 +224,8 @@ async def assign_character(
 ):
     try:
         await service.assign_character(campaign_id, character_id)
-    except (CampaignNotFound, CharacterNotFound):
-        pass
+    except (CampaignNotFound, CharacterNotFound) as e:
+        logger.warning("assign_character failed for campaign %s: %s", campaign_id, e)
     return RedirectResponse(
         url=f"/campaigns/{campaign_id}", status_code=status.HTTP_303_SEE_OTHER
     )
@@ -238,8 +240,8 @@ async def remove_character(
 ):
     try:
         await service.remove_character(campaign_id, character_id)
-    except (CampaignNotFound, CharacterNotFound):
-        pass
+    except (CampaignNotFound, CharacterNotFound) as e:
+        logger.warning("remove_character failed for campaign %s: %s", campaign_id, e)
     return RedirectResponse(
         url=f"/campaigns/{campaign_id}", status_code=status.HTTP_303_SEE_OTHER
     )

@@ -8,7 +8,8 @@
         <div class="sheet-header-avatar">
             {% if can_edit %}
             <button hx-get="{{ char_base }}/portrait/upload" hx-target="body" hx-swap="beforeend"
-                class="sheet-header-avatar-icon sheet-header-avatar-button" title="{{ _("Click to upload portrait") }}">
+                class="sheet-header-avatar-icon sheet-header-avatar-button" title="{{ _("Click to upload portrait") }}"
+                aria-label="{{ _('Upload portrait') }}">
                 {% if cc_portrait_data or character.portrait_data %}
                 <img src="{{ char_base }}/portrait" alt="{{ sheet.character_identity.character_name }}"
                     class="portrait-image" />
@@ -30,6 +31,7 @@
             {% if can_edit %}
             <button hx-post="{{ char_base }}/vitals/inspiration" hx-target="#sheet-header"
                 hx-swap="outerHTML"
+                aria-label="{{ _('Toggle heroic inspiration') }}"
                 class="btn-inspiration {% if sheet.heroic_inspiration %}btn-inspiration--active{% else %}btn-inspiration--inactive{% endif %}">
                 {{ "⭐" if sheet.heroic_inspiration else "☆" }}
             </button>
@@ -89,7 +91,8 @@
                         hx-vals='{"save_type": "{{ save_type }}", "action": "{{ "remove" if i <= count else "add" }}"}'
                         hx-target="#sheet-header" hx-swap="outerHTML" class="death-save-dot
                             {% if i <= count %}death-save-dot--{{ save_type }}
-                            {% else %}death-save-dot--empty{% endif %}">
+                            {% else %}death-save-dot--empty{% endif %}"
+                        aria-label="{{ _('Death save') }} {{ save_type }} {{ i }}">
                     </button>
                     {% else %}
                     <div class="death-save-dot
@@ -114,7 +117,7 @@
         </a>
         {% endif %}
         {% if can_edit %}
-        <a href="{{ char_base }}/edit" class="btn-edit-icon" title="{{ _("Edit character") }}">
+        <a href="{{ char_base }}/edit" class="btn-edit-icon" title="{{ _("Edit character") }}" aria-label="{{ _('Edit character') }}">
             ✏️
         </a>
         {% endif %}
