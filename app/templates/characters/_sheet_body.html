@@ -607,7 +607,7 @@
                         (_("Study"), _("Make an Intelligence (Investigation) check to study a creature or object.")),
                         (_("Utilize"), _("Use a nonmagical object, such as opening a door or activating an item."))
                         ] %}
-                        <div class="combat-action-item">
+                        <div class="combat-action-item" data-action-key="{{ action_name | e }}" onclick="openCombatActionModal(this)">
                             <div class="combat-action-name">{{ action_name }}</div>
                             <div class="combat-action-description">{{ action_desc }}</div>
                         </div>
@@ -1106,20 +1106,102 @@
             <h3 id="notes-modal-title" class="notes-modal-title"></h3>
             <button class="notes-modal-close" onclick="closeNotesModal()" type="button" aria-label="{{ _('Close') }}">✕</button>
         </div>
-        <div class="notes-modal-body">
-            <p id="notes-modal-content" class="notes-modal-text"></p>
+        <div id="notes-modal-content" class="notes-modal-body">
         </div>
     </div>
 </div>
 
+<script id="combat-action-details" type="application/json">
+{{ {
+    _("Attack"): [
+        _("Equipping and Unequipping Weapons. You can either equip or unequip one weapon when you make an attack as part of this action. You do so either before or after the attack. If you equip a weapon before an attack, you don't need to use it for that attack. Equipping a weapon includes drawing it from a sheath or picking it up. Unequipping a weapon includes sheathing, stowing, or dropping it."),
+        _("Moving between Attacks. If you move on your turn and have a feature, such as Extra Attack, that gives you more than one attack as part of the Attack action, you can use some or all of that movement to move between those attacks.")
+    ],
+    _("Dash"): [
+        _("When you take the Dash action, you gain extra movement for the current turn. The increase equals your Speed after applying any modifiers. With a Speed of 30 feet, for example, you can move up to 60 feet on your turn if you Dash. If your Speed of 30 feet is reduced to 15 feet, you can move up to 30 feet this turn if you Dash."),
+        _("If you have a special speed, such as a Fly Speed or Swim Speed, you can use that speed instead of your Speed when you take this action. You choose which speed to use each time you take it. See also 'Speed'.")
+    ],
+    _("Disengage"): [
+        _("If you take the Disengage action, your movement doesn't provoke Opportunity Attacks for the rest of the current turn.")
+    ],
+    _("Dodge"): [
+        _("If you take the Dodge action, you gain the following benefits: until the start of your next turn, any attack roll made against you has Disadvantage if you can see the attacker, and you make Dexterity saving throws with Advantage."),
+        _("You lose these benefits if you have the Incapacitated condition or if your Speed is 0.")
+    ],
+    _("Help"): [
+        _("When you take the Help action, you do one of the following."),
+        _("Assist an Ability Check. Choose one of your skill or tool proficiencies and one ally who is near enough for you to assist verbally or physically when they make an ability check. That ally has Advantage on the next ability check they make with the chosen skill or tool. This benefit expires if the ally doesn't use it before the start of your next turn. The DM has final say on whether your assistance is possible."),
+        _("Assist an Attack Roll. You momentarily distract an enemy within 5 feet of you, giving Advantage to the next attack roll by one of your allies against that enemy. This benefit expires at the start of your next turn.")
+    ],
+    _("Hide"): [
+        _("With the Hide action, you try to conceal yourself. To do so, you must succeed on a DC 15 Dexterity (Stealth) check while you're Heavily Obscured or behind Three-Quarters Cover or Total Cover, and you must be out of any enemy's line of sight; if you can see a creature, you can discern whether it can see you."),
+        _("On a successful check, you have the Invisible condition while hidden. Make note of your check's total, which is the DC for a creature to find you with a Wisdom (Perception) check."),
+        _("You stop being hidden immediately after any of the following occurs: you make a sound louder than a whisper, an enemy finds you, you make an attack roll, or you cast a spell with a Verbal component.")
+    ],
+    _("Influence"): [
+        _("With the Influence action, you urge a monster to do something. Describe or roleplay how you're communicating with the monster. Are you trying to deceive, intimidate, amuse, or gently persuade? The DM then determines whether the monster feels willing, unwilling, or hesitant due to your interaction; this determination establishes whether an ability check is necessary, as explained below."),
+        _("Willing. If your urging aligns with the monster's desires, no ability check is necessary; the monster fulfills your request in a way it prefers."),
+        _("Unwilling. If your urging is repugnant to the monster or counter to its alignment, no ability check is necessary; it doesn't comply."),
+        _("Hesitant. If you urge the monster to do something that it is hesitant to do, you must make an ability check, which is affected by the monster's attitude: Indifferent, Friendly, or Hostile, each of which is defined in this glossary. The Influence Checks table suggests which ability check to make based on how you're interacting with the monster. The DM chooses the check, which has a default DC equal to 15 or the monster's Intelligence score, whichever is higher. On a successful check, the monster does as urged. On a failed check, you must wait 24 hours (or a duration set by the DM) before urging it in the same way again.")
+    ],
+    _("Magic"): [
+        _("When you take the Magic action, you cast a spell that has a casting time of an action or use a feature or magic item that requires a Magic action to be activated."),
+        _("If you cast a spell that has a casting time of 1 minute or longer, you must take the Magic action on each turn of that casting, and you must maintain Concentration while you do so. If your Concentration is broken, the spell fails, but you don't expend a spell slot. See also 'Concentration'.")
+    ],
+    _("Ready"): [
+        _("You take the Ready action to wait for a particular circumstance before you act. To do so, you take this action on your turn, which lets you act by taking a Reaction before the start of your next turn."),
+        _("First, you decide what perceivable circumstance will trigger your Reaction. Then, you choose the action you will take in response to that trigger, or you choose to move up to your Speed in response to it. Examples include 'If the cultist steps on the trapdoor, I'll pull the lever that opens it,' and 'If the zombie steps next to me, I move away.'"),
+        _("When the trigger occurs, you can either take your Reaction right after the trigger finishes or ignore the trigger."),
+        _("When you Ready a spell, you cast it as normal (expending any resources used to cast it) but hold its energy, which you release with your Reaction when the trigger occurs. To be readied, a spell must have a casting time of an action, and holding on to the spell's magic requires Concentration, which you can maintain up to the start of your next turn. If your Concentration is broken, the spell dissipates without taking effect.")
+    ],
+    _("Search"): [
+        _("When you take the Search action, you make a Wisdom check to discern something that isn't obvious. The Search table suggests which skills are applicable when you take this action, depending on what you're trying to detect.")
+    ],
+    _("Study"): [
+        _("When you take the Study action, you make an Intelligence check to study your memory, a book, a clue, or another source of knowledge and call to mind an important piece of information about it."),
+        _("The Areas of Knowledge table suggests which skills are applicable to various areas of knowledge.")
+    ],
+    _("Utilize"): [
+        _("You normally interact with an object while doing something else, such as when you draw a sword as part of the Attack action. When an object requires an action for its use, you take the Utilize action.")
+    ]
+} | tojson }}
+</script>
+
 <script>
+var COMBAT_ACTION_DETAILS = JSON.parse(document.getElementById('combat-action-details').textContent);
+
+function openCombatActionModal(el) {
+    var key = el.getAttribute('data-action-key');
+    var paragraphs = COMBAT_ACTION_DETAILS[key];
+    if (!paragraphs) return;
+    document.getElementById('notes-modal-title').textContent = key;
+    var body = document.getElementById('notes-modal-content');
+    body.innerHTML = '';
+    paragraphs.forEach(function(text) {
+        var p = document.createElement('p');
+        p.textContent = text;
+        p.className = 'notes-modal-text';
+        body.appendChild(p);
+    });
+    var modal = document.getElementById('notes-modal');
+    modal.style.display = 'flex';
+    window._notesModalTrigger = document.activeElement;
+    var closeBtn = modal.querySelector('button');
+    if (closeBtn) closeBtn.focus();
+}
+
 function openNotesModal(row) {
     if (window.innerWidth >= 640) return;
     var notes = row.getAttribute('data-notes');
     var name = row.getAttribute('data-item-name');
     if (!notes) return;
     document.getElementById('notes-modal-title').textContent = name;
-    document.getElementById('notes-modal-content').textContent = notes;
+    var body = document.getElementById('notes-modal-content');
+    body.innerHTML = '';
+    var p = document.createElement('p');
+    p.textContent = notes;
+    p.className = 'notes-modal-text';
+    body.appendChild(p);
     var modal = document.getElementById('notes-modal');
     modal.style.display = 'flex';
     window._notesModalTrigger = document.activeElement;
@@ -1210,11 +1292,15 @@ document.addEventListener('keydown', function(e) {
 }
 
 .notes-modal-text {
-    margin: 0;
+    margin: 0 0 0.75rem 0;
     color: var(--color-text-secondary, #4b5563);
     font-size: 0.95rem;
     line-height: 1.6;
     white-space: pre-wrap;
+}
+
+.notes-modal-text:last-child {
+    margin-bottom: 0;
 }
 
 @media (min-width: 640px) {
