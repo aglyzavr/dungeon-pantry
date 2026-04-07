@@ -1095,3 +1095,9 @@ msgstr "Необязательное описание способности"
 
 msgid "—"
 msgstr "—"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Uses"
+msgstr "Использования"

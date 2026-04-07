@@ -549,37 +549,39 @@
                 <div class="actions-section-header">
                     <h3 class="actions-section-title">{{ _("Class & Racial Features") }}</h3>
                 </div>
-                <div class="class-resource-list">
-                    {% for res in class_feature_actions %}
-                    <div class="class-resource-item">
-                        <div class="class-resource-header">
-                            <span class="class-resource-name">{{ res.name }}</span>
-                            <span class="class-resource-badge class-resource-badge--action">{{ _("Action") }}</span>
-                            {% if res.recharge %}<span class="class-resource-recharge">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
-                        </div>
-                        {% if res.description %}<p class="class-resource-description">{{ res.description }}</p>{% endif %}
-                    </div>
-                    {% endfor %}
-                    {% for res in class_feature_bonus %}
-                    <div class="class-resource-item">
-                        <div class="class-resource-header">
-                            <span class="class-resource-name">{{ res.name }}</span>
-                            <span class="class-resource-badge class-resource-badge--bonus">{{ _("Bonus Action") }}</span>
-                            {% if res.recharge %}<span class="class-resource-recharge">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
-                        </div>
-                        {% if res.description %}<p class="class-resource-description">{{ res.description }}</p>{% endif %}
-                    </div>
-                    {% endfor %}
-                    {% for res in class_feature_reactions %}
-                    <div class="class-resource-item">
-                        <div class="class-resource-header">
-                            <span class="class-resource-name">{{ res.name }}</span>
-                            <span class="class-resource-badge class-resource-badge--reaction">{{ _("Reaction") }}</span>
-                            {% if res.recharge %}<span class="class-resource-recharge">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
-                        </div>
-                        {% if res.description %}<p class="class-resource-description">{{ res.description }}</p>{% endif %}
-                    </div>
-                    {% endfor %}
+                <div class="attacks-table-wrapper">
+                    <table class="attacks-table">
+                        <thead class="attacks-table-head">
+                            <tr>
+                                <th class="attacks-table-head-cell">{{ _("Name") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Type") }}</th>
+                                <th class="attacks-table-head-cell">{{ _("Uses") }}</th>
+                                <th class="attacks-table-head-cell hidden sm:table-cell">{{ _("Notes") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="attacks-table-body">
+                            {% for res in class_feature_actions + class_feature_bonus + class_feature_reactions %}
+                            {% set res_atype = res.get("action_type", "none") %}
+                            <tr class="attacks-table-row" data-notes="{{ res.description | e }}" data-item-name="{{ res.name | e }}" onclick="openNotesModal(this)">
+                                <td class="attacks-table-cell attacks-table-name">
+                                    {{ res.name }}
+                                    {% if res.recharge %}<span class="action-range">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
+                                </td>
+                                <td class="attacks-table-cell">
+                                    {% if res_atype == "action" %}
+                                    <span class="class-resource-badge class-resource-badge--action">{{ _("Action") }}</span>
+                                    {% elif res_atype == "bonus_action" %}
+                                    <span class="class-resource-badge class-resource-badge--bonus">{{ _("Bonus Action") }}</span>
+                                    {% elif res_atype == "reaction" %}
+                                    <span class="class-resource-badge class-resource-badge--reaction">{{ _("Reaction") }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="attacks-table-cell attacks-table-damage">{{ res.uses_current }}/{{ res.uses_max }}</td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ res.description }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             {% endif %}
