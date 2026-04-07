@@ -1049,3 +1049,49 @@ msgstr "Преимущество"
 
 msgid "Disadvantage"
 msgstr "Помеха"
+
+# Class Resources
+msgid "Class Resources"
+msgstr "Классовые ресурсы"
+
+msgid "Class & Racial Features"
+msgstr "Классовые и расовые способности"
+
+msgid "Add Resource"
+msgstr "Добавить ресурс"
+
+msgid "No class resources added yet."
+msgstr "Классовые ресурсы ещё не добавлены."
+
+msgid "Trackable class features and abilities (e.g. Rage, Second Wind, Bardic Inspiration)."
+msgstr "Отслеживаемые классовые черты и способности (например, Ярость, Второе дыхание, Вдохновение барда)."
+
+msgid "Resource"
+msgstr "Ресурс"
+
+msgid "Uses (Max)"
+msgstr "Использований (макс.)"
+
+msgid "Uses (Current)"
+msgstr "Использований (текущее)"
+
+msgid "Recharge On"
+msgstr "Восстановление"
+
+msgid "None / Passive"
+msgstr "Нет / Пассивно"
+
+msgid "Short Rest"
+msgstr "Короткий отдых"
+
+msgid "Long Rest"
+msgstr "Длинный отдых"
+
+msgid "Dawn"
+msgstr "Рассвет"
+
+msgid "Optional description of what this resource does"
+msgstr "Необязательное описание способности"
+
+msgid "—"
+msgstr "—"

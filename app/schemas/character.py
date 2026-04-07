@@ -135,3 +135,22 @@ class ThrowableCaseQtyUpdate(BaseModel):
         if v == "" or v is None:
             return 0
         return v
+
+
+class ClassResourceUpdate(BaseModel):
+    resource_index: int
+    delta: int
+
+    @field_validator("resource_index", "delta", mode="before")
+    @classmethod
+    def coerce_ints(cls, v):
+        if v == "" or v is None:
+            return 0
+        return v
+
+    @field_validator("resource_index", mode="after")
+    @classmethod
+    def non_negative_index(cls, v: int) -> int:
+        if v < 0:
+            raise ValueError("resource_index must be non-negative")
+        return v

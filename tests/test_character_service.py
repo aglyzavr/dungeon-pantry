@@ -576,3 +576,96 @@ class TestCreateFromJsonString:
         import json
         with pytest.raises(CharacterValidationError):
             await self.service.create_from_json_string(json.dumps({}), uuid.uuid4())
+
+
+# ---------------------------------------------------------------------------
+# use_class_resource
+# ---------------------------------------------------------------------------
+
+
+class TestUseClassResource:
+    def setup_method(self):
+        self.service = _make_service()
+
+    def _char_with_resources(self, resources):
+        sheet = _base_sheet()
+        sheet["class_resources"] = resources
+        owner_id = uuid.uuid4()
+        char = _make_character(sheet_data=sheet, owner_id=owner_id)
+        self.owner_id = owner_id
+        return char
+
+    @pytest.mark.asyncio
+    async def test_use_decrements_uses_current(self):
+        char = self._char_with_resources([
+            {"name": "Rage", "action_type": "bonus_action", "uses_max": 3, "uses_current": 3, "recharge": "long_rest", "description": ""},
+        ])
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+        saved = MagicMock()
+        self.service._repo.save_sheet_data = AsyncMock(return_value=saved)
+
+        result = await self.service.use_class_resource(char.id, self.owner_id, False, 0, -1)
+
+        saved_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert saved_data["class_resources"][0]["uses_current"] == 2
+
+    @pytest.mark.asyncio
+    async def test_restore_increments_uses_current(self):
+        char = self._char_with_resources([
+            {"name": "Rage", "action_type": "bonus_action", "uses_max": 3, "uses_current": 1, "recharge": "long_rest", "description": ""},
+        ])
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+        self.service._repo.save_sheet_data = AsyncMock(return_value=MagicMock())
+
+        await self.service.use_class_resource(char.id, self.owner_id, False, 0, 1)
+
+        saved_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert saved_data["class_resources"][0]["uses_current"] == 2
+
+    @pytest.mark.asyncio
+    async def test_uses_current_clamped_to_max(self):
+        char = self._char_with_resources([
+            {"name": "Rage", "action_type": "bonus_action", "uses_max": 3, "uses_current": 3, "recharge": "long_rest", "description": ""},
+        ])
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+        self.service._repo.save_sheet_data = AsyncMock(return_value=MagicMock())
+
+        await self.service.use_class_resource(char.id, self.owner_id, False, 0, 5)
+
+        saved_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert saved_data["class_resources"][0]["uses_current"] == 3
+
+    @pytest.mark.asyncio
+    async def test_uses_current_clamped_to_zero(self):
+        char = self._char_with_resources([
+            {"name": "Rage", "action_type": "bonus_action", "uses_max": 3, "uses_current": 0, "recharge": "long_rest", "description": ""},
+        ])
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+        self.service._repo.save_sheet_data = AsyncMock(return_value=MagicMock())
+
+        await self.service.use_class_resource(char.id, self.owner_id, False, 0, -10)
+
+        saved_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert saved_data["class_resources"][0]["uses_current"] == 0
+
+    @pytest.mark.asyncio
+    async def test_out_of_range_index_is_ignored(self):
+        char = self._char_with_resources([
+            {"name": "Rage", "action_type": "bonus_action", "uses_max": 3, "uses_current": 3, "recharge": "long_rest", "description": ""},
+        ])
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+        self.service._repo.save_sheet_data = AsyncMock(return_value=MagicMock())
+
+        await self.service.use_class_resource(char.id, self.owner_id, False, 99, -1)
+
+        saved_data = self.service._repo.save_sheet_data.call_args[0][1]
+        # unchanged
+        assert saved_data["class_resources"][0]["uses_current"] == 3
+
+    @pytest.mark.asyncio
+    async def test_non_owner_raises(self):
+        char = self._char_with_resources([])
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+
+        with pytest.raises(CharacterPermissionError):
+            await self.service.use_class_resource(char.id, uuid.uuid4(), False, 0, -1)

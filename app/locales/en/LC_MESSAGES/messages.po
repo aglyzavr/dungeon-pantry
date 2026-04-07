@@ -1051,3 +1051,49 @@ msgstr "Advantage"
 
 msgid "Disadvantage"
 msgstr "Disadvantage"
+
+# Class Resources
+msgid "Class Resources"
+msgstr "Class Resources"
+
+msgid "Class & Racial Features"
+msgstr "Class & Racial Features"
+
+msgid "Add Resource"
+msgstr "Add Resource"
+
+msgid "No class resources added yet."
+msgstr "No class resources added yet."
+
+msgid "Trackable class features and abilities (e.g. Rage, Second Wind, Bardic Inspiration)."
+msgstr "Trackable class features and abilities (e.g. Rage, Second Wind, Bardic Inspiration)."
+
+msgid "Resource"
+msgstr "Resource"
+
+msgid "Uses (Max)"
+msgstr "Uses (Max)"
+
+msgid "Uses (Current)"
+msgstr "Uses (Current)"
+
+msgid "Recharge On"
+msgstr "Recharge On"
+
+msgid "None / Passive"
+msgstr "None / Passive"
+
+msgid "Short Rest"
+msgstr "Short Rest"
+
+msgid "Long Rest"
+msgstr "Long Rest"
+
+msgid "Dawn"
+msgstr "Dawn"
+
+msgid "Optional description of what this resource does"
+msgstr "Optional description of what this resource does"
+
+msgid "—"
+msgstr "—"
