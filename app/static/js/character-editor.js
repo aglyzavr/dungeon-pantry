@@ -94,7 +94,18 @@ const classResourceSchema = {
 const caseItemSchema = {
   name: '',
   quantity: 0,
+  weight: 0,
   note: '',
+};
+
+/**
+ * Schema defining the structure and default values for armor entries
+ */
+const armorSchema = {
+  name: '',
+  weight: 0,
+  armor_class: 0,
+  notes: '',
 };
 
 /**
@@ -134,6 +145,11 @@ window.CharacterEditor = {
    * Normalizer function for class resource entries
    */
   normalizeClassResource: createNormalizer(classResourceSchema),
+
+  /**
+   * Normalizer function for armor entries
+   */
+  normalizeArmor: createNormalizer(armorSchema),
 
   /**
    * Normalizer function for throwable case entries
