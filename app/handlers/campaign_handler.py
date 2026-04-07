@@ -770,6 +770,72 @@ async def campaign_update_class_resource(
     )
 
 
+# ── Campaign character short rest ──────────────────────────────────────────────
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/short-rest", response_class=HTMLResponse)
+async def campaign_short_rest(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    try:
+        cc = await character_service.perform_campaign_short_rest(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": character_service._normalize_sheet(cc.sheet_data),
+            "can_edit": _cc_can_edit(current_user, cc),
+            "is_readonly": not _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
+# ── Campaign character long rest ───────────────────────────────────────────────
+
+@router.post("/{campaign_id}/characters/{character_id}/vitals/long-rest", response_class=HTMLResponse)
+async def campaign_long_rest(
+    request: Request,
+    campaign_id: UUID,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    character_service: CharacterService = Depends(_character_service),
+):
+    try:
+        cc = await character_service.perform_campaign_long_rest(
+            campaign_id, character_id, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": cc.character,
+            "campaign": cc.campaign,
+            "cc_portrait_data": cc.portrait_data,
+            "sheet": character_service._normalize_sheet(cc.sheet_data),
+            "can_edit": _cc_can_edit(current_user, cc),
+            "is_readonly": not _cc_can_edit(current_user, cc),
+        },
+        language=current_user.language,
+    )
+
+
 # ── Campaign character portrait ───────────────────────────────────────────────
 
 ALLOWED_PORTRAIT_EXTENSIONS = {".jpg", ".jpeg", ".png"}

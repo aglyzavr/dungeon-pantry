@@ -750,6 +750,68 @@ async def update_class_resource(
     )
 
 
+# ── Vitals: Short Rest ────────────────────────────────────────────────────
+
+@router.post("/{character_id}/vitals/short-rest", response_class=HTMLResponse)
+async def short_rest(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    try:
+        character = await service.perform_short_rest(
+            character_id, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": service._normalize_sheet(character.sheet_data),
+            "can_edit": _can_edit(current_user, character),
+            "is_readonly": not _can_edit(current_user, character),
+        },
+        language=current_user.language,
+    )
+
+
+# ── Vitals: Long Rest ─────────────────────────────────────────────────────
+
+@router.post("/{character_id}/vitals/long-rest", response_class=HTMLResponse)
+async def long_rest(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    try:
+        character = await service.perform_long_rest(
+            character_id, current_user.user_id, current_user.is_dm
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": service._normalize_sheet(character.sheet_data),
+            "can_edit": _can_edit(current_user, character),
+            "is_readonly": not _can_edit(current_user, character),
+        },
+        language=current_user.language,
+    )
+
+
 # ── Assign owner (DM only) ────────────────────────────────────────────────
 
 @router.post("/{character_id}/assign", response_class=HTMLResponse)

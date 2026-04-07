@@ -393,6 +393,99 @@ class CharacterService:
         data["spell_slots"][key] = slot
         return await self._repo.save_sheet_data(character, data)
 
+    @staticmethod
+    def _apply_short_rest(data: dict) -> None:
+        """Restore uses_current to uses_max for all short-rest resources (mutates data in-place)."""
+        for res in data.get("class_resources", []):
+            if isinstance(res, dict) and res.get("recharge") == "short_rest":
+                uses_max = int(res.get("uses_max", 1))
+                res["uses_current"] = uses_max
+
+    @staticmethod
+    def _apply_long_rest(data: dict) -> None:
+        """Apply long-rest recovery rules (mutates data in-place):
+        - Restore HP to max, clear temp HP
+        - Reset death saves
+        - Restore all spell slots (expended -> 0)
+        - Restore class resources with recharge in short_rest, long_rest, or dawn
+        - Recover half of spent hit dice (minimum 1)
+        """
+        # HP
+        hp = data.get("vitality", {}).get("hit_points", {})
+        if isinstance(hp, dict):
+            hp_max = int(hp.get("max", 0))
+            hp["current"] = hp_max
+            hp["temp"] = 0
+
+        # Death saves
+        saves = data.get("vitality", {}).get("death_saves", {})
+        if isinstance(saves, dict):
+            saves["successes"] = 0
+            saves["failures"] = 0
+
+        # Spell slots
+        spell_slots = data.get("spell_slots", {})
+        if isinstance(spell_slots, dict):
+            for slot in spell_slots.values():
+                if isinstance(slot, dict):
+                    slot["expended"] = 0
+
+        # Class resources
+        _LONG_REST_RECHARGE = {"short_rest", "long_rest", "dawn"}
+        for res in data.get("class_resources", []):
+            if isinstance(res, dict) and res.get("recharge") in _LONG_REST_RECHARGE:
+                uses_max = int(res.get("uses_max", 1))
+                res["uses_current"] = uses_max
+
+        # Hit dice: recover max(1, floor(total_count / 2)) spent dice
+        hit_dice = data.get("vitality", {}).get("hit_dice", {})
+        if isinstance(hit_dice, dict):
+            total_str = str(hit_dice.get("total", "1d8"))
+            # Parse "XdY" → X (e.g. "4d8" → 4, "d8" → 1, "1d8" → 1)
+            parts = total_str.lower().split("d")
+            try:
+                count_str = parts[0].strip()
+                total_count = int(count_str) if count_str else 1
+            except (ValueError, IndexError):
+                total_count = 1
+            recovery = max(1, total_count // 2)
+            spent = int(hit_dice.get("spent", 0))
+            hit_dice["spent"] = max(0, spent - recovery)
+
+    async def perform_short_rest(
+        self, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        self._apply_short_rest(data)
+        return await self._repo.save_sheet_data(character, data)
+
+    async def perform_long_rest(
+        self, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
+        data = copy.deepcopy(character.sheet_data)
+        self._apply_long_rest(data)
+        return await self._repo.save_sheet_data(character, data)
+
+    async def perform_campaign_short_rest(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        self._apply_short_rest(data)
+        return await self._flush_campaign_cc(cc, data)
+
+    async def perform_campaign_long_rest(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        self._apply_long_rest(data)
+        return await self._flush_campaign_cc(cc, data)
+
     async def use_class_resource(
         self, character_id: UUID, user_id: UUID, is_dm: bool, resource_index: int, delta: int
     ) -> Character:

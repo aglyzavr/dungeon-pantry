@@ -1103,3 +1103,10 @@ msgstr "Type"
 
 msgid "Uses"
 msgstr "Uses"
+
+msgid "Rest"
+msgstr "Rest"
+
+msgid "Take a Long Rest? This will restore HP, spell slots, and all resources."
+msgstr "Take a Long Rest? This will restore HP, spell slots, and all resources."
+

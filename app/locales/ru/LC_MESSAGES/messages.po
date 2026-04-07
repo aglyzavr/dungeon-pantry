@@ -1101,3 +1101,10 @@ msgstr "Тип"
 
 msgid "Uses"
 msgstr "Использования"
+
+msgid "Rest"
+msgstr "Отдых"
+
+msgid "Take a Long Rest? This will restore HP, spell slots, and all resources."
+msgstr "Взять длинный отдых? Это восстановит HP, ячейки заклинаний и все ресурсы."
+

@@ -669,3 +669,236 @@ class TestUseClassResource:
 
         with pytest.raises(CharacterPermissionError):
             await self.service.use_class_resource(char.id, uuid.uuid4(), False, 0, -1)
+
+
+# ---------------------------------------------------------------------------
+# _apply_short_rest (static method — pure logic)
+# ---------------------------------------------------------------------------
+
+
+class TestApplyShortRest:
+    def test_restores_short_rest_resources(self):
+        data = {
+            "class_resources": [
+                {"name": "Second Wind", "uses_max": 1, "uses_current": 0, "recharge": "short_rest"},
+            ]
+        }
+        CharacterService._apply_short_rest(data)
+        assert data["class_resources"][0]["uses_current"] == 1
+
+    def test_does_not_restore_long_rest_resources(self):
+        data = {
+            "class_resources": [
+                {"name": "Rage", "uses_max": 3, "uses_current": 1, "recharge": "long_rest"},
+            ]
+        }
+        CharacterService._apply_short_rest(data)
+        assert data["class_resources"][0]["uses_current"] == 1
+
+    def test_does_not_restore_dawn_resources(self):
+        data = {
+            "class_resources": [
+                {"name": "Channel Divinity", "uses_max": 2, "uses_current": 0, "recharge": "dawn"},
+            ]
+        }
+        CharacterService._apply_short_rest(data)
+        assert data["class_resources"][0]["uses_current"] == 0
+
+    def test_mixed_resources_only_short_rest_restored(self):
+        data = {
+            "class_resources": [
+                {"name": "Second Wind", "uses_max": 1, "uses_current": 0, "recharge": "short_rest"},
+                {"name": "Rage", "uses_max": 3, "uses_current": 1, "recharge": "long_rest"},
+                {"name": "Bardic Inspiration", "uses_max": 4, "uses_current": 2, "recharge": "short_rest"},
+            ]
+        }
+        CharacterService._apply_short_rest(data)
+        assert data["class_resources"][0]["uses_current"] == 1
+        assert data["class_resources"][1]["uses_current"] == 1  # unchanged
+        assert data["class_resources"][2]["uses_current"] == 4
+
+    def test_empty_class_resources_is_noop(self):
+        data = {"class_resources": []}
+        CharacterService._apply_short_rest(data)
+        assert data["class_resources"] == []
+
+    def test_missing_class_resources_is_noop(self):
+        data = {}
+        CharacterService._apply_short_rest(data)
+        assert data == {}
+
+
+# ---------------------------------------------------------------------------
+# _apply_long_rest (static method — pure logic)
+# ---------------------------------------------------------------------------
+
+
+class TestApplyLongRest:
+    def _make_data(self, **overrides) -> dict:
+        base = {
+            "vitality": {
+                "hit_points": {"current": 20, "max": 40, "temp": 5},
+                "death_saves": {"successes": 2, "failures": 1},
+                "hit_dice": {"total": "4d8", "spent": "3"},
+            },
+            "spell_slots": {
+                "level_1": {"total": 4, "expended": 3},
+                "level_2": {"total": 3, "expended": 2},
+            },
+            "class_resources": [
+                {"name": "Rage", "uses_max": 3, "uses_current": 1, "recharge": "long_rest"},
+                {"name": "Second Wind", "uses_max": 1, "uses_current": 0, "recharge": "short_rest"},
+                {"name": "Channel Divinity", "uses_max": 2, "uses_current": 0, "recharge": "dawn"},
+            ],
+        }
+        base.update(overrides)
+        return base
+
+    def test_hp_restored_to_max(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        assert data["vitality"]["hit_points"]["current"] == 40
+
+    def test_temp_hp_cleared(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        assert data["vitality"]["hit_points"]["temp"] == 0
+
+    def test_death_saves_reset(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        assert data["vitality"]["death_saves"]["successes"] == 0
+        assert data["vitality"]["death_saves"]["failures"] == 0
+
+    def test_spell_slots_fully_restored(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        assert data["spell_slots"]["level_1"]["expended"] == 0
+        assert data["spell_slots"]["level_2"]["expended"] == 0
+
+    def test_long_rest_resources_restored(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        assert data["class_resources"][0]["uses_current"] == 3  # Rage
+
+    def test_short_rest_resources_also_restored(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        assert data["class_resources"][1]["uses_current"] == 1  # Second Wind
+
+    def test_dawn_resources_restored(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        assert data["class_resources"][2]["uses_current"] == 2  # Channel Divinity
+
+    def test_hit_dice_recovery_4d8_recovers_2(self):
+        data = self._make_data()
+        CharacterService._apply_long_rest(data)
+        # spent was 3, recover 2, result = 1
+        assert data["vitality"]["hit_dice"]["spent"] == 1
+
+    def test_hit_dice_recovery_1d8_recovers_1(self):
+        data = self._make_data()
+        data["vitality"]["hit_dice"]["total"] = "1d8"
+        data["vitality"]["hit_dice"]["spent"] = "1"
+        CharacterService._apply_long_rest(data)
+        # spent was 1, recover max(1, 1//2) = max(1, 0) = 1, result = 0
+        assert data["vitality"]["hit_dice"]["spent"] == 0
+
+    def test_hit_dice_spent_never_goes_below_zero(self):
+        data = self._make_data()
+        data["vitality"]["hit_dice"]["spent"] = "0"
+        CharacterService._apply_long_rest(data)
+        assert data["vitality"]["hit_dice"]["spent"] == 0
+
+    def test_hit_dice_recovery_odd_count_floors(self):
+        data = self._make_data()
+        data["vitality"]["hit_dice"]["total"] = "3d10"
+        data["vitality"]["hit_dice"]["spent"] = "3"
+        CharacterService._apply_long_rest(data)
+        # recover max(1, 3//2) = max(1,1) = 1; 3-1=2
+        assert data["vitality"]["hit_dice"]["spent"] == 2
+
+    def test_empty_spell_slots_is_noop(self):
+        data = self._make_data()
+        data["spell_slots"] = {}
+        CharacterService._apply_long_rest(data)
+        assert data["spell_slots"] == {}
+
+    def test_no_class_resources_is_noop(self):
+        data = self._make_data()
+        data["class_resources"] = []
+        CharacterService._apply_long_rest(data)
+        assert data["class_resources"] == []
+
+
+# ---------------------------------------------------------------------------
+# perform_short_rest / perform_long_rest (async, uses mock repo)
+# ---------------------------------------------------------------------------
+
+
+class TestPerformShortRest:
+    def setup_method(self):
+        self.service = _make_service()
+
+    @pytest.mark.asyncio
+    async def test_calls_save_with_updated_data(self):
+        owner_id = uuid.uuid4()
+        sheet = _base_sheet()
+        sheet["class_resources"] = [
+            {"name": "Second Wind", "uses_max": 1, "uses_current": 0, "recharge": "short_rest"},
+        ]
+        char = _make_character(sheet_data=sheet, owner_id=owner_id)
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+        saved = MagicMock()
+        self.service._repo.save_sheet_data = AsyncMock(return_value=saved)
+
+        result = await self.service.perform_short_rest(char.id, owner_id, False)
+
+        assert result is saved
+        saved_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert saved_data["class_resources"][0]["uses_current"] == 1
+
+    @pytest.mark.asyncio
+    async def test_non_owner_raises(self):
+        owner_id = uuid.uuid4()
+        char = _make_character(owner_id=owner_id)
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+
+        with pytest.raises(CharacterPermissionError):
+            await self.service.perform_short_rest(char.id, uuid.uuid4(), False)
+
+
+class TestPerformLongRest:
+    def setup_method(self):
+        self.service = _make_service()
+
+    @pytest.mark.asyncio
+    async def test_restores_hp_and_spell_slots(self):
+        owner_id = uuid.uuid4()
+        sheet = _base_sheet()
+        sheet["vitality"]["hit_points"] = {"current": 10, "max": 40, "temp": 5}
+        sheet["spell_slots"] = {"level_1": {"total": 4, "expended": 3}}
+        sheet["class_resources"] = []
+        char = _make_character(sheet_data=sheet, owner_id=owner_id)
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+        saved = MagicMock()
+        self.service._repo.save_sheet_data = AsyncMock(return_value=saved)
+
+        result = await self.service.perform_long_rest(char.id, owner_id, False)
+
+        assert result is saved
+        saved_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert saved_data["vitality"]["hit_points"]["current"] == 40
+        assert saved_data["vitality"]["hit_points"]["temp"] == 0
+        assert saved_data["spell_slots"]["level_1"]["expended"] == 0
+
+    @pytest.mark.asyncio
+    async def test_non_owner_raises(self):
+        owner_id = uuid.uuid4()
+        char = _make_character(owner_id=owner_id)
+        self.service._repo.get_by_id = AsyncMock(return_value=char)
+
+        with pytest.raises(CharacterPermissionError):
+            await self.service.perform_long_rest(char.id, uuid.uuid4(), False)
+

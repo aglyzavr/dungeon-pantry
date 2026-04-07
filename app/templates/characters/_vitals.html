@@ -129,6 +129,21 @@
             </div>
           </div>
           {% endif %}
+          <!-- Rest Buttons -->
+          <div class="hp-control-group" style="padding-top: 1em;">
+            <span class="hp-control-label">{{ _("Rest") }}</span>
+            <div class="hp-adjust-controls">
+              <button hx-post="{{ char_base }}/vitals/short-rest" hx-target="#sheet-body" hx-swap="outerHTML"
+                class="btn-heal">
+                💤 {{ _("Short Rest") }}
+              </button>
+              <button hx-post="{{ char_base }}/vitals/long-rest" hx-target="#sheet-body" hx-swap="outerHTML"
+                hx-confirm="{{ _('Take a Long Rest? This will restore HP, spell slots, and all resources.') }}"
+                class="btn-damage">
+                🌙 {{ _("Long Rest") }}
+              </button>
+            </div>
+          </div>
       </div>
       <script>
         function toggleHpControls(btn) {
