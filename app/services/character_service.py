@@ -138,6 +138,7 @@ class CharacterService:
                 "equipment_list": [],
                 "throwable_cases": [],
                 "weapons": [],
+                "armor": [],
                 "magic_item_attunement": [],
             },
             "spell_slots": {},
@@ -559,6 +560,8 @@ class CharacterService:
             data["equipment"]["throwable_cases"] = []
         if not isinstance(data["equipment"].get("weapons"), list):
             data["equipment"]["weapons"] = []
+        if not isinstance(data["equipment"].get("armor"), list):
+            data["equipment"]["armor"] = []
         if not isinstance(data.get("spell_slots"), dict):
             data["spell_slots"] = {}
         # coins structure expected by _sheet_body.html
@@ -942,9 +945,14 @@ class CharacterService:
                         item_name = str(item.get("name", "")).strip()
                         if not item_name:
                             continue
+                        try:
+                            item_weight = max(0, int(item.get("weight", 0)))
+                        except (ValueError, TypeError):
+                            item_weight = 0
                         items.append({
                             "name": item_name,
                             "quantity": max(0, int(item.get("quantity", 0))),
+                            "weight": item_weight,
                             "note": str(item.get("note", "")).strip(),
                         })
                     throwable_cases.append({"name": case_name, "items": items})
@@ -969,6 +977,10 @@ class CharacterService:
                     w_action_type = str(weapon.get("action_type", "")).strip()
                     if w_action_type not in ("action", "bonus_action", "reaction", "none"):
                         w_action_type = "none"
+                    try:
+                        weapon_weight = max(0, int(weapon.get("weight", 0)))
+                    except (ValueError, TypeError):
+                        weapon_weight = 0
                     weapons.append({
                         "name": weapon_name,
                         "damage": str(weapon.get("damage", "")).strip(),
@@ -976,17 +988,50 @@ class CharacterService:
                         "properties": str(weapon.get("properties", "")).strip(),
                         "range": str(weapon.get("range", "")).strip(),
                         "atk_bonus": str(weapon.get("atk_bonus", "")).strip(),
-                        "weight": str(weapon.get("weight", "")).strip(),
+                        "weight": weapon_weight,
                         "action_type": w_action_type,
                     })
         else:
             weapons = sheet.get("equipment", {}).get("weapons", [])
+
+        # Armor (submitted as JSON from the edit form)
+        armor = []
+        armor_raw = str(get_form("armor_json", "")).strip()
+        if armor_raw:
+            try:
+                submitted_armor = json.loads(armor_raw)
+            except (json.JSONDecodeError, TypeError):
+                submitted_armor = None
+            if isinstance(submitted_armor, list):
+                for piece in submitted_armor:
+                    if not isinstance(piece, dict):
+                        continue
+                    piece_name = str(piece.get("name", "")).strip()
+                    if not piece_name:
+                        continue
+                    try:
+                        piece_weight = max(0, int(piece.get("weight", 0)))
+                    except (ValueError, TypeError):
+                        piece_weight = 0
+                    try:
+                        piece_ac = max(0, int(piece.get("armor_class", 0)))
+                    except (ValueError, TypeError):
+                        piece_ac = 0
+                    armor.append({
+                        "name": piece_name,
+                        "weight": piece_weight,
+                        "armor_class": piece_ac,
+                        "notes": str(piece.get("notes", "")).strip(),
+                    })
+        else:
+            armor = sheet.get("equipment", {}).get("armor", [])
 
         sheet["equipment"] = {
             "equipment_list": equipment_list,
             "magic_item_attunement": sheet.get("equipment", {}).get("magic_item_attunement", []),
             "throwable_cases": throwable_cases,
             "weapons": weapons,
+            "armor": armor,
         }
         
         # Coins

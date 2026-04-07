@@ -1017,6 +1017,99 @@
   line-height: 1.4;
 }
 
+.throwable-case-item-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.throwable-case-item-weight {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   INVENTORY SECTION HEADER / TOTAL WEIGHT
+   ───────────────────────────────────────────────────────────────── */
+
+.inventory-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.inventory-section-header .content-section-title {
+  margin-bottom: 0;
+}
+
+.inventory-total-weight {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   ARMOR TABLE
+   ───────────────────────────────────────────────────────────────── */
+
+.armor-table-wrapper {
+  overflow-x: auto;
+}
+
+.armor-table {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.armor-table-head {
+  font-size: 0.75rem;
+  color: var(--color-marker-unproficient);
+  text-transform: uppercase;
+  background-color: var(--color-bg-secondary-30);
+}
+
+.armor-table-head-cell {
+  text-align: left;
+  padding: 0.5rem 1rem;
+}
+
+.armor-table-body {
+  border-top: 1px solid var(--color-border);
+}
+
+.armor-table-row {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.armor-table-cell {
+  padding: 0.625rem 1rem;
+}
+
+.armor-table-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.armor-table-weight {
+  color: var(--color-text-muted);
+  font-family: monospace;
+}
+
+.armor-table-ac {
+  color: var(--color-accent-light);
+  font-family: monospace;
+}
+
+.armor-table-damage {
+  color: var(--color-text-secondary);
+}
+
+.armor-table-notes {
+  color: var(--color-text-muted);
+}
+
 /* ─────────────────────────────────────────────────────────────────
    BIO TAB SPECIFIC STYLES
    ───────────────────────────────────────────────────────────────── */

@@ -888,9 +888,28 @@
         {% if not is_readonly %}
         <div x-show="tab === 'inventory'" x-cloak class="inventory-tab-content">
 
+            {# Compute total weight across armor, weapons and throwable case items #}
+            {% set tw = namespace(value=0) %}
+            {% for piece in sheet.equipment.get("armor", []) if piece.name %}
+                {% set tw.value = tw.value + (piece.weight | int) %}
+            {% endfor %}
+            {% for wpn in sheet.equipment.get("weapons", []) if wpn.name %}
+                {% set tw.value = tw.value + (wpn.weight | int) %}
+            {% endfor %}
+            {% for tcase in sheet.equipment.get("throwable_cases", []) %}
+                {% for item in tcase.get("items", []) if item.name %}
+                    {% set tw.value = tw.value + ((item.weight | int) * (item.quantity | int)) %}
+                {% endfor %}
+            {% endfor %}
+
             {% if sheet.equipment.equipment_list %}
             <div class="content-section">
-                <h3 class="content-section-title">{{ _("Equipment") }}</h3>
+                <div class="inventory-section-header">
+                    <h3 class="content-section-title">{{ _("Equipment") }}</h3>
+                    {% if tw.value > 0 %}
+                    <span class="inventory-total-weight">⚖ {{ tw.value }} lb</span>
+                    {% endif %}
+                </div>
                 <ul class="inventory-grid">
                     {% for item in sheet.equipment.equipment_list %}
                     {% if item %}
@@ -901,6 +920,13 @@
                     {% endif %}
                     {% endfor %}
                 </ul>
+            </div>
+            {% elif tw.value > 0 %}
+            <div class="content-section">
+                <div class="inventory-section-header">
+                    <h3 class="content-section-title">{{ _("Equipment") }}</h3>
+                    <span class="inventory-total-weight">⚖ {{ tw.value }} lb</span>
+                </div>
             </div>
             {% endif %}
 
@@ -945,6 +971,66 @@
             </div>
             {% endif %}
 
+            {# Armor #}
+            {% set armor_items = sheet.equipment.get("armor", []) | selectattr("name") | list %}
+            {% if armor_items %}
+            <div class="content-section">
+                <h3 class="content-section-title">{{ _("Armor") }}</h3>
+                <div class="armor-table-wrapper">
+                    <table class="armor-table">
+                        <thead class="armor-table-head">
+                            <tr>
+                                <th class="armor-table-head-cell">{{ _("Name") }}</th>
+                                <th class="armor-table-head-cell">{{ _("Weight (lb)") }}</th>
+                                <th class="armor-table-head-cell">{{ _("AC") }}</th>
+                                <th class="armor-table-head-cell">{{ _("Notes") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="armor-table-body">
+                            {% for piece in armor_items %}
+                            <tr class="armor-table-row">
+                                <td class="armor-table-cell armor-table-name">{{ piece.name }}</td>
+                                <td class="armor-table-cell armor-table-weight">{{ piece.weight | int }}</td>
+                                <td class="armor-table-cell armor-table-ac">{{ piece.armor_class | int }}</td>
+                                <td class="armor-table-cell armor-table-notes">{{ piece.notes }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            {# Weapons (Inventory) #}
+            {% set inv_weapons = sheet.equipment.get("weapons", []) | selectattr("name") | list %}
+            {% if inv_weapons %}
+            <div class="content-section">
+                <h3 class="content-section-title">{{ _("Weapons") }}</h3>
+                <div class="armor-table-wrapper">
+                    <table class="armor-table">
+                        <thead class="armor-table-head">
+                            <tr>
+                                <th class="armor-table-head-cell">{{ _("Name") }}</th>
+                                <th class="armor-table-head-cell">{{ _("Weight (lb)") }}</th>
+                                <th class="armor-table-head-cell">{{ _("Damage") }}</th>
+                                <th class="armor-table-head-cell">{{ _("Properties") }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="armor-table-body">
+                            {% for wpn in inv_weapons %}
+                            <tr class="armor-table-row">
+                                <td class="armor-table-cell armor-table-name">{{ wpn.name }}</td>
+                                <td class="armor-table-cell armor-table-weight">{{ wpn.weight | int }}</td>
+                                <td class="armor-table-cell armor-table-damage">{{ [wpn.damage, wpn.damage_type] | select | join(" ") }}</td>
+                                <td class="armor-table-cell armor-table-notes">{{ wpn.properties }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
             {# Throwable Cases #}
             {% set cases = sheet.equipment.get("throwable_cases", []) %}
             {% for tcase in cases %}
@@ -959,28 +1045,33 @@
                     <div class="throwable-case-item">
                         <div class="throwable-case-item-info">
                             <span class="throwable-case-item-name">{{ item.name }}</span>
-                            <div class="throwable-case-item-qty">
-                                {% if can_edit %}
-                                <button class="throwable-case-qty-btn"
-                                    @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                    hx-post="{{ char_base }}/inventory/throwable-case-qty"
-                                    hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": -1}'
-                                    hx-target="#sheet-body"
-                                    hx-select="#sheet-body"
-                                    hx-swap="outerHTML"
-                                    aria-label="{{ _('Decrease quantity') }}">−</button>
+                            <div class="throwable-case-item-right">
+                                {% if item.weight | int > 0 %}
+                                <span class="throwable-case-item-weight">⚖ {{ item.weight | int }} lb</span>
                                 {% endif %}
-                                <span class="throwable-case-qty-value">{{ item.quantity }}</span>
-                                {% if can_edit %}
-                                <button class="throwable-case-qty-btn"
-                                    @click="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                    hx-post="{{ char_base }}/inventory/throwable-case-qty"
-                                    hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": 1}'
-                                    hx-target="#sheet-body"
-                                    hx-select="#sheet-body"
-                                    hx-swap="outerHTML"
-                                    aria-label="{{ _('Increase quantity') }}">+</button>
-                                {% endif %}
+                                <div class="throwable-case-item-qty">
+                                    {% if can_edit %}
+                                    <button class="throwable-case-qty-btn"
+                                        @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                        hx-post="{{ char_base }}/inventory/throwable-case-qty"
+                                        hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": -1}'
+                                        hx-target="#sheet-body"
+                                        hx-select="#sheet-body"
+                                        hx-swap="outerHTML"
+                                        aria-label="{{ _('Decrease quantity') }}">−</button>
+                                    {% endif %}
+                                    <span class="throwable-case-qty-value">{{ item.quantity }}</span>
+                                    {% if can_edit %}
+                                    <button class="throwable-case-qty-btn"
+                                        @click="sessionStorage.setItem('sheetCurrentTab', tab)"
+                                        hx-post="{{ char_base }}/inventory/throwable-case-qty"
+                                        hx-vals='{"case_index": {{ case_idx }}, "item_index": {{ loop.index0 }}, "delta": 1}'
+                                        hx-target="#sheet-body"
+                                        hx-select="#sheet-body"
+                                        hx-swap="outerHTML"
+                                        aria-label="{{ _('Increase quantity') }}">+</button>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                         {% if item.note %}
