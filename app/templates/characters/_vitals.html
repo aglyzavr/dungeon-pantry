@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="/static/css/vitals.css" />
 <script src="/static/js/vitals.js"></script>
+{% set char_base = "/campaigns/" ~ campaign.id ~ "/characters/" ~ character.id if campaign else "/characters/" ~ character.id %}
 
 <div id="vitals-section">
   {% set hp = sheet.vitality.hit_points %}
@@ -13,7 +14,7 @@
 
     {# AC — shield toggle #}
     {% if can_edit %}
-    <button hx-post="/characters/{{ character.id }}/vitals/shield" hx-target="#vitals-section" hx-swap="outerHTML"
+    <button hx-post="{{ char_base }}/vitals/shield" hx-target="#vitals-section" hx-swap="outerHTML"
       class="btn-ac {% if shield %}btn-ac--active{% else %}btn-ac--inactive{% endif %}">
       <div class="vitals-stat-label">{{ _("AC") }} {{ '🛡️' if shield else '' }}</div>
       <div class="vitals-stat-value">{{ total_ac }}</div>
@@ -82,10 +83,10 @@
           <span class="hp-control-label">{{ _("Adjust HP") }}</span>
           <div class="hp-adjust-controls">
             <input type="number" id="hp-input-{{ character.id }}" value="0" min="0" class="hp-input" placeholder="0" />
-            <button data-hp-action="heal" data-character-id="{{ character.id }}" class="btn-heal">
+            <button data-hp-action="heal" data-vitals-base-url="{{ char_base }}" class="btn-heal">
               {{ _("Heal") }}
             </button>
-            <button data-hp-action="damage" data-character-id="{{ character.id }}" class="btn-damage">
+            <button data-hp-action="damage" data-vitals-base-url="{{ char_base }}" class="btn-damage">
               {{ _("Dmg") }}
             </button>
           </div>
@@ -94,7 +95,7 @@
         <!-- Max and Temp HP (DM only) -->
         {% if current_user and current_user.is_dm %}
         <div class="hp-control-group" style="padding-top: 1em;">
-          <form hx-post="/characters/{{ character.id }}/vitals/temp-hp" hx-target="#vitals-section" hx-swap="outerHTML"
+          <form hx-post="{{ char_base }}/vitals/temp-hp" hx-target="#vitals-section" hx-swap="outerHTML"
             class="hp-form-group">
             <span class="hp-control-label">{{ _("Temp HP") }}</span>
             <div class="hp-form-controls">
@@ -104,7 +105,7 @@
           </form>
         </div>
         <div class="hp-control-group" style="padding-top: 1em;">
-          <form hx-post="/characters/{{ character.id }}/vitals/max-hp" hx-target="#vitals-section" hx-swap="outerHTML"
+          <form hx-post="{{ char_base }}/vitals/max-hp" hx-target="#vitals-section" hx-swap="outerHTML"
             class="hp-form-group">
             <span class="hp-control-label">{{ _("Max HP") }}</span>
             <div class="hp-form-controls">

@@ -3,8 +3,9 @@ import json
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.attributes import flag_modified
 
-from app.models.character import Character
+from app.models.character import Character, CampaignCharacter
 from app.repositories.campaign_repository import CampaignRepository
 from app.repositories.character_repository import CharacterRepository
 from app.schemas.character import validate_mandatory_fields
@@ -488,9 +489,9 @@ class CharacterService:
         sheet_data = self._normalize_sheet(sheet_data)
         return await self._repo.save_sheet_data(character, sheet_data)
 
-    async def build_sheet_from_form(self, character: Character, form) -> dict:
+    async def build_sheet_from_form(self, sheet_data: dict, form) -> dict:
         """Build a complete sheet_data dict from the submitted form"""
-        sheet = copy.deepcopy(character.sheet_data)
+        sheet = copy.deepcopy(sheet_data)
         
         # Helper to safely get form values
         def get_form(key: str, default=""):
@@ -571,7 +572,7 @@ class CharacterService:
             }
             
             # Skills for the ability (if any)
-            ability_data = character.sheet_data.get(ability, {})
+            ability_data = sheet_data.get(ability, {})
             if "ability_scores" in ability_data:
                 sheet[ability]["ability_scores"] = {}
                 for skill_name in ability_data["ability_scores"].keys():
@@ -785,8 +786,8 @@ class CharacterService:
                 sheet["weapons_damage_cantrips"] = normalized_attacks
         else:
             # Preserve existing attacks if no attack data was submitted
-            if "weapons_damage_cantrips" in character.sheet_data:
-                sheet["weapons_damage_cantrips"] = character.sheet_data["weapons_damage_cantrips"]
+            if "weapons_damage_cantrips" in sheet_data:
+                sheet["weapons_damage_cantrips"] = sheet_data["weapons_damage_cantrips"]
         
         # Calculate spell slots based on character level and class
         character_level = sheet.get("character_level", {}).get("level", 1)
@@ -796,7 +797,7 @@ class CharacterService:
         new_spell_slots = self._calculate_spell_slots(character_class, character_level)
         
         # Preserve expended values from existing spell slots
-        old_spell_slots = character.sheet_data.get("spell_slots", {})
+        old_spell_slots = sheet_data.get("spell_slots", {})
         for level_key, slot_data in new_spell_slots.items():
             if level_key in old_spell_slots:
                 old_expended = old_spell_slots[level_key].get("expended", 0)
@@ -808,7 +809,180 @@ class CharacterService:
         # Preserve other existing complex structures (spellcasting ability, etc.)
         # Note: weapons_damage_cantrips is now handled via the attacks_json form field
         for key in ["spellcasting_ability"]:
-            if key in character.sheet_data:
-                sheet[key] = character.sheet_data[key]
+            if key in sheet_data:
+                sheet[key] = sheet_data[key]
         
         return sheet
+
+    # ── Campaign-specific write helpers ───────────────────────────────────────
+
+    async def _get_campaign_char_for_write(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        """Load CampaignCharacter with character+campaign eagerly loaded and check write permission."""
+        cc = await self._campaign_repo.get_campaign_character_with_association(campaign_id, character_id)
+        if cc is None:
+            raise CharacterNotFound(
+                f"Character {character_id} not found in campaign {campaign_id}"
+            )
+        self._check_write_permission(cc.character, user_id, is_dm)
+        return cc
+
+    async def _flush_campaign_cc(self, cc: CampaignCharacter, data: dict) -> CampaignCharacter:
+        """Persist updated sheet_data on a CampaignCharacter and return it."""
+        cc.sheet_data = data
+        flag_modified(cc, "sheet_data")
+        await self._repo._db.flush()
+        return cc
+
+    # ── Campaign-aware update methods ─────────────────────────────────────────
+
+    async def update_campaign_hp(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        hp = data["vitality"]["hit_points"]
+        hp_max = int(hp.get("max", 0))
+        current = int(hp.get("current", 0))
+        temp = int(hp.get("temp", 0) or 0)
+        if payload.value is not None:
+            hp["current"] = max(0, min(payload.value, hp_max))
+        elif payload.delta is not None:
+            delta = payload.delta
+            if delta < 0:
+                dmg = -delta
+                if temp >= dmg:
+                    temp -= dmg
+                    dmg = 0
+                else:
+                    dmg -= temp
+                    temp = 0
+                hp["current"] = max(0, current - dmg)
+            else:
+                hp["current"] = min(hp_max, current + delta)
+            hp["temp"] = temp
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_death_save(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        if payload.save_type not in ("successes", "failures"):
+            return cc
+        data = copy.deepcopy(cc.sheet_data)
+        saves = data["vitality"]["death_saves"]
+        current = int(saves.get(payload.save_type, 0))
+        if payload.action == "add":
+            saves[payload.save_type] = min(3, current + 1)
+        elif payload.action == "remove":
+            saves[payload.save_type] = max(0, current - 1)
+        return await self._flush_campaign_cc(cc, data)
+
+    async def toggle_campaign_inspiration(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        data["heroic_inspiration"] = not bool(data.get("heroic_inspiration", False))
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_spell_slot(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        key = f"level_{payload.level}"
+        if "spell_slots" not in data or not isinstance(data.get("spell_slots"), dict):
+            data["spell_slots"] = {}
+        slot = data.get("spell_slots", {}).get(key, {})
+        total = int(slot.get("total", 0))
+        current = int(slot.get("expended", 0))
+        slot["expended"] = max(0, min(total, current + payload.delta))
+        data["spell_slots"][key] = slot
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_temp_hp(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool,
+        delta: int | None, absolute: int | None
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        hp = data["vitality"]["hit_points"]
+        current_temp = int(hp.get("temp") or 0)
+        if absolute is not None:
+            hp["temp"] = max(0, absolute)
+        elif delta is not None:
+            hp["temp"] = max(0, current_temp + delta)
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_max_hp(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool, value: int
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        hp = data["vitality"]["hit_points"]
+        hp["max"] = max(1, value)
+        hp["current"] = min(int(hp.get("current", 0)), hp["max"])
+        return await self._flush_campaign_cc(cc, data)
+
+    async def toggle_campaign_shield(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        data["shield_equipped"] = not bool(data.get("shield_equipped", False))
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_defenses(
+        self, campaign_id: UUID, character_id: UUID, defenses: str, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        data["defenses"] = defenses
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_conditions(
+        self, campaign_id: UUID, character_id: UUID, conditions: list, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        data["conditions"] = conditions
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_throwable_case_quantity(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool,
+        case_index: int, item_index: int, delta: int
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        cases = data.get("equipment", {}).get("throwable_cases", [])
+        if 0 <= case_index < len(cases):
+            items = cases[case_index].get("items", [])
+            if 0 <= item_index < len(items):
+                items[item_index]["quantity"] = max(
+                    0, int(items[item_index].get("quantity", 0)) + delta
+                )
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_sheet_data(
+        self, campaign_id: UUID, character_id: UUID, sheet_data: dict, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        """Replace the entire campaign-specific sheet with validated data."""
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        errors = validate_mandatory_fields(sheet_data)
+        if errors:
+            raise CharacterValidationError(errors)
+        sheet_data = self._normalize_sheet(sheet_data)
+        return await self._flush_campaign_cc(cc, sheet_data)
+
+    async def update_campaign_portrait(
+        self, campaign_id: UUID, character_id: UUID,
+        portrait_data: bytes, mime_type: str, user_id: UUID, is_dm: bool
+    ) -> CampaignCharacter:
+        """Store a portrait image on the campaign-specific character instance."""
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        cc.portrait_data = portrait_data
+        cc.portrait_mime_type = mime_type
+        await self._repo._db.flush()
+        return cc

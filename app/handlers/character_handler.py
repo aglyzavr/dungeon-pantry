@@ -267,7 +267,7 @@ async def edit_character_submit(
     form = await request.form()
     
     try:
-        updated_sheet = await service.build_sheet_from_form(character, form)
+        updated_sheet = await service.build_sheet_from_form(character.sheet_data, form)
         await service.update_sheet_data(character_id, updated_sheet)
         return RedirectResponse(
             url=f"/characters/{character_id}",
