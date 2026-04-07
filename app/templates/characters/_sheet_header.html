@@ -107,14 +107,10 @@
 
     {# ── Edit Button & Campaign Navigation ─────────────────────── #}
     <div class="sheet-header-edit-section">
-        {% if campaign %}
-        <a href="/campaigns/{{ campaign.id }}" class="btn-campaign-back" title="{{ _("Back to campaign") }}">
-            ← {{ campaign.name }}
-        </a>
-        {% elif campaigns %}
-        {% set first_campaign = campaigns[0] %}
-        <a href="/campaigns/{{ first_campaign.id }}" class="btn-campaign-back" title="{{ _("Back to campaign") }}">
-            ← {{ first_campaign.name }}
+        {% set nav_campaign = campaign if campaign else (campaigns[0] if campaigns else none) %}
+        {% if nav_campaign %}
+        <a href="/campaigns/{{ nav_campaign.id }}" class="btn-campaign-back" title="{{ _("Back to campaign") }}">
+            ← {{ nav_campaign.name }}
         </a>
         {% endif %}
         {% if can_edit %}
