@@ -3,7 +3,7 @@
 
 set -e
 
-# apply database migrations (silently ignore if alembic is not yet configured)
+# apply database migrations
 echo "==> Running database migrations"
 alembic upgrade head
 

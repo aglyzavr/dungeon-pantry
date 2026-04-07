@@ -1,12 +1,11 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models.share_link import ShareLink
-
 
 class ShareLinkRepository:
     def __init__(self, db: AsyncSession):
@@ -44,19 +43,15 @@ class ShareLinkRepository:
         return link
 
     async def revoke(self, token: str) -> None:
-        result = await self._db.execute(
-            select(ShareLink).where(ShareLink.id == token)
+        await self._db.execute(
+            update(ShareLink)
+            .where(ShareLink.id == token)
+            .values(is_active=False)
         )
-        link = result.scalar_one_or_none()
-        if link:
-            link.is_active = False
-            await self._db.flush()
+        await self._db.flush()
 
     async def delete(self, token: str) -> None:
-        result = await self._db.execute(
-            select(ShareLink).where(ShareLink.id == token)
+        await self._db.execute(
+            delete(ShareLink).where(ShareLink.id == token)
         )
-        link = result.scalar_one_or_none()
-        if link:
-            await self._db.delete(link)
-            await self._db.flush()
+        await self._db.flush()

@@ -69,6 +69,13 @@ class HPUpdate(BaseModel):
             return None
         return v
 
+    @field_validator("delta", "value", mode="after")
+    @classmethod
+    def bounded(cls, v: int | None) -> int | None:
+        if v is not None and not (-9999 <= v <= 9999):
+            raise ValueError("Value must be between -9999 and 9999")
+        return v
+
 
 class DeathSaveUpdate(BaseModel):
     save_type: str
@@ -107,6 +114,13 @@ class MaxHPUpdate(BaseModel):
     def coerce_default(cls, v):
         if v == "" or v is None:
             return 1
+        return v
+
+    @field_validator("value", mode="after")
+    @classmethod
+    def bounded(cls, v: int) -> int:
+        if not (1 <= v <= 9999):
+            raise ValueError("Max HP must be between 1 and 9999")
         return v
 
 

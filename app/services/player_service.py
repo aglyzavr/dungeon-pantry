@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.character import Character
@@ -59,7 +60,12 @@ class PlayerService:
             role="player",
         )
         self._db.add(user)
-        await self._db.flush()
+        try:
+            await self._db.flush()
+        except IntegrityError:
+            raise UsernameAlreadyExists(
+                f"Username '{data.username}' is already taken"
+            )
         return user
 
     async def update_password(self, player_id: UUID, new_password: str) -> None:
