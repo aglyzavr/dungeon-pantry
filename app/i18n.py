@@ -161,5 +161,5 @@ def error_response(
 
 def _get_error_templates() -> Jinja2Templates:
     """Return the shared Jinja2Templates instance (lazy import to avoid circular imports)."""
-    from app.templates_config import templates  # noqa: PLC0415
+    from app.templates_config import templates
     return templates

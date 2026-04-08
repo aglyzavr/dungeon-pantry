@@ -1293,7 +1293,10 @@ function openNotesModal(row) {
     var body = document.getElementById('notes-modal-content');
     body.innerHTML = '';
     if (notesHtml) {
-        body.innerHTML = '<div class="notes-modal-text markdown-prose">' + notesHtml + '</div>';
+        var div = document.createElement('div');
+        div.className = 'notes-modal-text markdown-prose';
+        div.innerHTML = notesHtml;
+        body.appendChild(div);
     } else {
         var p = document.createElement('p');
         p.textContent = notes;
