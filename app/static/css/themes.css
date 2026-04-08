@@ -1,285 +1,285 @@
 /* ========================================
    THEMES.CSS - Light and Dark Theme Variables
-   SaaS-inspired dark theme with purple accents
+   Android Studio Darcula (dark) + IntelliJ Light
    ======================================== */
 
-/* Root - Default to Dark Theme (SaaS-style) */
+/* Root - Default to Dark Theme (AS Darcula) */
 :root {
-/* Surfaces — warm dark parchment */
-  --color-bg-primary:    #1a1612;
-  --color-bg-secondary:  #211d18;
-  --color-bg-tertiary:   #2a2520;
-  --color-bg-light:      #35302a;
-  
-   /* Text */
-  --color-text-primary:   #e8e0d0;
-  --color-text-secondary: #c4b9a8;
-  --color-text-tertiary:  #8a7f70;
-  --color-text-muted:     #5a5248;
-  
-  /* Borders */
-  --color-border:       #2e2920;
-  --color-border-light: #3d3830;
-  
-  /* Accent — aged gold instead of neon purple */
-  --color-accent:             #c8922a;
-  --color-accent-hover:       #e0a83a;
-  --color-accent-hover-bg:    rgba(200, 146, 42, 0.1);
-  --color-accent-hover-shadow: rgba(200, 146, 42, 0.25);
-  --color-accent-light:       #f5dfa0;
+  /* Surfaces — Darcula editor / panel */
+  --color-bg-primary:    #2B2B2B;
+  --color-bg-secondary:  #3C3F41;
+  --color-bg-tertiary:   #3C3F41;
+  --color-bg-light:      #4E5254;
 
-  /* Primary button — deep crimson */
-  --color-button-bg:    #7a3020;
-  --color-button-hover: #8f3a26;
-  
+  /* Text */
+  --color-text-primary:   #A9B7C6;
+  --color-text-secondary: #808080;
+  --color-text-tertiary:  #6A8759;
+  --color-text-muted:     #616161;
+
+  /* Borders */
+  --color-border:       #515151;
+  --color-border-light: #606060;
+
+  /* Accent — AS blue */
+  --color-accent:              #4D78CC;
+  --color-accent-hover:        #6D94DC;
+  --color-accent-hover-bg:     rgba(77, 120, 204, 0.1);
+  --color-accent-hover-shadow: rgba(77, 120, 204, 0.25);
+  --color-accent-light:        #A8C8F8;
+
+  /* Primary button — AS blue */
+  --color-button-bg:    #4D78CC;
+  --color-button-hover: #6D94DC;
+
   --color-message-success: #052e16;
   --color-message-success-border: #166534;
   --color-message-success-text: #86efac;
-  
+
   --color-message-error: #450a0a;
   --color-message-error-border: #dc2626;
   --color-message-error-text: #fca5a5;
-  
+
   --color-success: #22c55e;
   --color-error: #ef4444;
-  
+
   --color-message-warning: #422006;
   --color-message-warning-border: #d97706;
   --color-message-warning-text: #fbbf24;
-  
+
   --color-warning-bg: rgba(217, 119, 6, 0.1);
   --color-warning-border: #fbbf24;
   --color-warning-text: #fbbf24;
-  
+
   --color-message-info: #0c1a2e;
-  --color-message-info-border: #7c3aed;
-  --color-message-info-text: #c4b5fd;
-  
-  --color-role-dm-bg: #581c87;
-  --color-role-dm-text: #e9d5ff;
+  --color-message-info-border: #4D78CC;
+  --color-message-info-text: #A9B7C6;
+
+  --color-role-dm-bg: #214283;
+  --color-role-dm-text: #A9B7C6;
   --color-role-player-bg: #27272a;
   --color-role-player-text: #d4d4d8;
-  
-    /* Cards */
-  --color-card-bg:    #211d18;
-  --color-card-hover: #2a2520;
-  
-    --color-form-bg:    #211d18;
-  --color-form-border: #3d3830;
-  --color-form-accent: #c8922a;
-  --color-form-text: #ffffff;
-  --color-form-placeholder: #71717a;
 
-  --color-vitals-accent: #a855f7;
-  --color-vitals-accent-soft: #e9d5ff;
-  --color-vitals-warning: #eab308;
-  --color-vitals-health-high: #4ade80;
-  --color-vitals-health-mid: #facc15;
-  --color-vitals-health-low: #f87171;
-  --color-vitals-info: #c4b5fd;
-  --color-vitals-info-strong: #e8e0d0;
-  --color-vitals-heal-hover: #166534;
-  --color-vitals-heal-active: #14532d;
-  --color-vitals-damage-active: #450a0a;
-  --color-vitals-slot-border: #c084fc;
-  --color-vitals-slot-fill: #9333ea;
-  --color-vitals-slot-text: #e9d5ff;
-  --color-vitals-slot-restore-hover: #7e22ce;
-  --color-vitals-slot-restore-active: #581c87;
+  /* Cards */
+  --color-card-bg:    #3C3F41;
+  --color-card-hover: #4E5254;
 
-  --color-positive: #4ade80;
+  --color-form-bg:          #3C3F41;
+  --color-form-border:      #606060;
+  --color-form-accent:      #4D78CC;
+  --color-form-text:        #A9B7C6;
+  --color-form-placeholder: #616161;
+
+  --color-vitals-accent:           #6A8759;
+  --color-vitals-accent-soft:      #8AB49A;
+  --color-vitals-warning:          #CC7832;
+  --color-vitals-health-high:      #6A8759;
+  --color-vitals-health-mid:       #CC7832;
+  --color-vitals-health-low:       #f87171;
+  --color-vitals-info:             #6897BB;
+  --color-vitals-info-strong:      #A9B7C6;
+  --color-vitals-heal-hover:       #166534;
+  --color-vitals-heal-active:      #14532d;
+  --color-vitals-damage-active:    #450a0a;
+  --color-vitals-slot-border:      #6A8759;
+  --color-vitals-slot-fill:        #4A6B4A;
+  --color-vitals-slot-text:        #8AB49A;
+  --color-vitals-slot-restore-hover:  #4A6B4A;
+  --color-vitals-slot-restore-active: #2E4D2E;
+
+  --color-positive: #6A8759;
   --color-negative: #f87171;
 
-  --color-marker-unproficient: #3f3f46;
+  --color-marker-unproficient: #4E5254;
 
   --color-danger-text: #fca5a5;
-  --color-avatar-bg: #581c87;
-  --color-interactive: #a855f7;
-  --color-interactive-hover: #9333ea;
+  --color-avatar-bg:   #214283;
+  --color-interactive:       #4D78CC;
+  --color-interactive-hover: #6D94DC;
 
-  --color-currency-copper: #ea580c;
-  --color-currency-electrum: #c4b5fd;
-  --color-currency-gold: #facc15;
-  --color-currency-platinum: #e9d5ff;
+  --color-currency-copper:   #ea580c;
+  --color-currency-electrum: #6897BB;
+  --color-currency-gold:     #CC7832;
+  --color-currency-platinum: #A9B7C6;
 
-  --color-tag-spell-bg: rgba(168, 85, 247, 0.4);
+  --color-tag-spell-bg:           rgba(106, 135, 89, 0.4);
   --color-tag-concentration-text: #fcd34d;
-  --color-tag-ritual-text: #e9d5ff;
+  --color-tag-ritual-text:        #8AB49A;
 
-  --color-banner-info-bg: rgba(88, 28, 135, 0.4);
-  --color-banner-info-border: #7e22ce;
-  --color-banner-info-text: #e9d5ff;
+  --color-banner-info-bg:     rgba(77, 120, 204, 0.2);
+  --color-banner-info-border: #4D78CC;
+  --color-banner-info-text:   #A9B7C6;
 
-  --color-overlay-shadow-sm: rgba(0, 0, 0, 0.5);
-  --color-bg-secondary-20: rgba(12, 12, 14, 0.2);
-  --color-bg-secondary-30: rgba(12, 12, 14, 0.3);
-  --color-bg-secondary-40: rgba(12, 12, 14, 0.4);
-  --color-bg-secondary-50: rgba(12, 12, 14, 0.5);
-  --color-bg-secondary-60: rgba(12, 12, 14, 0.6);
-  --color-bg-secondary-70: rgba(12, 12, 14, 0.7);
-  --color-bg-primary-95: rgba(0, 0, 0, 0.95);
+  --color-overlay-shadow-sm:   rgba(0, 0, 0, 0.5);
+  --color-bg-secondary-20: rgba(60, 63, 65, 0.2);
+  --color-bg-secondary-30: rgba(60, 63, 65, 0.3);
+  --color-bg-secondary-40: rgba(60, 63, 65, 0.4);
+  --color-bg-secondary-50: rgba(60, 63, 65, 0.5);
+  --color-bg-secondary-60: rgba(60, 63, 65, 0.6);
+  --color-bg-secondary-70: rgba(60, 63, 65, 0.7);
+  --color-bg-primary-95:   rgba(43, 43, 43, 0.95);
 
-  --color-status-blue-bg: rgba(168, 85, 247, 0.4);
-  --color-status-green-bg: rgba(34, 197, 94, 0.4);
-  --color-status-red-bg: rgba(239, 68, 68, 0.4);
-  --color-status-purple-bg: rgba(168, 85, 247, 0.4);
-  --color-status-purple-glow: rgba(192, 132, 252, 0.4);
+  --color-status-blue-bg:   rgba(77, 120, 204, 0.4);
+  --color-status-green-bg:  rgba(34, 197, 94, 0.4);
+  --color-status-red-bg:    rgba(239, 68, 68, 0.4);
+  --color-status-purple-bg: rgba(106, 135, 89, 0.4);
+  --color-status-purple-glow: rgba(138, 180, 154, 0.4);
 
-  --color-tag-indigo-bg: rgba(168, 85, 247, 0.4);
-  --color-tag-amber-bg-40: rgba(180, 83, 9, 0.4);
-  --color-tag-purple-bg-40: rgba(88, 28, 135, 0.4);
+  --color-tag-indigo-bg:    rgba(77, 120, 204, 0.4);
+  --color-tag-amber-bg-40:  rgba(204, 120, 50, 0.4);
+  --color-tag-purple-bg-40: rgba(106, 135, 89, 0.4);
 
   --color-currency-orange-bg: rgba(234, 88, 12, 0.3);
-  --color-currency-blue-bg: rgba(168, 85, 247, 0.3);
-  --color-currency-amber-bg: rgba(180, 83, 9, 0.3);
-  --color-currency-purple-bg: rgba(147, 51, 234, 0.3);
+  --color-currency-blue-bg:   rgba(104, 151, 187, 0.3);
+  --color-currency-amber-bg:  rgba(204, 120, 50, 0.3);
+  --color-currency-purple-bg: rgba(106, 135, 89, 0.3);
 
-  --color-danger-bg-40: rgba(127, 29, 29, 0.4);
-  --color-focus-success-ring: rgba(168, 85, 247, 0.15);
+  --color-danger-bg-40:       rgba(127, 29, 29, 0.4);
+  --color-focus-success-ring: rgba(106, 135, 89, 0.15);
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 8px 24px rgba(168, 85, 247, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(77, 120, 204, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Light Theme */
 [data-theme="light"] {
-  --color-bg-primary: #eee7d8;
-  --color-bg-secondary: #e0d8c7;
-  --color-bg-tertiary: #d2c8b7;
-  --color-bg-light: #c8baae;
-  
-  --color-text-primary: #0c0b09;
-  --color-text-secondary: #2e2a24;
-  --color-text-tertiary: #945c7f;
-  --color-text-muted: #948d7f;
-  
-  --color-border: #e0d8c7;
-  --color-border-light: #c8baae;
-  
-  --color-accent: #7e730f;
-  --color-accent-hover: #e1bf30;
-  --color-accent-hover-bg: rgba(126, 115, 15, 0.1);
-  --color-accent-hover-shadow: rgba(126, 115, 15, 0.2);
-  --color-accent-light: #7e730f;
-  --color-button-bg: #e1bf30;
-  --color-button-hover: #e1c575;
-  
+  --color-bg-primary:   #F2F2F2;
+  --color-bg-secondary: #EAEAEA;
+  --color-bg-tertiary:  #E0E0E0;
+  --color-bg-light:     #D3D3D3;
+
+  --color-text-primary:   #1E1E1E;
+  --color-text-secondary: #383838;
+  --color-text-tertiary:  #067D17;
+  --color-text-muted:     #999999;
+
+  --color-border:       #D3D3D3;
+  --color-border-light: #C4C4C4;
+
+  --color-accent:              #4D78CC;
+  --color-accent-hover:        #2D60BA;
+  --color-accent-hover-bg:     rgba(77, 120, 204, 0.1);
+  --color-accent-hover-shadow: rgba(77, 120, 204, 0.2);
+  --color-accent-light:        #4D78CC;
+  --color-button-bg:    #4D78CC;
+  --color-button-hover: #2D60BA;
+
   --color-message-success: #dcfce7;
   --color-message-success-border: #86efac;
   --color-message-success-text: #166534;
-  
+
   --color-message-error: #fef2f2;
   --color-message-error-border: #fca5a5;
   --color-message-error-text: #991b1b;
-  
-  --color-success: #16a34a;
+
+  --color-success: #067D17;
   --color-error: #dc2626;
-  
+
   --color-message-warning: #fffbeb;
   --color-message-warning-border: #f59e0b;
   --color-message-warning-text: #92400e;
-  
+
   --color-warning-bg: rgba(245, 158, 11, 0.1);
   --color-warning-border: #f59e0b;
   --color-warning-text: #92400e;
-  
+
   --color-message-info: #eff6ff;
-  --color-message-info-border: #93c5fd;
-  --color-message-info-text: #1e40af;
-  
-  --color-role-dm-bg: #ce7f7e;
-  --color-role-dm-text: #e1bf30;
-  --color-role-player-bg: #c8baae;
-  --color-role-player-text: #e0d8c7;
-  
-  --color-card-bg: #f5f5f5;
-  --color-card-hover: #e0d8c7;
-  
-  --color-form-bg: #f5f5f5;
-  --color-form-border: #d2c8b7;
-  --color-form-text: #0c0b09;
-  --color-form-placeholder: #948d7f;
-  --color-form-accent: #059669;
+  --color-message-info-border: #4D78CC;
+  --color-message-info-text: #0033B3;
 
-  --color-vitals-accent: #7e730f;
-  --color-vitals-accent-soft: #7e730f;
-  --color-vitals-warning: #db9d08;
-  --color-vitals-health-high: #16a34a;
-  --color-vitals-health-mid: #db9d08;
-  --color-vitals-health-low: #dc2626;
-  --color-vitals-info: #1e40af;
-  --color-vitals-info-strong: #0480db;
-  --color-vitals-heal-hover: #bbf7d0;
-  --color-vitals-heal-active: #86efac;
-  --color-vitals-damage-active: #fecaca;
-  --color-vitals-slot-border: #8770f0;
-  --color-vitals-slot-fill: #3f00b0;
-  --color-vitals-slot-text: #e1bf30;
-  --color-vitals-slot-restore-hover: #8770f0;
-  --color-vitals-slot-restore-active: #3f00b0;
+  --color-role-dm-bg:     #D0E4FF;
+  --color-role-dm-text:   #0033B3;
+  --color-role-player-bg: #EAEAEA;
+  --color-role-player-text: #383838;
 
-  --color-positive: #16a34a;
+  --color-card-bg:    #FFFFFF;
+  --color-card-hover: #EAEAEA;
+
+  --color-form-bg:          #FFFFFF;
+  --color-form-border:      #D3D3D3;
+  --color-form-text:        #1E1E1E;
+  --color-form-placeholder: #999999;
+  --color-form-accent:      #067D17;
+
+  --color-vitals-accent:           #067D17;
+  --color-vitals-accent-soft:      #067D17;
+  --color-vitals-warning:          #B85C00;
+  --color-vitals-health-high:      #067D17;
+  --color-vitals-health-mid:       #B85C00;
+  --color-vitals-health-low:       #dc2626;
+  --color-vitals-info:             #0033B3;
+  --color-vitals-info-strong:      #0033B3;
+  --color-vitals-heal-hover:       #bbf7d0;
+  --color-vitals-heal-active:      #86efac;
+  --color-vitals-damage-active:    #fecaca;
+  --color-vitals-slot-border:      #067D17;
+  --color-vitals-slot-fill:        #067D17;
+  --color-vitals-slot-text:        #FFFFFF;
+  --color-vitals-slot-restore-hover:  #045C10;
+  --color-vitals-slot-restore-active: #045C10;
+
+  --color-positive: #067D17;
   --color-negative: #dc2626;
 
-  --color-marker-unproficient: #948d7f;
+  --color-marker-unproficient: #D3D3D3;
 
   --color-danger-text: #dc2626;
-  --color-avatar-bg: #c8baae;
-  --color-interactive: #e1bf30;
-  --color-interactive-hover: #e1c575;
+  --color-avatar-bg:   #D0E4FF;
+  --color-interactive:       #4D78CC;
+  --color-interactive-hover: #2D60BA;
 
-  --color-currency-copper: #c1590a;
-  --color-currency-electrum: #7e730f;
-  --color-currency-gold: #db9d08;
-  --color-currency-platinum: #945c7f;
+  --color-currency-copper:   #B85C00;
+  --color-currency-electrum: #4D78CC;
+  --color-currency-gold:     #B85C00;
+  --color-currency-platinum: #999999;
 
-  --color-tag-spell-bg: rgba(225, 191, 48, 0.5);
-  --color-tag-concentration-text: #db9d08;
-  --color-tag-ritual-text: #945c7f;
+  --color-tag-spell-bg:           rgba(6, 125, 23, 0.25);
+  --color-tag-concentration-text: #B85C00;
+  --color-tag-ritual-text:        #067D17;
 
-  --color-banner-info-bg: rgba(126, 115, 15, 0.2);
-  --color-banner-info-border: #7e730f;
-  --color-banner-info-text: #7e730f;
+  --color-banner-info-bg:     rgba(77, 120, 204, 0.15);
+  --color-banner-info-border: #4D78CC;
+  --color-banner-info-text:   #0033B3;
 
   --color-overlay-shadow-sm: rgba(0, 0, 0, 0.15);
-  --color-bg-secondary-20: rgba(224, 216, 199, 0.2);
-  --color-bg-secondary-30: rgba(224, 216, 199, 0.3);
-  --color-bg-secondary-40: rgba(224, 216, 199, 0.4);
-  --color-bg-secondary-50: rgba(224, 216, 199, 0.5);
-  --color-bg-secondary-60: rgba(224, 216, 199, 0.6);
-  --color-bg-secondary-70: rgba(224, 216, 199, 0.7);
-  --color-bg-primary-95: rgba(238, 231, 216, 0.95);
+  --color-bg-secondary-20: rgba(234, 234, 234, 0.2);
+  --color-bg-secondary-30: rgba(234, 234, 234, 0.3);
+  --color-bg-secondary-40: rgba(234, 234, 234, 0.4);
+  --color-bg-secondary-50: rgba(234, 234, 234, 0.5);
+  --color-bg-secondary-60: rgba(234, 234, 234, 0.6);
+  --color-bg-secondary-70: rgba(234, 234, 234, 0.7);
+  --color-bg-primary-95:   rgba(242, 242, 242, 0.95);
 
-  --color-status-blue-bg: rgba(4, 128, 219, 0.4);
-  --color-status-green-bg: rgba(22, 163, 74, 0.35);
-  --color-status-red-bg: rgba(220, 38, 38, 0.35);
-  --color-status-purple-bg: rgba(63, 0, 176, 0.35);
-  --color-status-purple-glow: rgba(148, 92, 127, 0.4);
+  --color-status-blue-bg:     rgba(77, 120, 204, 0.4);
+  --color-status-green-bg:    rgba(6, 125, 23, 0.25);
+  --color-status-red-bg:      rgba(220, 38, 38, 0.35);
+  --color-status-purple-bg:   rgba(6, 125, 23, 0.25);
+  --color-status-purple-glow: rgba(6, 125, 23, 0.3);
 
-  --color-tag-indigo-bg: rgba(126, 115, 15, 0.35);
-  --color-tag-amber-bg-40: rgba(219, 157, 8, 0.4);
-  --color-tag-purple-bg-40: rgba(148, 92, 127, 0.4);
+  --color-tag-indigo-bg:    rgba(77, 120, 204, 0.35);
+  --color-tag-amber-bg-40:  rgba(184, 92, 0, 0.4);
+  --color-tag-purple-bg-40: rgba(6, 125, 23, 0.25);
 
-  --color-currency-orange-bg: rgba(193, 89, 10, 0.3);
-  --color-currency-blue-bg: rgba(4, 128, 219, 0.3);
-  --color-currency-amber-bg: rgba(219, 157, 8, 0.3);
-  --color-currency-purple-bg: rgba(148, 92, 127, 0.3);
+  --color-currency-orange-bg: rgba(184, 92, 0, 0.3);
+  --color-currency-blue-bg:   rgba(77, 120, 204, 0.3);
+  --color-currency-amber-bg:  rgba(184, 92, 0, 0.3);
+  --color-currency-purple-bg: rgba(6, 125, 23, 0.25);
 
-  --color-danger-bg-40: rgba(220, 38, 38, 0.15);
-  --color-focus-success-ring: rgba(22, 163, 74, 0.12);
+  --color-danger-bg-40:       rgba(220, 38, 38, 0.15);
+  --color-focus-success-ring: rgba(6, 125, 23, 0.12);
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.08);
   --shadow-card-hover: 0 4px 6px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.15);
 
-  background-color: #eee7d8;
-  color: #0c0b09;
+  background-color: #F2F2F2;
+  color: #1E1E1E;
 }
 
 /* Dark Theme - HTML element (default) */
 html {
-  background-color: #000000;
+  background-color: #2B2B2B;
 }
 
 /* Base typography - SaaS-inspired Lato font */
