@@ -10,7 +10,7 @@ The test suite is pure Python and **does not require a running PostgreSQL databa
 
 You need:
 
-- **Python 3.12+**
+- **Python 3.13+**
 - The project dependencies installed in your environment (see [Quick setup](#quick-setup))
 
 ---
@@ -19,7 +19,7 @@ You need:
 
 ```bash
 # 1. Create and activate a virtual environment
-python3.12 -m venv .venv
+python3.13 -m venv .venv
 source .venv/bin/activate        # On Windows: .venv\Scripts\activate
 
 # 2. Install all dependencies (including test tools)

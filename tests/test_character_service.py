@@ -232,6 +232,28 @@ class TestNormalizeSheet:
         assert thrown_item["weight"] == 0
         assert thrown_item["quantity"] == 1
 
+    def test_preserves_decimal_equipment_weights(self):
+        data = {
+            "equipment": {
+                "armor": [{"name": "Chain Shirt", "weight": "13.5"}],
+                "weapons": [{"name": "Dagger", "weight": "0.25"}],
+                "throwable_cases": [
+                    {
+                        "name": "Quiver",
+                        "weight": "0.1",
+                        "items": [{"name": "Arrow", "weight": "0.05", "quantity": 20}],
+                    }
+                ],
+            }
+        }
+
+        result = self.service._normalize_sheet(data)
+
+        assert result["equipment"]["armor"][0]["weight"] == pytest.approx(13.5)
+        assert result["equipment"]["weapons"][0]["weight"] == pytest.approx(0.25)
+        assert result["equipment"]["throwable_cases"][0]["weight"] == pytest.approx(0.1)
+        assert result["equipment"]["throwable_cases"][0]["items"][0]["weight"] == pytest.approx(0.05)
+
     def test_seeds_ability_scores_when_missing(self):
         """Abilities without ability_scores must get the canonical D&D 5e skill list."""
         result = self.service._normalize_sheet({})
@@ -291,6 +313,32 @@ class TestNormalizeSheet:
         assert scores["acrobatics"]["bonus"] == 3  # unchanged
         assert "sleight_of_hand" in scores  # added
         assert "stealth" in scores  # added
+
+
+# ---------------------------------------------------------------------------
+# build_sheet_from_form
+# ---------------------------------------------------------------------------
+
+
+class TestBuildSheetFromForm:
+    def setup_method(self):
+        self.service = _make_service()
+
+    @pytest.mark.asyncio
+    async def test_preserves_decimal_weight_values(self):
+        form = {
+            "equipment_list": "",
+            "throwable_cases_json": '[{"name":"Quiver","weight":0.1,"items":[{"name":"Arrow","quantity":20,"weight":0.05,"note":""}]}]',
+            "weapons_json": '[{"name":"Dagger","weight":0.25,"damage":"1d4","damage_type":"Piercing","properties":"Finesse","range":"20/60 ft","atk_bonus":"+5","action_type":"action"}]',
+            "armor_json": '[{"name":"Chain Shirt","weight":13.5,"armor_class":13,"notes":""}]',
+        }
+
+        result = await self.service.build_sheet_from_form(_base_sheet(), form)
+
+        assert result["equipment"]["throwable_cases"][0]["weight"] == pytest.approx(0.1)
+        assert result["equipment"]["throwable_cases"][0]["items"][0]["weight"] == pytest.approx(0.05)
+        assert result["equipment"]["weapons"][0]["weight"] == pytest.approx(0.25)
+        assert result["equipment"]["armor"][0]["weight"] == pytest.approx(13.5)
 
 
 # ---------------------------------------------------------------------------

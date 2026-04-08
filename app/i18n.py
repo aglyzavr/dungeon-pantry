@@ -98,6 +98,7 @@ def render_template(
     context["ngettext"] = translator.ngettext
     
     return templates.TemplateResponse(
+        context["request"],
         name,
         context,
         status_code=status_code,

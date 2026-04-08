@@ -45,6 +45,20 @@ class CharacterService:
     @staticmethod
     def _default_skill_entry() -> dict:
         return {"bonus": 0, "proficient": False, "advantage": "none"}
+
+    @staticmethod
+    def _safe_non_negative_int(value, default=0):
+        try:
+            return max(0, int(value))
+        except (TypeError, ValueError):
+            return default
+
+    @staticmethod
+    def _safe_non_negative_float(value, default=0.0):
+        try:
+            return max(0.0, float(value))
+        except (TypeError, ValueError):
+            return default
     
     @staticmethod
     def _blank_sheet() -> dict:
@@ -568,20 +582,14 @@ class CharacterService:
         if not isinstance(equipment.get("armor"), list):
             equipment["armor"] = []
 
-        def _safe_non_negative_int(value, default=0):
-            try:
-                return max(0, int(value))
-            except (TypeError, ValueError):
-                return default
-
         normalized_armor = []
         for piece in equipment["armor"]:
             if not isinstance(piece, dict):
                 continue
             normalized_piece = copy.deepcopy(piece)
             normalized_piece.setdefault("name", "")
-            normalized_piece["weight"] = _safe_non_negative_int(normalized_piece.get("weight", 0), 0)
-            normalized_piece["armor_class"] = _safe_non_negative_int(normalized_piece.get("armor_class", 0), 0)
+            normalized_piece["weight"] = self._safe_non_negative_float(normalized_piece.get("weight", 0), 0.0)
+            normalized_piece["armor_class"] = self._safe_non_negative_int(normalized_piece.get("armor_class", 0), 0)
             normalized_piece.setdefault("notes", "")
             normalized_armor.append(normalized_piece)
         equipment["armor"] = normalized_armor
@@ -592,7 +600,7 @@ class CharacterService:
                 continue
             normalized_weapon = copy.deepcopy(weapon)
             normalized_weapon.setdefault("name", "")
-            normalized_weapon["weight"] = _safe_non_negative_int(normalized_weapon.get("weight", 0), 0)
+            normalized_weapon["weight"] = self._safe_non_negative_float(normalized_weapon.get("weight", 0), 0.0)
             normalized_weapon.setdefault("damage", "")
             normalized_weapon.setdefault("damage_type", "")
             normalized_weapon.setdefault("properties", "")
@@ -605,7 +613,7 @@ class CharacterService:
                 continue
             normalized_case = copy.deepcopy(case)
             normalized_case.setdefault("name", "")
-            normalized_case["weight"] = _safe_non_negative_int(normalized_case.get("weight", 0), 0)
+            normalized_case["weight"] = self._safe_non_negative_float(normalized_case.get("weight", 0), 0.0)
             items = normalized_case.get("items", [])
             if not isinstance(items, list):
                 items = []
@@ -615,8 +623,8 @@ class CharacterService:
                     continue
                 normalized_item = copy.deepcopy(item)
                 normalized_item.setdefault("name", "")
-                normalized_item["weight"] = _safe_non_negative_int(normalized_item.get("weight", 0), 0)
-                normalized_item["quantity"] = _safe_non_negative_int(normalized_item.get("quantity", 1), 1)
+                normalized_item["weight"] = self._safe_non_negative_float(normalized_item.get("weight", 0), 0.0)
+                normalized_item["quantity"] = self._safe_non_negative_int(normalized_item.get("quantity", 1), 1)
                 normalized_items.append(normalized_item)
             normalized_case["items"] = normalized_items
             normalized_cases.append(normalized_case)
@@ -998,10 +1006,7 @@ class CharacterService:
                     case_name = str(case.get("name", "")).strip()
                     if not case_name:
                         continue
-                    try:
-                        case_weight = max(0, int(case.get("weight", 0)))
-                    except (ValueError, TypeError):
-                        case_weight = 0
+                    case_weight = self._safe_non_negative_float(case.get("weight", 0), 0.0)
                     items = []
                     for item in (case.get("items") or []):
                         if not isinstance(item, dict):
@@ -1009,13 +1014,10 @@ class CharacterService:
                         item_name = str(item.get("name", "")).strip()
                         if not item_name:
                             continue
-                        try:
-                            item_weight = max(0, int(item.get("weight", 0)))
-                        except (ValueError, TypeError):
-                            item_weight = 0
+                        item_weight = self._safe_non_negative_float(item.get("weight", 0), 0.0)
                         items.append({
                             "name": item_name,
-                            "quantity": max(0, int(item.get("quantity", 0))),
+                            "quantity": self._safe_non_negative_int(item.get("quantity", 0), 0),
                             "weight": item_weight,
                             "note": str(item.get("note", "")).strip(),
                         })
@@ -1041,10 +1043,7 @@ class CharacterService:
                     w_action_type = str(weapon.get("action_type", "")).strip()
                     if w_action_type not in ("action", "bonus_action", "reaction", "none"):
                         w_action_type = "none"
-                    try:
-                        weapon_weight = max(0, int(weapon.get("weight", 0)))
-                    except (ValueError, TypeError):
-                        weapon_weight = 0
+                    weapon_weight = self._safe_non_negative_float(weapon.get("weight", 0), 0.0)
                     weapons.append({
                         "name": weapon_name,
                         "damage": str(weapon.get("damage", "")).strip(),
@@ -1073,14 +1072,8 @@ class CharacterService:
                     piece_name = str(piece.get("name", "")).strip()
                     if not piece_name:
                         continue
-                    try:
-                        piece_weight = max(0, int(piece.get("weight", 0)))
-                    except (ValueError, TypeError):
-                        piece_weight = 0
-                    try:
-                        piece_ac = max(0, int(piece.get("armor_class", 0)))
-                    except (ValueError, TypeError):
-                        piece_ac = 0
+                    piece_weight = self._safe_non_negative_float(piece.get("weight", 0), 0.0)
+                    piece_ac = self._safe_non_negative_int(piece.get("armor_class", 0), 0)
                     armor.append({
                         "name": piece_name,
                         "weight": piece_weight,

@@ -319,10 +319,10 @@ class TestPostCreateCharacterHandler:
         if data:
             form.update(data)
 
+        self.client.cookies.set("csrf_token", csrf)
         return self.client.post(
             "/characters/new",
             data=form,
-            cookies={"csrf_token": csrf},
         )
 
     def test_valid_submission_redirects_to_character(self):

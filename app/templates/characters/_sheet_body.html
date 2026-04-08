@@ -891,15 +891,15 @@
             {# Compute total weight across armor, weapons and throwable case items #}
             {% set tw = namespace(value=0) %}
             {% for piece in sheet.equipment.get("armor", []) if piece.get("name") %}
-                {% set tw.value = tw.value + (piece.get("weight", 0) | int) %}
+                {% set tw.value = tw.value + (piece.get("weight", 0) | float) %}
             {% endfor %}
             {% for wpn in sheet.equipment.get("weapons", []) if wpn.get("name") %}
-                {% set tw.value = tw.value + (wpn.get("weight", 0) | int) %}
+                {% set tw.value = tw.value + (wpn.get("weight", 0) | float) %}
             {% endfor %}
             {% for tcase in sheet.equipment.get("throwable_cases", []) %}
-                {% set tw.value = tw.value + (tcase.get("weight", 0) | int) %}
+                {% set tw.value = tw.value + (tcase.get("weight", 0) | float) %}
                 {% for item in tcase.get("items", []) if item.get("name") %}
-                    {% set tw.value = tw.value + ((item.get("weight", 0) | int) * (item.get("quantity", 1) | int)) %}
+                    {% set tw.value = tw.value + ((item.get("weight", 0) | float) * (item.get("quantity", 1) | int)) %}
                 {% endfor %}
             {% endfor %}
 
@@ -908,7 +908,7 @@
                 <div class="inventory-section-header">
                     <h3 class="content-section-title">{{ _("Equipment") }}</h3>
                     {% if tw.value > 0 %}
-                    <span class="inventory-total-weight">⚖ {{ tw.value }} lb</span>
+                    <span class="inventory-total-weight">⚖ {{ "%.2f"|format(tw.value | float) }} lb</span>
                     {% endif %}
                 </div>
                 <ul class="inventory-grid">
@@ -926,7 +926,7 @@
             <div class="content-section">
                 <div class="inventory-section-header">
                     <h3 class="content-section-title">{{ _("Equipment") }}</h3>
-                    <span class="inventory-total-weight">⚖ {{ tw.value }} lb</span>
+                    <span class="inventory-total-weight">⚖ {{ "%.2f"|format(tw.value | float) }} lb</span>
                 </div>
             </div>
             {% endif %}
@@ -991,7 +991,7 @@
                             {% for piece in armor_items %}
                             <tr class="armor-table-row">
                                 <td class="armor-table-cell armor-table-name">{{ piece.name }}</td>
-                                <td class="armor-table-cell armor-table-weight">{{ piece.get("weight", 0) | int }}</td>
+                                <td class="armor-table-cell armor-table-weight">{{ "%.2f"|format(piece.get("weight", 0) | float) }}</td>
                                 <td class="armor-table-cell armor-table-ac">{{ piece.get("armor_class", 0) | int }}</td>
                                 <td class="armor-table-cell armor-table-notes">{{ piece.get("notes", "") }}</td>
                             </tr>
@@ -1021,7 +1021,7 @@
                             {% for wpn in inv_weapons %}
                             <tr class="armor-table-row">
                                 <td class="armor-table-cell armor-table-name">{{ wpn.name }}</td>
-                                <td class="armor-table-cell armor-table-weight">{{ wpn.get("weight", 0) | int }}</td>
+                                <td class="armor-table-cell armor-table-weight">{{ "%.2f"|format(wpn.get("weight", 0) | float) }}</td>
                                 <td class="armor-table-cell armor-table-damage">{{ [wpn.get("damage", ""), wpn.get("damage_type", "")] | select | join(" ") }}</td>
                                 <td class="armor-table-cell armor-table-notes">{{ wpn.get("properties", "") }}</td>
                             </tr>
@@ -1040,8 +1040,8 @@
             <div class="content-section">
                 <div class="inventory-section-header">
                     <h3 class="content-section-title">{{ tcase.name }}</h3>
-                    {% if tcase.get("weight", 0) | int > 0 %}
-                    <span class="inventory-total-weight">⚖ {{ tcase.get("weight", 0) | int }} lb</span>
+                    {% if tcase.get("weight", 0) | float > 0 %}
+                    <span class="inventory-total-weight">⚖ {{ "%.2f"|format(tcase.get("weight", 0) | float) }} lb</span>
                     {% endif %}
                 </div>
                 {% if tcase["items"] %}
@@ -1052,8 +1052,8 @@
                         <div class="throwable-case-item-info">
                             <span class="throwable-case-item-name">{{ item.name }}</span>
                             <div class="throwable-case-item-right">
-                                {% if item.get("weight", 0) | int > 0 %}
-                                <span class="throwable-case-item-weight">⚖ {{ item.get("weight", 0) | int }} lb</span>
+                                {% if item.get("weight", 0) | float > 0 %}
+                                <span class="throwable-case-item-weight">⚖ {{ "%.2f"|format(item.get("weight", 0) | float) }} lb</span>
                                 {% endif %}
                                 <div class="throwable-case-item-qty">
                                     {% if can_edit %}

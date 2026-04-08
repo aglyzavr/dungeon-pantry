@@ -775,7 +775,7 @@
 
             <div class="form-group">
               <label>{{ _("Case Weight (lb)") }}</label>
-              <input type="number" min="0" x-model="tcase.weight">
+              <input type="number" min="0" step="any" x-model="tcase.weight">
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0 0.5rem; gap: 0.75rem;">
@@ -796,7 +796,7 @@
                   </div>
                   <div class="form-group">
                     <label>{{ _("Weight (lb)") }}</label>
-                    <input type="number" min="0" x-model="item.weight">
+                    <input type="number" min="0" step="any" x-model="item.weight">
                   </div>
                 </div>
                 <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 0.75rem;">
@@ -864,7 +864,7 @@
               </div>
               <div class="form-group">
                 <label>{{ _("Weight (lb)") }}</label>
-                <input type="number" min="0" x-model="weapon.weight">
+                <input type="number" min="0" step="any" x-model="weapon.weight">
               </div>
               <div class="form-group">
                 <label>{{ _("Action Type") }}</label>
@@ -904,7 +904,7 @@
               </div>
               <div class="form-group">
                 <label>{{ _("Weight (lb)") }}</label>
-                <input type="number" min="0" x-model="piece.weight">
+                <input type="number" min="0" step="any" x-model="piece.weight">
               </div>
               <div class="form-group">
                 <label>{{ _("Armor Class") }}</label>
