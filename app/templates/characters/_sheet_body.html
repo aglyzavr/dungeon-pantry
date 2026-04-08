@@ -982,7 +982,6 @@
                         <thead class="armor-table-head">
                             <tr>
                                 <th class="armor-table-head-cell">{{ _("Name") }}</th>
-                                <th class="armor-table-head-cell">{{ _("Weight (lb)") }}</th>
                                 <th class="armor-table-head-cell">{{ _("AC") }}</th>
                                 <th class="armor-table-head-cell">{{ _("Notes") }}</th>
                             </tr>
@@ -991,7 +990,6 @@
                             {% for piece in armor_items %}
                             <tr class="armor-table-row">
                                 <td class="armor-table-cell armor-table-name">{{ piece.name }}</td>
-                                <td class="armor-table-cell armor-table-weight">{{ "%.2f"|format(piece.get("weight", 0) | float) }}</td>
                                 <td class="armor-table-cell armor-table-ac">{{ piece.get("armor_class", 0) | int }}</td>
                                 <td class="armor-table-cell armor-table-notes">{{ piece.get("notes", "") }}</td>
                             </tr>
@@ -1012,7 +1010,6 @@
                         <thead class="armor-table-head">
                             <tr>
                                 <th class="armor-table-head-cell">{{ _("Name") }}</th>
-                                <th class="armor-table-head-cell">{{ _("Weight (lb)") }}</th>
                                 <th class="armor-table-head-cell">{{ _("Damage") }}</th>
                                 <th class="armor-table-head-cell">{{ _("Properties") }}</th>
                             </tr>
@@ -1021,7 +1018,6 @@
                             {% for wpn in inv_weapons %}
                             <tr class="armor-table-row">
                                 <td class="armor-table-cell armor-table-name">{{ wpn.name }}</td>
-                                <td class="armor-table-cell armor-table-weight">{{ "%.2f"|format(wpn.get("weight", 0) | float) }}</td>
                                 <td class="armor-table-cell armor-table-damage">{{ [wpn.get("damage", ""), wpn.get("damage_type", "")] | select | join(" ") }}</td>
                                 <td class="armor-table-cell armor-table-notes">{{ wpn.get("properties", "") }}</td>
                             </tr>
