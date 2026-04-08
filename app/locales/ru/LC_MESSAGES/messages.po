@@ -1090,6 +1090,9 @@ msgstr "Длинный отдых"
 msgid "Dawn"
 msgstr "Рассвет"
 
+msgid "Once per turn"
+msgstr "Один раз за ход"
+
 msgid "Optional description of what this resource does"
 msgstr "Необязательное описание способности"
 

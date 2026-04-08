@@ -1092,6 +1092,9 @@ msgstr "Long Rest"
 msgid "Dawn"
 msgstr "Dawn"
 
+msgid "Once per turn"
+msgstr "Once per turn"
+
 msgid "Optional description of what this resource does"
 msgstr "Optional description of what this resource does"
 
