@@ -7,9 +7,6 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from starlette.responses import Response
 
-# Module-level templates instance for error_response (avoids circular imports)
-_error_templates = Jinja2Templates(directory="app/templates")
-
 # Path to translations
 LOCALES_DIR = Path(__file__).parent / "locales"
 
@@ -154,10 +151,15 @@ def error_response(
     }
 
     return render_template(
-        _error_templates,
+        _get_error_templates(),
         "error.html",
         context,
         language=language,
         status_code=status_code,
     )
 
+
+def _get_error_templates() -> Jinja2Templates:
+    """Return the shared Jinja2Templates instance (lazy import to avoid circular imports)."""
+    from app.templates_config import templates
+    return templates

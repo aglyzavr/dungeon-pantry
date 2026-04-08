@@ -3,7 +3,6 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile, status
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -22,9 +21,9 @@ from app.services.character_service import (
     CharacterService,
 )
 from app.services.player_service import PlayerService
+from app.templates_config import templates
 
 router = APIRouter(prefix="/characters", tags=["Characters"])
-templates = Jinja2Templates(directory="app/templates")
 
 
 def _can_edit(current_user: UserSession, character) -> bool:

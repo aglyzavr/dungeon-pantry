@@ -2,7 +2,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -14,9 +13,9 @@ from app.services.share_link_service import (
     ShareLinkNotFound,
     ShareLinkService,
 )
+from app.templates_config import templates
 
 router = APIRouter(tags=["Share"])
-templates = Jinja2Templates(directory="app/templates")
 
 
 def _service(db: AsyncSession = Depends(get_db)) -> ShareLinkService:
