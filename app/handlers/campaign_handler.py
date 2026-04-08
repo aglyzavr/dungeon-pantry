@@ -4,7 +4,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, Request, UploadFile, status
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -22,9 +21,9 @@ from app.services.character_service import (
     CharacterService,
     CharacterValidationError,
 )
+from app.templates_config import templates
 
 router = APIRouter(prefix="/campaigns", tags=["Campaigns"])
-templates = Jinja2Templates(directory="app/templates")
 logger = logging.getLogger(__name__)
 
 

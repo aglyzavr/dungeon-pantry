@@ -443,14 +443,14 @@
                         </thead>
                         <tbody class="attacks-table-body">
                             {% for w in actions_list %}
-                            <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
+                            <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-notes-html="{{ w.notes | markdown | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
                                 <td class="attacks-table-cell attacks-table-name">
                                     {{ w.name }}
                                     {% if w.get("range") %}<span class="action-range">{{ w.range }}</span>{% endif %}
                                 </td>
                                 <td class="attacks-table-cell attacks-table-bonus">{{ w.atk_bonus_or_dc }}</td>
                                 <td class="attacks-table-cell attacks-table-damage">{{ w.damage_and_type }}</td>
-                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}</td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell markdown-prose">{{ w.notes | markdown | safe }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -477,14 +477,14 @@
                         </thead>
                         <tbody class="attacks-table-body">
                             {% for w in bonus_actions %}
-                            <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
+                            <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-notes-html="{{ w.notes | markdown | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
                                 <td class="attacks-table-cell attacks-table-name">
                                     {{ w.name }}
                                     {% if w.get("range") %}<span class="action-range">{{ w.range }}</span>{% endif %}
                                 </td>
                                 <td class="attacks-table-cell attacks-table-bonus">{{ w.atk_bonus_or_dc }}</td>
                                 <td class="attacks-table-cell attacks-table-damage">{{ w.damage_and_type }}</td>
-                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}</td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell markdown-prose">{{ w.notes | markdown | safe }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -511,14 +511,14 @@
                         </thead>
                         <tbody class="attacks-table-body">
                             {% for w in reactions %}
-                            <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
+                            <tr class="attacks-table-row" data-notes="{{ w.notes | e }}" data-notes-html="{{ w.notes | markdown | e }}" data-item-name="{{ w.name | e }}" onclick="openNotesModal(this)">
                                 <td class="attacks-table-cell attacks-table-name">
                                     {{ w.name }}
                                     {% if w.get("range") %}<span class="action-range">{{ w.range }}</span>{% endif %}
                                 </td>
                                 <td class="attacks-table-cell attacks-table-bonus">{{ w.atk_bonus_or_dc }}</td>
                                 <td class="attacks-table-cell attacks-table-damage">{{ w.damage_and_type }}</td>
-                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ w.notes }}</td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell markdown-prose">{{ w.notes | markdown | safe }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -562,7 +562,7 @@
                         <tbody class="attacks-table-body">
                             {% for res in class_feature_actions + class_feature_bonus + class_feature_reactions %}
                             {% set res_atype = res.get("action_type", "none") %}
-                            <tr class="attacks-table-row" data-notes="{{ res.description | e }}" data-item-name="{{ res.name | e }}" onclick="openNotesModal(this)">
+                            <tr class="attacks-table-row" data-notes="{{ res.description | e }}" data-notes-html="{{ res.description | markdown | e }}" data-item-name="{{ res.name | e }}" onclick="openNotesModal(this)">
                                 <td class="attacks-table-cell attacks-table-name">
                                     {{ res.name }}
                                     {% if res.recharge %}<span class="action-range">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
@@ -577,7 +577,7 @@
                                     {% endif %}
                                 </td>
                                 <td class="attacks-table-cell attacks-table-damage">{{ res.uses_current }}/{{ res.uses_max }}</td>
-                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell">{{ res.description }}</td>
+                                <td class="attacks-table-cell attacks-table-notes hidden sm:table-cell markdown-prose">{{ res.description | markdown | safe }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -624,21 +624,21 @@
             {% if sheet.class_features %}
             <div class="content-section mb-8">
                 <h3 class="content-section-title">{{ _("Class Features") }}</h3>
-                <p class="content-section-text">{{ sheet.class_features }}</p>
+                <div class="content-section-text markdown-prose">{{ sheet.class_features | markdown | safe }}</div>
             </div>
             {% endif %}
 
             {% if sheet.species_traits %}
             <div class="content-section mb-8">
                 <h3 class="content-section-title">{{ _("Species Traits") }}</h3>
-                <p class="content-section-text">{{ sheet.species_traits }}</p>
+                <div class="content-section-text markdown-prose">{{ sheet.species_traits | markdown | safe }}</div>
             </div>
             {% endif %}
 
             {% if sheet.feats %}
             <div class="content-section mb-8">
                 <h3 class="content-section-title">{{ _("Feats") }}</h3>
-                <p class="content-section-text">{{ sheet.feats }}</p>
+                <div class="content-section-text markdown-prose">{{ sheet.feats | markdown | safe }}</div>
             </div>
             {% endif %}
 
@@ -818,7 +818,7 @@
                         </div>
 
                         {% if spell.notes %}
-                        <p class="spell-notes">{{ spell.notes }}</p>
+                        <div class="spell-notes markdown-prose">{{ spell.notes | markdown | safe }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}
@@ -867,7 +867,7 @@
                         </div>
 
                         {% if spell.notes %}
-                        <p class="spell-notes">{{ spell.notes }}</p>
+                        <div class="spell-notes markdown-prose">{{ spell.notes | markdown | safe }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}
@@ -991,7 +991,7 @@
                             <tr class="armor-table-row">
                                 <td class="armor-table-cell armor-table-name">{{ piece.name }}</td>
                                 <td class="armor-table-cell armor-table-ac">{{ piece.get("armor_class", 0) | int }}</td>
-                                <td class="armor-table-cell armor-table-notes">{{ piece.get("notes", "") }}</td>
+                                <td class="armor-table-cell armor-table-notes markdown-prose">{{ piece.get("notes", "") | markdown | safe }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -1077,7 +1077,7 @@
                             </div>
                         </div>
                         {% if item.note %}
-                        <p class="throwable-case-item-note">{{ item.note }}</p>
+                        <div class="throwable-case-item-note markdown-prose">{{ item.note | markdown | safe }}</div>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -1125,7 +1125,7 @@
             {% if val %}
             <div class="bio-long-card">
                 <h3 class="bio-long-card-title">{{ label }}</h3>
-                <p class="bio-long-card-text">{{ val }}</p>
+                <div class="bio-long-card-text markdown-prose">{{ val | markdown | safe }}</div>
             </div>
             {% endif %}
             {% endfor %}
@@ -1285,16 +1285,21 @@ function openCombatActionModal(el) {
 
 function openNotesModal(row) {
     if (window.innerWidth >= 640) return;
+    var notesHtml = row.getAttribute('data-notes-html');
     var notes = row.getAttribute('data-notes');
     var name = row.getAttribute('data-item-name');
-    if (!notes) return;
+    if (!notesHtml && !notes) return;
     document.getElementById('notes-modal-title').textContent = name;
     var body = document.getElementById('notes-modal-content');
     body.innerHTML = '';
-    var p = document.createElement('p');
-    p.textContent = notes;
-    p.className = 'notes-modal-text';
-    body.appendChild(p);
+    if (notesHtml) {
+        body.innerHTML = '<div class="notes-modal-text markdown-prose">' + notesHtml + '</div>';
+    } else {
+        var p = document.createElement('p');
+        p.textContent = notes;
+        p.className = 'notes-modal-text';
+        body.appendChild(p);
+    }
     var modal = document.getElementById('notes-modal');
     modal.style.display = 'flex';
     window._notesModalTrigger = document.activeElement;
@@ -1389,7 +1394,6 @@ document.addEventListener('keydown', function(e) {
     color: var(--color-text-secondary, #4b5563);
     font-size: 0.95rem;
     line-height: 1.6;
-    white-space: pre-wrap;
 }
 
 .notes-modal-text:last-child {
@@ -1759,7 +1763,7 @@ document.addEventListener('keydown', function(e) {
                     <span class="text-xs px-2 py-0.5 rounded-full bg-blue-900/50 text-blue-300">Action</span>
                     {% if res.recharge %}<span class="text-xs text-gray-500">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
                 </div>
-                {% if res.description %}<p class="text-xs text-gray-500 leading-relaxed">{{ res.description }}</p>{% endif %}
+                {% if res.description %}<div class="text-xs text-gray-500 leading-relaxed markdown-prose">{{ res.description | markdown | safe }}</div>{% endif %}
             </div>
             {% endfor %}
             {% for res in class_feature_bonus %}
@@ -1769,7 +1773,7 @@ document.addEventListener('keydown', function(e) {
                     <span class="text-xs px-2 py-0.5 rounded-full bg-green-900/50 text-green-300">Bonus Action</span>
                     {% if res.recharge %}<span class="text-xs text-gray-500">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
                 </div>
-                {% if res.description %}<p class="text-xs text-gray-500 leading-relaxed">{{ res.description }}</p>{% endif %}
+                {% if res.description %}<div class="text-xs text-gray-500 leading-relaxed markdown-prose">{{ res.description | markdown | safe }}</div>{% endif %}
             </div>
             {% endfor %}
             {% for res in class_feature_reactions %}
@@ -1779,7 +1783,7 @@ document.addEventListener('keydown', function(e) {
                     <span class="text-xs px-2 py-0.5 rounded-full bg-orange-900/50 text-orange-300">Reaction</span>
                     {% if res.recharge %}<span class="text-xs text-gray-500">↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
                 </div>
-                {% if res.description %}<p class="text-xs text-gray-500 leading-relaxed">{{ res.description }}</p>{% endif %}
+                {% if res.description %}<div class="text-xs text-gray-500 leading-relaxed markdown-prose">{{ res.description | markdown | safe }}</div>{% endif %}
             </div>
             {% endfor %}
         </div>
@@ -1891,7 +1895,7 @@ document.addEventListener('keydown', function(e) {
                             {% if spell.duration %}<span>⏳ {{ spell.duration }}</span>{% endif %}
                         </div>
                         {% if spell.notes %}
-                        <p class="text-xs text-gray-500 mt-2 leading-relaxed line-clamp-3">{{ spell.notes }}</p>
+                        <div class="text-xs text-gray-500 mt-2 leading-relaxed markdown-prose">{{ spell.notes | markdown | safe }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -1938,7 +1942,7 @@ document.addEventListener('keydown', function(e) {
                             {% if spell.duration %}<span>⏳ {{ spell.duration }}</span>{% endif %}
                         </div>
                         {% if spell.notes %}
-                        <p class="text-xs text-gray-500 mt-2 leading-relaxed line-clamp-3">{{ spell.notes }}</p>
+                        <div class="text-xs text-gray-500 mt-2 leading-relaxed markdown-prose">{{ spell.notes | markdown | safe }}</div>
                         {% endif %}
                     </div>
                 </div>
@@ -1999,7 +2003,7 @@ document.addEventListener('keydown', function(e) {
                 {% if res.recharge or res.description %}
                 <div class="mt-1.5 flex flex-wrap gap-3 text-xs text-gray-500">
                     {% if res.recharge %}<span>↺ {{ res.recharge | replace("_", " ") | title }}</span>{% endif %}
-                    {% if res.description %}<span class="text-gray-600">{{ res.description }}</span>{% endif %}
+                    {% if res.description %}<div class="text-gray-600 markdown-prose">{{ res.description | markdown | safe }}</div>{% endif %}
                 </div>
                 {% endif %}
             </div>
@@ -2088,9 +2092,9 @@ document.addEventListener('keydown', function(e) {
         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
             Class Features
         </h3>
-        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
-            {{ sheet.class_features }}
-        </p>
+        <div class="text-sm text-gray-300 leading-relaxed markdown-prose">
+            {{ sheet.class_features | markdown | safe }}
+        </div>
     </div>
     {% endif %}
 
@@ -2099,9 +2103,9 @@ document.addEventListener('keydown', function(e) {
         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
             Species Traits
         </h3>
-        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
-            {{ sheet.species_traits }}
-        </p>
+        <div class="text-sm text-gray-300 leading-relaxed markdown-prose">
+            {{ sheet.species_traits | markdown | safe }}
+        </div>
     </div>
     {% endif %}
 
@@ -2110,9 +2114,9 @@ document.addEventListener('keydown', function(e) {
         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
             Feats
         </h3>
-        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
-            {{ sheet.feats }}
-        </p>
+        <div class="text-sm text-gray-300 leading-relaxed markdown-prose">
+            {{ sheet.feats | markdown | safe }}
+        </div>
     </div>
     {% endif %}
 
@@ -2157,9 +2161,9 @@ document.addEventListener('keydown', function(e) {
         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             {{ label }}
         </h3>
-        <p class="text-sm text-gray-300 whitespace-pre-line leading-relaxed">
-            {{ val }}
-        </p>
+        <div class="text-sm text-gray-300 leading-relaxed markdown-prose">
+            {{ val | markdown | safe }}
+        </div>
     </div>
     {% endif %}
     {% endfor %}

@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
@@ -13,9 +12,9 @@ from app.middleware.auth import SESSION_COOKIE_NAME, require_login
 from app.schemas.auth import UserSession
 from app.repositories.user_repository import UserRepository
 from app.services.auth_service import create_session_token
+from app.templates_config import templates
 
 router = APIRouter(prefix="/settings", tags=["Settings"])
-templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("", response_class=HTMLResponse)

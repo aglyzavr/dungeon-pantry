@@ -369,3 +369,12 @@
     padding: 1rem;
   }
 }
+
+/* ── Markdown hint below textareas ─────────────────────────────── */
+.form-hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #6b7280);
+  opacity: 0.8;
+}

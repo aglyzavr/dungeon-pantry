@@ -2,7 +2,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import ValidationError
 
@@ -17,9 +16,9 @@ from app.services.player_service import (
     PlayerService,
     UsernameAlreadyExists,
 )
+from app.templates_config import templates
 
 router = APIRouter(prefix="/players", tags=["Players"])
-templates = Jinja2Templates(directory="app/templates")
 
 
 def _service(db: AsyncSession = Depends(get_db)) -> PlayerService:
