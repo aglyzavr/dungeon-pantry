@@ -1015,6 +1015,7 @@
   font-size: 0.75rem;
   color: var(--color-text-muted);
   line-height: 1.4;
+  white-space: pre-line;
 }
 
 .throwable-case-item-right {
