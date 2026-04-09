@@ -3,9 +3,21 @@
 
 set -e
 
-# apply database migrations
+# apply database migrations — retry up to 10 times with 3-second backoff to
+# handle transient DB unavailability on cold starts (e.g. Fly.io scale-to-zero)
 echo "==> Running database migrations"
-alembic upgrade head
+MAX_TRIES=10
+WAIT_SECS=3
+n=0
+until alembic upgrade head; do
+  n=$((n + 1))
+  if [ "$n" -ge "$MAX_TRIES" ]; then
+    echo "==> Database migrations failed after $MAX_TRIES attempts, aborting"
+    exit 1
+  fi
+  echo "==> Migration attempt $n failed, retrying in ${WAIT_SECS}s..."
+  sleep "$WAIT_SECS"
+done
 
 # start the uvicorn server
 RELOAD_FLAG=""
