@@ -23,12 +23,42 @@
 
   <div x-data="{
       activeTab: 'identity',
+      isCreateMode: {{ 'true' if not character else 'false' }},
+      identityName: {{ (sheet.character_identity.character_name or '') | tojson }},
+      identityClass: {{ (sheet.character_identity['class'].name or '') | tojson }},
+      identitySpecies: {{ (sheet.character_identity.species.name or '') | tojson }},
+      identityLevel: {{ sheet.character_level.level | default(1) }},
+      vitalsHpMax: {{ sheet.vitality.hit_points.max | default(0) }},
+      vitalsHpCurrent: {{ sheet.vitality.hit_points.current | default(0) }},
       spellEntries: {{ (sheet.cantrips_and_prepared_spells or []) | tojson | forceescape }},
       attackEntries: {{ (sheet.weapons_damage_cantrips or []) | tojson | forceescape }},
       caseEntries: {{ (sheet.equipment.get('throwable_cases', []) or []) | tojson | forceescape }},
       weaponEntries: {{ (sheet.equipment.get('weapons', []) or []) | tojson | forceescape }},
       armorEntries: {{ (sheet.equipment.get('armor', []) or []) | tojson | forceescape }},
       classResourceEntries: {{ (sheet.class_resources or []) | tojson | forceescape }},
+      identityComplete() {
+        const name = String(this.identityName || '').trim();
+        const cls = String(this.identityClass || '').trim();
+        const species = String(this.identitySpecies || '').trim();
+        const level = parseInt(this.identityLevel) || 0;
+        return !!(name && cls && species && level >= 1 && level <= 20);
+      },
+      vitalsComplete() {
+        const hpMax = parseInt(this.vitalsHpMax) || 0;
+        const hpCurrent = parseInt(this.vitalsHpCurrent);
+        return hpMax > 0 && hpCurrent >= 0;
+      },
+      canAccessTab(tab) {
+        if (!this.isCreateMode) return true;
+        const needsIdentity = ['stats', 'vitals', 'skills', 'features', 'spells', 'attacks', 'equipment', 'bio'];
+        const needsVitals   = ['skills', 'features', 'spells', 'attacks', 'equipment', 'bio'];
+        if (needsIdentity.includes(tab) && !this.identityComplete()) return false;
+        if (needsVitals.includes(tab) && !this.vitalsComplete()) return false;
+        return true;
+      },
+      goToTab(tab) {
+        if (this.canAccessTab(tab)) this.activeTab = tab;
+      },
       addSpell() {
         this.spellEntries.push(CharacterEditor.normalizeSpell({}));
       },
@@ -90,28 +120,52 @@
       <button type="button" class="tab-btn" @click="activeTab = 'identity'" :class="{ 'active': activeTab === 'identity' }">
         {{ _("Identity") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'stats'" :class="{ 'active': activeTab === 'stats' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('stats')"
+        :class="{ 'active': activeTab === 'stats', 'tab-btn--locked': isCreateMode && !canAccessTab('stats') }"
+        :title="isCreateMode && !canAccessTab('stats') ? '{{ _('Fill in Name, Class, Species and Level first') }}' : ''">
         {{ _("Stats & Abilities") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'vitals'" :class="{ 'active': activeTab === 'vitals' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('vitals')"
+        :class="{ 'active': activeTab === 'vitals', 'tab-btn--locked': isCreateMode && !canAccessTab('vitals') }"
+        :title="isCreateMode && !canAccessTab('vitals') ? '{{ _('Fill in Name, Class, Species and Level first') }}' : ''">
         {{ _("Vitals") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'skills'" :class="{ 'active': activeTab === 'skills' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('skills')"
+        :class="{ 'active': activeTab === 'skills', 'tab-btn--locked': isCreateMode && !canAccessTab('skills') }"
+        :title="isCreateMode && !canAccessTab('skills') ? '{{ _('Fill in Identity and Vitals (HP) first') }}' : ''">
         {{ _("Skills") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'features'" :class="{ 'active': activeTab === 'features' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('features')"
+        :class="{ 'active': activeTab === 'features', 'tab-btn--locked': isCreateMode && !canAccessTab('features') }"
+        :title="isCreateMode && !canAccessTab('features') ? '{{ _('Fill in Identity and Vitals (HP) first') }}' : ''">
         {{ _("Features & Traits") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'spells'" :class="{ 'active': activeTab === 'spells' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('spells')"
+        :class="{ 'active': activeTab === 'spells', 'tab-btn--locked': isCreateMode && !canAccessTab('spells') }"
+        :title="isCreateMode && !canAccessTab('spells') ? '{{ _('Fill in Identity and Vitals (HP) first') }}' : ''">
         {{ _("Spells") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'attacks'" :class="{ 'active': activeTab === 'attacks' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('attacks')"
+        :class="{ 'active': activeTab === 'attacks', 'tab-btn--locked': isCreateMode && !canAccessTab('attacks') }"
+        :title="isCreateMode && !canAccessTab('attacks') ? '{{ _('Fill in Identity and Vitals (HP) first') }}' : ''">
         {{ _("Attacks & Cantrips") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'equipment'" :class="{ 'active': activeTab === 'equipment' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('equipment')"
+        :class="{ 'active': activeTab === 'equipment', 'tab-btn--locked': isCreateMode && !canAccessTab('equipment') }"
+        :title="isCreateMode && !canAccessTab('equipment') ? '{{ _('Fill in Identity and Vitals (HP) first') }}' : ''">
         {{ _("Equipment") }}
       </button>
-      <button type="button" class="tab-btn" @click="activeTab = 'bio'" :class="{ 'active': activeTab === 'bio' }">
+      <button type="button" class="tab-btn"
+        @click="goToTab('bio')"
+        :class="{ 'active': activeTab === 'bio', 'tab-btn--locked': isCreateMode && !canAccessTab('bio') }"
+        :title="isCreateMode && !canAccessTab('bio') ? '{{ _('Fill in Identity and Vitals (HP) first') }}' : ''">
         {{ _("Biography") }}
       </button>
     </div>
@@ -133,7 +187,7 @@
           <div class="form-group">
             <label for="character_name">{{ _("Character Name") }} *</label>
             <input type="text" id="character_name" name="character_name" 
-                   value="{{ sheet.character_identity.character_name }}" required>
+                   x-model="identityName" required>
           </div>
           
           <div class="form-group">
@@ -150,7 +204,7 @@
           <div class="form-group">
             <label for="class_name">{{ _("Class Name") }} *</label>
             <input type="text" id="class_name" name="class_name" 
-                   value="{{ sheet.character_identity.class.name }}" required>
+                   x-model="identityClass" required>
           </div>
           
           <div class="form-group">
@@ -167,7 +221,7 @@
           <div class="form-group">
             <label for="species_name">{{ _("Species Name") }} *</label>
             <input type="text" id="species_name" name="species_name" 
-                   value="{{ sheet.character_identity.species.name }}" required>
+                   x-model="identitySpecies" required>
           </div>
           
           <div class="form-group">
@@ -184,7 +238,7 @@
           <div class="form-group">
             <label for="level">{{ _("Level") }} *</label>
             <input type="number" id="level" name="level" min="1" max="20"
-                   value="{{ sheet.character_level.level }}" required>
+                   x-model.number="identityLevel" required>
           </div>
           
           <div class="form-group">
@@ -308,13 +362,13 @@
           <div class="form-group">
             <label for="hp_current">{{ _("Current HP") }} *</label>
             <input type="number" id="hp_current" name="hp_current" min="0"
-                   value="{{ sheet.vitality.hit_points.current }}" required>
+                   x-model.number="vitalsHpCurrent" required>
           </div>
           
           <div class="form-group">
             <label for="hp_max">{{ _("Max HP") }} *</label>
             <input type="number" id="hp_max" name="hp_max" min="1"
-                   value="{{ sheet.vitality.hit_points.max }}" required>
+                   x-model.number="vitalsHpMax" required>
           </div>
           
           <div class="form-group">
