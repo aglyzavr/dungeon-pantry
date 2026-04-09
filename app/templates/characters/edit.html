@@ -24,9 +24,9 @@
   <div x-data="{
       activeTab: 'identity',
       isCreateMode: {{ 'true' if not character else 'false' }},
-      identityName: {{ (sheet.character_identity.character_name or '') | tojson }},
-      identityClass: {{ (sheet.character_identity['class'].name or '') | tojson }},
-      identitySpecies: {{ (sheet.character_identity.species.name or '') | tojson }},
+      identityName: {{ (sheet.character_identity.character_name or '') | tojson | forceescape }},
+      identityClass: {{ (sheet.character_identity['class'].name or '') | tojson | forceescape }},
+      identitySpecies: {{ (sheet.character_identity.species.name or '') | tojson | forceescape }},
       identityLevel: {{ sheet.character_level.level | default(1) }},
       vitalsHpMax: {{ sheet.vitality.hit_points.max | default(0) }},
       vitalsHpCurrent: {{ sheet.vitality.hit_points.current | default(0) }},
