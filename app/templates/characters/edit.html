@@ -45,7 +45,7 @@
       },
       vitalsComplete() {
         const hpMax = parseInt(this.vitalsHpMax) || 0;
-        const hpCurrent = parseInt(this.vitalsHpCurrent);
+        const hpCurrent = parseInt(this.vitalsHpCurrent) || 0;
         return hpMax > 0 && hpCurrent >= 0;
       },
       canAccessTab(tab) {
@@ -187,6 +187,7 @@
           <div class="form-group">
             <label for="character_name">{{ _("Character Name") }} *</label>
             <input type="text" id="character_name" name="character_name" 
+                   value="{{ sheet.character_identity.character_name }}"
                    x-model="identityName" required>
           </div>
           
@@ -204,6 +205,7 @@
           <div class="form-group">
             <label for="class_name">{{ _("Class Name") }} *</label>
             <input type="text" id="class_name" name="class_name" 
+                   value="{{ sheet.character_identity.class.name }}"
                    x-model="identityClass" required>
           </div>
           
@@ -221,6 +223,7 @@
           <div class="form-group">
             <label for="species_name">{{ _("Species Name") }} *</label>
             <input type="text" id="species_name" name="species_name" 
+                   value="{{ sheet.character_identity.species.name }}"
                    x-model="identitySpecies" required>
           </div>
           
@@ -238,6 +241,7 @@
           <div class="form-group">
             <label for="level">{{ _("Level") }} *</label>
             <input type="number" id="level" name="level" min="1" max="20"
+                   value="{{ sheet.character_level.level }}"
                    x-model.number="identityLevel" required>
           </div>
           
@@ -362,12 +366,14 @@
           <div class="form-group">
             <label for="hp_current">{{ _("Current HP") }} *</label>
             <input type="number" id="hp_current" name="hp_current" min="0"
+                   value="{{ sheet.vitality.hit_points.current }}"
                    x-model.number="vitalsHpCurrent" required>
           </div>
           
           <div class="form-group">
             <label for="hp_max">{{ _("Max HP") }} *</label>
             <input type="number" id="hp_max" name="hp_max" min="1"
+                   value="{{ sheet.vitality.hit_points.max }}"
                    x-model.number="vitalsHpMax" required>
           </div>
           
