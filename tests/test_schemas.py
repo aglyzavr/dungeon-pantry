@@ -8,7 +8,6 @@ from app.schemas.character import (
     HPUpdate,
     MaxHPUpdate,
     SpellSlotUpdate,
-    SpellSlotTotalUpdate,
     TempHPUpdate,
     ThrowableCaseQtyUpdate,
     get_skill_advantage,
@@ -240,41 +239,6 @@ class TestSpellSlotUpdate:
 
     def test_level_9_valid(self):
         assert SpellSlotUpdate(level=9, delta=1).level == 9
-
-
-class TestSpellSlotTotalUpdate:
-    def test_valid(self):
-        m = SpellSlotTotalUpdate(level=3, total=4)
-        assert m.level == 3
-        assert m.total == 4
-
-    def test_level_zero_invalid(self):
-        with pytest.raises(ValidationError):
-            SpellSlotTotalUpdate(level=0, total=1)
-
-    def test_level_ten_invalid(self):
-        with pytest.raises(ValidationError):
-            SpellSlotTotalUpdate(level=10, total=1)
-
-    def test_total_negative_invalid(self):
-        with pytest.raises(ValidationError):
-            SpellSlotTotalUpdate(level=1, total=-1)
-
-    def test_total_100_invalid(self):
-        with pytest.raises(ValidationError):
-            SpellSlotTotalUpdate(level=1, total=100)
-
-    def test_total_zero_valid(self):
-        assert SpellSlotTotalUpdate(level=1, total=0).total == 0
-
-    def test_total_99_valid(self):
-        assert SpellSlotTotalUpdate(level=9, total=99).total == 99
-
-    def test_level_1_valid(self):
-        assert SpellSlotTotalUpdate(level=1, total=4).level == 1
-
-    def test_level_9_valid(self):
-        assert SpellSlotTotalUpdate(level=9, total=4).level == 9
 
 
 class TestDeathSaveUpdate:

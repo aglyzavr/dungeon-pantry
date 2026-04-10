@@ -94,25 +94,6 @@ class SpellSlotUpdate(BaseModel):
         return v
 
 
-class SpellSlotTotalUpdate(BaseModel):
-    level: int
-    total: int
-
-    @field_validator("level")
-    @classmethod
-    def valid_level(cls, v: int) -> int:
-        if not (1 <= v <= 9):
-            raise ValueError("Spell slot level must be 1-9")
-        return v
-
-    @field_validator("total")
-    @classmethod
-    def valid_total(cls, v: int) -> int:
-        if not (0 <= v <= 99):
-            raise ValueError("Spell slot total must be 0-99")
-        return v
-
-
 class TempHPUpdate(BaseModel):
     delta: int | None = None
     value: int | None = None

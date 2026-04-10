@@ -409,28 +409,6 @@ class CharacterService:
         return await self._repo.save_sheet_data(character, data)
 
     @staticmethod
-    def _apply_spell_slot_total(data: dict, level: int, total: int) -> None:
-        """Set the total for a single spell slot level, clamping expended (mutates data in-place).
-
-        Args:
-            data: The sheet_data dict to mutate.
-            level: Spell slot level (1-9).
-            total: New maximum number of slots (0-99); expended is clamped to this value.
-        """
-        key = f"level_{level}"
-        if "spell_slots" not in data or not isinstance(data.get("spell_slots"), dict):
-            data["spell_slots"] = {}
-        slot = data["spell_slots"].get(key, {})
-        slot["total"] = total
-        slot["expended"] = min(int(slot.get("expended", 0)), total)
-        data["spell_slots"][key] = slot
-
-    async def set_spell_slot_total(self, character: Character, level: int, total: int) -> Character:
-        data = copy.deepcopy(character.sheet_data)
-        self._apply_spell_slot_total(data, level, total)
-        return await self._repo.save_sheet_data(character, data)
-
-    @staticmethod
     def _apply_short_rest(data: dict) -> None:
         """Restore uses_current to uses_max for all short-rest resources (mutates data in-place)."""
         for res in data.get("class_resources", []):
@@ -747,13 +725,6 @@ class CharacterService:
         character = await self.get_character(character_id, user_id, is_dm)
         self._check_write_permission(character, user_id, is_dm)
         return await self.adjust_spell_slot(character, payload.level, payload.delta)
-
-    async def update_spell_slot_total(
-        self, character_id: UUID, user_id: UUID, is_dm: bool, payload
-    ) -> Character:
-        character = await self.get_character(character_id, user_id, is_dm)
-        self._check_write_permission(character, user_id, is_dm)
-        return await self.set_spell_slot_total(character, payload.level, payload.total)
 
     async def update_temp_hp(
         self, character_id: UUID, user_id: UUID, is_dm: bool, delta: int | None, absolute: int | None
@@ -1219,22 +1190,29 @@ class CharacterService:
             if "weapons_damage_cantrips" in sheet_data:
                 sheet["weapons_damage_cantrips"] = sheet_data["weapons_damage_cantrips"]
         
-        # Calculate spell slots based on character level and class
-        character_level = sheet.get("character_level", {}).get("level", 1)
-        character_class = sheet.get("character_identity", {}).get("class", {}).get("name", "")
-        
-        # Get new spell slots based on level and class
-        new_spell_slots = self._calculate_spell_slots(character_class, character_level)
-        
-        # Preserve expended values from existing spell slots
+        # Parse spell slot totals from the form (user-specified; no auto-calculation from class/level)
+        spell_slots_json_str = str(form.get("spell_slots_json", "")).strip()
         old_spell_slots = sheet_data.get("spell_slots", {})
-        for level_key, slot_data in new_spell_slots.items():
-            if level_key in old_spell_slots:
-                old_expended = old_spell_slots[level_key].get("expended", 0)
-                # Make sure expended doesn't exceed new total
-                slot_data["expended"] = min(old_expended, slot_data["total"])
-        
-        sheet["spell_slots"] = new_spell_slots
+        if spell_slots_json_str:
+            try:
+                totals = json.loads(spell_slots_json_str)
+                if isinstance(totals, list):
+                    new_slots = {}
+                    for i, raw_total in enumerate(totals[:9], start=1):
+                        key = f"level_{i}"
+                        total = max(0, min(99, int(raw_total or 0)))
+                        old_expended = int((old_spell_slots.get(key) or {}).get("expended", 0))
+                        new_slots[key] = {
+                            "total": total,
+                            "expended": min(old_expended, total),
+                        }
+                    sheet["spell_slots"] = new_slots
+                else:
+                    sheet["spell_slots"] = old_spell_slots
+            except (json.JSONDecodeError, ValueError, TypeError):
+                sheet["spell_slots"] = old_spell_slots
+        else:
+            sheet["spell_slots"] = old_spell_slots
         
         # Preserve other existing complex structures (spellcasting ability, etc.)
         # Note: weapons_damage_cantrips is now handled via the attacks_json form field
@@ -1330,14 +1308,6 @@ class CharacterService:
         current = int(slot.get("expended", 0))
         slot["expended"] = max(0, min(total, current + payload.delta))
         data["spell_slots"][key] = slot
-        return await self._flush_campaign_cc(cc, data)
-
-    async def update_campaign_spell_slot_total(
-        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool, payload
-    ) -> CampaignCharacter:
-        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
-        data = copy.deepcopy(cc.sheet_data)
-        self._apply_spell_slot_total(data, payload.level, payload.total)
         return await self._flush_campaign_cc(cc, data)
 
     async def update_campaign_temp_hp(

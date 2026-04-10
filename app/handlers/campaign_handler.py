@@ -13,7 +13,7 @@ from app.schemas.auth import UserSession
 from app.schemas.campaign import CampaignCreate, CampaignUpdate
 from app.schemas.character import (
     DeathSaveUpdate, HPUpdate, MaxHPUpdate,
-    SpellSlotUpdate, SpellSlotTotalUpdate, TempHPUpdate, ThrowableCaseQtyUpdate, ClassResourceUpdate,
+    SpellSlotUpdate, TempHPUpdate, ThrowableCaseQtyUpdate, ClassResourceUpdate,
 )
 from app.services.campaign_service import CampaignNotFound, CampaignService, CharacterNotFound
 from app.services.character_service import (
@@ -511,39 +511,6 @@ async def campaign_update_spell_slot(
     payload = SpellSlotUpdate(level=int(form.get("level")), delta=int(form.get("delta")))
     try:
         cc = await character_service.update_campaign_spell_slot(
-            campaign_id, character_id, current_user.user_id, current_user.is_dm, payload
-        )
-    except (CharacterNotFound, CharacterPermissionError):
-        return error_response(request, 403, language=current_user.language)
-    return render_template(
-        templates,
-        "characters/_sheet_body.html",
-        {
-            "request": request,
-            "current_user": current_user,
-            "character": cc.character,
-            "campaign": cc.campaign,
-            "cc_portrait_data": cc.portrait_data,
-            "sheet": character_service._normalize_sheet(cc.sheet_data),
-            "can_edit": _cc_can_edit(current_user, cc),
-            "is_readonly": not _cc_can_edit(current_user, cc),
-        },
-        language=current_user.language,
-    )
-
-
-@router.post("/{campaign_id}/characters/{character_id}/vitals/spell-slot-total", response_class=HTMLResponse)
-async def campaign_update_spell_slot_total(
-    request: Request,
-    campaign_id: UUID,
-    character_id: UUID,
-    current_user: UserSession = Depends(require_login),
-    character_service: CharacterService = Depends(_character_service),
-):
-    form = await request.form()
-    payload = SpellSlotTotalUpdate(level=int(form.get("level")), total=int(form.get("total")))
-    try:
-        cc = await character_service.update_campaign_spell_slot_total(
             campaign_id, character_id, current_user.user_id, current_user.is_dm, payload
         )
     except (CharacterNotFound, CharacterPermissionError):

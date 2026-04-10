@@ -340,6 +340,47 @@ class TestBuildSheetFromForm:
         assert result["equipment"]["weapons"][0]["weight"] == pytest.approx(0.25)
         assert result["equipment"]["armor"][0]["weight"] == pytest.approx(13.5)
 
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_sets_totals(self):
+        """Spell slot totals come from spell_slots_json, not class/level."""
+        import json as _json
+        form = {"spell_slots_json": _json.dumps([4, 3, 2, 1, 0, 0, 0, 0, 0])}
+        result = await self.service.build_sheet_from_form(_base_sheet(), form)
+        assert result["spell_slots"]["level_1"]["total"] == 4
+        assert result["spell_slots"]["level_2"]["total"] == 3
+        assert result["spell_slots"]["level_3"]["total"] == 2
+        assert result["spell_slots"]["level_9"]["total"] == 0
+
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_preserves_expended(self):
+        """Existing expended values are preserved (clamped to new total)."""
+        import json as _json
+        sheet = _base_sheet()
+        sheet["spell_slots"] = {"level_1": {"total": 4, "expended": 3}}
+        form = {"spell_slots_json": _json.dumps([2, 0, 0, 0, 0, 0, 0, 0, 0])}
+        result = await self.service.build_sheet_from_form(sheet, form)
+        assert result["spell_slots"]["level_1"]["total"] == 2
+        # expended clamped from 3 to 2
+        assert result["spell_slots"]["level_1"]["expended"] == 2
+
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_missing_preserves_existing(self):
+        """When spell_slots_json is absent, existing spell_slots are unchanged."""
+        sheet = _base_sheet()
+        sheet["spell_slots"] = {"level_1": {"total": 7, "expended": 2}}
+        result = await self.service.build_sheet_from_form(sheet, {})
+        assert result["spell_slots"]["level_1"]["total"] == 7
+        assert result["spell_slots"]["level_1"]["expended"] == 2
+
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_invalid_falls_back_to_existing(self):
+        """Invalid JSON in spell_slots_json leaves existing slots intact."""
+        sheet = _base_sheet()
+        sheet["spell_slots"] = {"level_1": {"total": 5, "expended": 1}}
+        form = {"spell_slots_json": "not-json"}
+        result = await self.service.build_sheet_from_form(sheet, form)
+        assert result["spell_slots"]["level_1"]["total"] == 5
+
 
 # ---------------------------------------------------------------------------
 # adjust_hp
@@ -581,81 +622,6 @@ class TestAdjustSpellSlot:
         await self.service.adjust_spell_slot(char, level=1, delta=1)
         new_data = self.service._repo.save_sheet_data.call_args[0][1]
         assert isinstance(new_data["spell_slots"], dict)
-
-
-# ---------------------------------------------------------------------------
-# set_spell_slot_total
-# ---------------------------------------------------------------------------
-
-
-class TestSetSpellSlotTotal:
-    def setup_method(self):
-        self.service = _make_service()
-
-    @pytest.mark.asyncio
-    async def test_sets_total(self):
-        char = _make_character()
-        char.sheet_data["spell_slots"] = {"level_1": {"total": 2, "expended": 1}}
-        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
-
-        await self.service.set_spell_slot_total(char, level=1, total=5)
-        new_data = self.service._repo.save_sheet_data.call_args[0][1]
-        assert new_data["spell_slots"]["level_1"]["total"] == 5
-
-    @pytest.mark.asyncio
-    async def test_expended_clamped_to_new_total(self):
-        char = _make_character()
-        char.sheet_data["spell_slots"] = {"level_2": {"total": 4, "expended": 4}}
-        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
-
-        await self.service.set_spell_slot_total(char, level=2, total=2)
-        new_data = self.service._repo.save_sheet_data.call_args[0][1]
-        assert new_data["spell_slots"]["level_2"]["total"] == 2
-        assert new_data["spell_slots"]["level_2"]["expended"] == 2
-
-    @pytest.mark.asyncio
-    async def test_expended_not_clamped_when_within_total(self):
-        char = _make_character()
-        char.sheet_data["spell_slots"] = {"level_3": {"total": 3, "expended": 1}}
-        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
-
-        await self.service.set_spell_slot_total(char, level=3, total=5)
-        new_data = self.service._repo.save_sheet_data.call_args[0][1]
-        assert new_data["spell_slots"]["level_3"]["total"] == 5
-        assert new_data["spell_slots"]["level_3"]["expended"] == 1
-
-    @pytest.mark.asyncio
-    async def test_total_zero_clamps_expended(self):
-        char = _make_character()
-        char.sheet_data["spell_slots"] = {"level_1": {"total": 4, "expended": 3}}
-        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
-
-        await self.service.set_spell_slot_total(char, level=1, total=0)
-        new_data = self.service._repo.save_sheet_data.call_args[0][1]
-        assert new_data["spell_slots"]["level_1"]["total"] == 0
-        assert new_data["spell_slots"]["level_1"]["expended"] == 0
-
-    @pytest.mark.asyncio
-    async def test_missing_spell_slots_dict_initialised(self):
-        char = _make_character()
-        char.sheet_data["spell_slots"] = "invalid_non_dict_data"  # simulates corrupted field
-        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
-
-        await self.service.set_spell_slot_total(char, level=1, total=3)
-        new_data = self.service._repo.save_sheet_data.call_args[0][1]
-        assert isinstance(new_data["spell_slots"], dict)
-        assert new_data["spell_slots"]["level_1"]["total"] == 3
-
-    @pytest.mark.asyncio
-    async def test_new_level_created_if_not_present(self):
-        char = _make_character()
-        char.sheet_data["spell_slots"] = {}
-        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
-
-        await self.service.set_spell_slot_total(char, level=5, total=2)
-        new_data = self.service._repo.save_sheet_data.call_args[0][1]
-        assert new_data["spell_slots"]["level_5"]["total"] == 2
-        assert new_data["spell_slots"]["level_5"]["expended"] == 0
 
 
 # ---------------------------------------------------------------------------

@@ -677,7 +677,7 @@
             {% endif %}
             {% endfor %}
 
-            {% if has_slots.found or can_edit %}
+            {% if has_slots.found %}
             <div class="spell-slots-container">
                 <div class="spell-slots-header">
                     <span class="spell-slots-title">{{ _("Spell Slots") }}</span>
@@ -686,11 +686,11 @@
                     {% for lvl in range(1, 10) %}
                     {% set key = "level_" ~ lvl %}
                     {% set slot = slots.get(key, {}) %}
-                    {% if (slot.total | default(0)) > 0 or can_edit %}
+                    {% if (slot.total | default(0)) > 0 %}
                     <div class="spell-slot-row">
                         <span class="spell-slot-level-label">Level {{ lvl }}</span>
                         <div class="spell-slot-dots">
-                            {% for i in range(1, (slot.total | default(0)) + 1) %}
+                            {% for i in range(1, slot.total + 1) %}
                             <div class="spell-slot-dot
                       {% if i > slot.expended %}spell-slot-dot--available
                       {% else %}spell-slot-dot--expended{% endif %}">
@@ -699,18 +699,6 @@
                         </div>
                         {% if can_edit %}
                         <div class="spell-slot-controls">
-                            <label class="spell-slot-total-label">{{ _("Max") }}</label>
-                            <input type="number"
-                                name="total"
-                                min="0" max="99"
-                                value="{{ slot.total | default(0) }}"
-                                @change="sessionStorage.setItem('sheetCurrentTab', tab)"
-                                hx-post="{{ char_base }}/vitals/spell-slot-total"
-                                hx-vals='{"level": {{ lvl }}}'
-                                hx-trigger="change"
-                                hx-target="#sheet-body"
-                                hx-swap="outerHTML"
-                                class="spell-slot-total-input">
                             <button @click="sessionStorage.setItem('sheetCurrentTab', tab)"
                                 hx-post="{{ char_base }}/vitals/spell-slot"
                                 hx-vals='{"level": {{ lvl }}, "delta": 1}' hx-target="#sheet-body" hx-swap="outerHTML"
