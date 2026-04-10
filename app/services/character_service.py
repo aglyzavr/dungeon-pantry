@@ -1190,22 +1190,29 @@ class CharacterService:
             if "weapons_damage_cantrips" in sheet_data:
                 sheet["weapons_damage_cantrips"] = sheet_data["weapons_damage_cantrips"]
         
-        # Calculate spell slots based on character level and class
-        character_level = sheet.get("character_level", {}).get("level", 1)
-        character_class = sheet.get("character_identity", {}).get("class", {}).get("name", "")
-        
-        # Get new spell slots based on level and class
-        new_spell_slots = self._calculate_spell_slots(character_class, character_level)
-        
-        # Preserve expended values from existing spell slots
+        # Parse spell slot totals from the form (user-specified; no auto-calculation from class/level)
+        spell_slots_json_str = str(form.get("spell_slots_json", "")).strip()
         old_spell_slots = sheet_data.get("spell_slots", {})
-        for level_key, slot_data in new_spell_slots.items():
-            if level_key in old_spell_slots:
-                old_expended = old_spell_slots[level_key].get("expended", 0)
-                # Make sure expended doesn't exceed new total
-                slot_data["expended"] = min(old_expended, slot_data["total"])
-        
-        sheet["spell_slots"] = new_spell_slots
+        if spell_slots_json_str:
+            try:
+                totals = json.loads(spell_slots_json_str)
+                if isinstance(totals, list):
+                    new_slots = {}
+                    for i, raw_total in enumerate(totals[:9], start=1):
+                        key = f"level_{i}"
+                        total = max(0, min(99, int(raw_total or 0)))
+                        old_expended = int((old_spell_slots.get(key) or {}).get("expended", 0))
+                        new_slots[key] = {
+                            "total": total,
+                            "expended": min(old_expended, total),
+                        }
+                    sheet["spell_slots"] = new_slots
+                else:
+                    sheet["spell_slots"] = old_spell_slots
+            except (json.JSONDecodeError, ValueError, TypeError):
+                sheet["spell_slots"] = old_spell_slots
+        else:
+            sheet["spell_slots"] = old_spell_slots
         
         # Preserve other existing complex structures (spellcasting ability, etc.)
         # Note: weapons_damage_cantrips is now handled via the attacks_json form field
