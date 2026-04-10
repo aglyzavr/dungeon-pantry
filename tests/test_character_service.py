@@ -4,6 +4,7 @@ All repository calls are replaced with AsyncMock so these tests run without
 a PostgreSQL connection.
 """
 import copy
+import json
 import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -343,8 +344,7 @@ class TestBuildSheetFromForm:
     @pytest.mark.asyncio
     async def test_spell_slots_json_sets_totals(self):
         """Spell slot totals come from spell_slots_json, not class/level."""
-        import json as _json
-        form = {"spell_slots_json": _json.dumps([4, 3, 2, 1, 0, 0, 0, 0, 0])}
+        form = {"spell_slots_json": json.dumps([4, 3, 2, 1, 0, 0, 0, 0, 0])}
         result = await self.service.build_sheet_from_form(_base_sheet(), form)
         assert result["spell_slots"]["level_1"]["total"] == 4
         assert result["spell_slots"]["level_2"]["total"] == 3
@@ -354,10 +354,9 @@ class TestBuildSheetFromForm:
     @pytest.mark.asyncio
     async def test_spell_slots_json_preserves_expended(self):
         """Existing expended values are preserved (clamped to new total)."""
-        import json as _json
         sheet = _base_sheet()
         sheet["spell_slots"] = {"level_1": {"total": 4, "expended": 3}}
-        form = {"spell_slots_json": _json.dumps([2, 0, 0, 0, 0, 0, 0, 0, 0])}
+        form = {"spell_slots_json": json.dumps([2, 0, 0, 0, 0, 0, 0, 0, 0])}
         result = await self.service.build_sheet_from_form(sheet, form)
         assert result["spell_slots"]["level_1"]["total"] == 2
         # expended clamped from 3 to 2
