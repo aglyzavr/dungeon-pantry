@@ -157,13 +157,13 @@
   --color-border:       #e4e6eb;
   --color-border-light: #dfe1e5;
 
-  --color-accent:              #0033b3;
-  --color-accent-hover:        #002d9e;
-  --color-accent-hover-bg:     rgba(0, 51, 179, 0.1);
-  --color-accent-hover-shadow: rgba(0, 51, 179, 0.2);
-  --color-accent-light:        #0033b3;
-  --color-button-bg:    #0033b3;
-  --color-button-hover: #002d9e;
+  --color-accent:              #aabef2;
+  --color-accent-hover:        #aabef2;
+  --color-accent-hover-bg:     rgba(76, 119, 227, 0.1);
+  --color-accent-hover-shadow: rgba(77, 109, 192, 0.2);
+  --color-accent-light:        #aabef2;
+  --color-button-bg:    #aabef2;
+  --color-button-hover: #aabef2;
 
   --color-message-success: #f0fdf2;
   --color-message-success-border: #7fc784;

@@ -1571,7 +1571,7 @@
 
 .class-resource-badge--bonus {
   background-color: var(--color-status-green-bg, rgba(34, 197, 94, 0.15));
-  color: var(--color-status-green-text, #86efac);
+  color: var(--color-text-tertiary, rgb(6, 125, 23));
 }
 
 .class-resource-badge--reaction {
