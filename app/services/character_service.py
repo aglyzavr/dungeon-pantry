@@ -408,8 +408,9 @@ class CharacterService:
         data["spell_slots"][key] = slot
         return await self._repo.save_sheet_data(character, data)
 
-    async def set_spell_slot_total(self, character: Character, level: int, total: int) -> Character:
-        data = copy.deepcopy(character.sheet_data)
+    @staticmethod
+    def _apply_spell_slot_total(data: dict, level: int, total: int) -> None:
+        """Set the total for a single spell slot level, clamping expended (mutates data in-place)."""
         key = f"level_{level}"
         if "spell_slots" not in data or not isinstance(data.get("spell_slots"), dict):
             data["spell_slots"] = {}
@@ -417,6 +418,10 @@ class CharacterService:
         slot["total"] = total
         slot["expended"] = min(int(slot.get("expended", 0)), total)
         data["spell_slots"][key] = slot
+
+    async def set_spell_slot_total(self, character: Character, level: int, total: int) -> Character:
+        data = copy.deepcopy(character.sheet_data)
+        self._apply_spell_slot_total(data, level, total)
         return await self._repo.save_sheet_data(character, data)
 
     @staticmethod
@@ -1326,13 +1331,7 @@ class CharacterService:
     ) -> CampaignCharacter:
         cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
         data = copy.deepcopy(cc.sheet_data)
-        key = f"level_{payload.level}"
-        if "spell_slots" not in data or not isinstance(data.get("spell_slots"), dict):
-            data["spell_slots"] = {}
-        slot = data["spell_slots"].get(key, {})
-        slot["total"] = payload.total
-        slot["expended"] = min(int(slot.get("expended", 0)), payload.total)
-        data["spell_slots"][key] = slot
+        self._apply_spell_slot_total(data, payload.level, payload.total)
         return await self._flush_campaign_cc(cc, data)
 
     async def update_campaign_temp_hp(
