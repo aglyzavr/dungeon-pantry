@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
-    logger.info("🚀 Starting DnD Campaign Manager [env=%s]", settings.app_env)
+    logger.info("🚀 Starting Dungeon Pantry [env=%s]", settings.app_env)
     try:
         async with engine.connect() as conn:
             await conn.execute(__import__("sqlalchemy").text("SELECT 1"))
@@ -39,7 +39,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
 
     app = FastAPI(
-        title="DnD Campaign Manager",
+        title="Dungeon Pantry",
         version="0.1.0",
         docs_url="/docs" if settings.is_development else None,
         redoc_url="/redoc" if settings.is_development else None,
@@ -97,7 +97,7 @@ def _register_routes(app: FastAPI) -> None:
 
     @app.get("/health", tags=["System"])
     async def health_check():
-        return JSONResponse({"status": "ok", "service": "dnd-campaign-manager"})
+        return JSONResponse({"status": "ok", "service": "dungeon-pantry"})
 
     @app.get("/")
     async def root():

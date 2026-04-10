@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="{% block meta_description %}D&D Campaign Manager{% endblock %}" />
+  <meta name="description" content="{% block meta_description %}Dungeon Pantry — D&D campaign manager{% endblock %}" />
   <style>[x-cloak] { display: none !important; }</style>
-  <title>{% block title %}Campaign Manager{% endblock %}</title>
+  <title>{% block title %}Dungeon Pantry{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +28,7 @@
   {# ── Navbar ───────────────────────────────────────────────────── #}
   {% if current_user %}
   <nav class="navbar" x-data="{ open: false }">
-    <a href="/" class="navbar-brand">⚔️ Campaign Manager</a>
+    <a href="/" class="navbar-brand">⚔️ Dungeon Pantry</a>
     <!-- Burger icon for mobile -->
     <div class="burger" @click="open = !open" :aria-expanded="open.toString()" aria-label="Open navigation" tabindex="0">
       <span :class="{ 'rotate-45 translate-y-2': open }"></span>
@@ -91,7 +92,7 @@
 
   {# ── Footer ───────────────────────────────────────────────────── #}
   <footer class="footer">
-    &copy; {{ now.year if now is defined else 2026 }} Campaign Manager &mdash; Roll for initiative.
+    &copy; {{ now.year if now is defined else 2026 }} Dungeon Pantry &mdash; Roll for initiative.
   </footer>
 
   {% block extra_scripts %}{% endblock %}
