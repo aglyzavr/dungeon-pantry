@@ -4,6 +4,7 @@ All repository calls are replaced with AsyncMock so these tests run without
 a PostgreSQL connection.
 """
 import copy
+import json
 import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -339,6 +340,45 @@ class TestBuildSheetFromForm:
         assert result["equipment"]["throwable_cases"][0]["items"][0]["weight"] == pytest.approx(0.05)
         assert result["equipment"]["weapons"][0]["weight"] == pytest.approx(0.25)
         assert result["equipment"]["armor"][0]["weight"] == pytest.approx(13.5)
+
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_sets_totals(self):
+        """Spell slot totals come from spell_slots_json, not class/level."""
+        form = {"spell_slots_json": json.dumps([4, 3, 2, 1, 0, 0, 0, 0, 0])}
+        result = await self.service.build_sheet_from_form(_base_sheet(), form)
+        assert result["spell_slots"]["level_1"]["total"] == 4
+        assert result["spell_slots"]["level_2"]["total"] == 3
+        assert result["spell_slots"]["level_3"]["total"] == 2
+        assert result["spell_slots"]["level_9"]["total"] == 0
+
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_preserves_expended(self):
+        """Existing expended values are preserved (clamped to new total)."""
+        sheet = _base_sheet()
+        sheet["spell_slots"] = {"level_1": {"total": 4, "expended": 3}}
+        form = {"spell_slots_json": json.dumps([2, 0, 0, 0, 0, 0, 0, 0, 0])}
+        result = await self.service.build_sheet_from_form(sheet, form)
+        assert result["spell_slots"]["level_1"]["total"] == 2
+        # expended clamped from 3 to 2
+        assert result["spell_slots"]["level_1"]["expended"] == 2
+
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_missing_preserves_existing(self):
+        """When spell_slots_json is absent, existing spell_slots are unchanged."""
+        sheet = _base_sheet()
+        sheet["spell_slots"] = {"level_1": {"total": 7, "expended": 2}}
+        result = await self.service.build_sheet_from_form(sheet, {})
+        assert result["spell_slots"]["level_1"]["total"] == 7
+        assert result["spell_slots"]["level_1"]["expended"] == 2
+
+    @pytest.mark.asyncio
+    async def test_spell_slots_json_invalid_falls_back_to_existing(self):
+        """Invalid JSON in spell_slots_json leaves existing slots intact."""
+        sheet = _base_sheet()
+        sheet["spell_slots"] = {"level_1": {"total": 5, "expended": 1}}
+        form = {"spell_slots_json": "not-json"}
+        result = await self.service.build_sheet_from_form(sheet, form)
+        assert result["spell_slots"]["level_1"]["total"] == 5
 
 
 # ---------------------------------------------------------------------------
