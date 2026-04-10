@@ -584,6 +584,81 @@ class TestAdjustSpellSlot:
 
 
 # ---------------------------------------------------------------------------
+# set_spell_slot_total
+# ---------------------------------------------------------------------------
+
+
+class TestSetSpellSlotTotal:
+    def setup_method(self):
+        self.service = _make_service()
+
+    @pytest.mark.asyncio
+    async def test_sets_total(self):
+        char = _make_character()
+        char.sheet_data["spell_slots"] = {"level_1": {"total": 2, "expended": 1}}
+        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
+
+        await self.service.set_spell_slot_total(char, level=1, total=5)
+        new_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert new_data["spell_slots"]["level_1"]["total"] == 5
+
+    @pytest.mark.asyncio
+    async def test_expended_clamped_to_new_total(self):
+        char = _make_character()
+        char.sheet_data["spell_slots"] = {"level_2": {"total": 4, "expended": 4}}
+        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
+
+        await self.service.set_spell_slot_total(char, level=2, total=2)
+        new_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert new_data["spell_slots"]["level_2"]["total"] == 2
+        assert new_data["spell_slots"]["level_2"]["expended"] == 2
+
+    @pytest.mark.asyncio
+    async def test_expended_not_clamped_when_within_total(self):
+        char = _make_character()
+        char.sheet_data["spell_slots"] = {"level_3": {"total": 3, "expended": 1}}
+        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
+
+        await self.service.set_spell_slot_total(char, level=3, total=5)
+        new_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert new_data["spell_slots"]["level_3"]["total"] == 5
+        assert new_data["spell_slots"]["level_3"]["expended"] == 1
+
+    @pytest.mark.asyncio
+    async def test_total_zero_clamps_expended(self):
+        char = _make_character()
+        char.sheet_data["spell_slots"] = {"level_1": {"total": 4, "expended": 3}}
+        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
+
+        await self.service.set_spell_slot_total(char, level=1, total=0)
+        new_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert new_data["spell_slots"]["level_1"]["total"] == 0
+        assert new_data["spell_slots"]["level_1"]["expended"] == 0
+
+    @pytest.mark.asyncio
+    async def test_missing_spell_slots_dict_initialised(self):
+        char = _make_character()
+        char.sheet_data["spell_slots"] = "corrupted"
+        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
+
+        await self.service.set_spell_slot_total(char, level=1, total=3)
+        new_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert isinstance(new_data["spell_slots"], dict)
+        assert new_data["spell_slots"]["level_1"]["total"] == 3
+
+    @pytest.mark.asyncio
+    async def test_new_level_created_if_not_present(self):
+        char = _make_character()
+        char.sheet_data["spell_slots"] = {}
+        self.service._repo.save_sheet_data = AsyncMock(return_value=char)
+
+        await self.service.set_spell_slot_total(char, level=5, total=2)
+        new_data = self.service._repo.save_sheet_data.call_args[0][1]
+        assert new_data["spell_slots"]["level_5"]["total"] == 2
+        assert new_data["spell_slots"]["level_5"]["expended"] == 0
+
+
+# ---------------------------------------------------------------------------
 # _check_write_permission
 # ---------------------------------------------------------------------------
 

@@ -10,7 +10,7 @@ from app.i18n import error_response, render_template
 from app.middleware.auth import require_dm, require_login
 from app.schemas.auth import UserSession
 from app.schemas.character import (
-    HPUpdate, DeathSaveUpdate, SpellSlotUpdate,
+    HPUpdate, DeathSaveUpdate, SpellSlotUpdate, SpellSlotTotalUpdate,
     TempHPUpdate, MaxHPUpdate, ThrowableCaseQtyUpdate, ClassResourceUpdate,
 )
 from jinja2 import TemplateError
@@ -504,6 +504,43 @@ async def update_spell_slot(
             "character": character,
             "sheet": character.sheet_data,
             "can_edit": _can_edit(current_user, character),
+        },
+        language=current_user.language,
+    )
+
+
+# ── Vitals: Spell slot total ──────────────────────────────────────────────
+
+@router.post("/{character_id}/vitals/spell-slot-total", response_class=HTMLResponse)
+async def update_spell_slot_total(
+    request: Request,
+    character_id: UUID,
+    current_user: UserSession = Depends(require_login),
+    service: CharacterService = Depends(_service),
+):
+    form = await request.form()
+    payload = SpellSlotTotalUpdate(
+        level=int(form.get("level")),
+        total=int(form.get("total")),
+    )
+
+    try:
+        character = await service.update_spell_slot_total(
+            character_id, current_user.user_id, current_user.is_dm, payload
+        )
+    except (CharacterNotFound, CharacterPermissionError):
+        return error_response(request, 403, language=current_user.language)
+
+    return render_template(
+        templates,
+        "characters/_sheet_body.html",
+        {
+            "request": request,
+            "current_user": current_user,
+            "character": character,
+            "sheet": service._normalize_sheet(character.sheet_data),
+            "can_edit": _can_edit(current_user, character),
+            "is_readonly": not _can_edit(current_user, character),
         },
         language=current_user.language,
     )

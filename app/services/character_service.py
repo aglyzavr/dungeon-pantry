@@ -408,6 +408,17 @@ class CharacterService:
         data["spell_slots"][key] = slot
         return await self._repo.save_sheet_data(character, data)
 
+    async def set_spell_slot_total(self, character: Character, level: int, total: int) -> Character:
+        data = copy.deepcopy(character.sheet_data)
+        key = f"level_{level}"
+        if "spell_slots" not in data or not isinstance(data.get("spell_slots"), dict):
+            data["spell_slots"] = {}
+        slot = data["spell_slots"].get(key, {})
+        slot["total"] = total
+        slot["expended"] = min(int(slot.get("expended", 0)), total)
+        data["spell_slots"][key] = slot
+        return await self._repo.save_sheet_data(character, data)
+
     @staticmethod
     def _apply_short_rest(data: dict) -> None:
         """Restore uses_current to uses_max for all short-rest resources (mutates data in-place)."""
@@ -725,6 +736,13 @@ class CharacterService:
         character = await self.get_character(character_id, user_id, is_dm)
         self._check_write_permission(character, user_id, is_dm)
         return await self.adjust_spell_slot(character, payload.level, payload.delta)
+
+    async def update_spell_slot_total(
+        self, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> Character:
+        character = await self.get_character(character_id, user_id, is_dm)
+        self._check_write_permission(character, user_id, is_dm)
+        return await self.set_spell_slot_total(character, payload.level, payload.total)
 
     async def update_temp_hp(
         self, character_id: UUID, user_id: UUID, is_dm: bool, delta: int | None, absolute: int | None
@@ -1300,6 +1318,20 @@ class CharacterService:
         total = int(slot.get("total", 0))
         current = int(slot.get("expended", 0))
         slot["expended"] = max(0, min(total, current + payload.delta))
+        data["spell_slots"][key] = slot
+        return await self._flush_campaign_cc(cc, data)
+
+    async def update_campaign_spell_slot_total(
+        self, campaign_id: UUID, character_id: UUID, user_id: UUID, is_dm: bool, payload
+    ) -> CampaignCharacter:
+        cc = await self._get_campaign_char_for_write(campaign_id, character_id, user_id, is_dm)
+        data = copy.deepcopy(cc.sheet_data)
+        key = f"level_{payload.level}"
+        if "spell_slots" not in data or not isinstance(data.get("spell_slots"), dict):
+            data["spell_slots"] = {}
+        slot = data["spell_slots"].get(key, {})
+        slot["total"] = payload.total
+        slot["expended"] = min(int(slot.get("expended", 0)), payload.total)
         data["spell_slots"][key] = slot
         return await self._flush_campaign_cc(cc, data)
 
