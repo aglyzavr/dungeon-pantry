@@ -410,7 +410,13 @@ class CharacterService:
 
     @staticmethod
     def _apply_spell_slot_total(data: dict, level: int, total: int) -> None:
-        """Set the total for a single spell slot level, clamping expended (mutates data in-place)."""
+        """Set the total for a single spell slot level, clamping expended (mutates data in-place).
+
+        Args:
+            data: The sheet_data dict to mutate.
+            level: Spell slot level (1-9).
+            total: New maximum number of slots (0-99); expended is clamped to this value.
+        """
         key = f"level_{level}"
         if "spell_slots" not in data or not isinstance(data.get("spell_slots"), dict):
             data["spell_slots"] = {}

@@ -638,7 +638,7 @@ class TestSetSpellSlotTotal:
     @pytest.mark.asyncio
     async def test_missing_spell_slots_dict_initialised(self):
         char = _make_character()
-        char.sheet_data["spell_slots"] = "corrupted"
+        char.sheet_data["spell_slots"] = "invalid_non_dict_data"  # simulates corrupted field
         self.service._repo.save_sheet_data = AsyncMock(return_value=char)
 
         await self.service.set_spell_slot_total(char, level=1, total=3)
