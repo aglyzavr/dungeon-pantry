@@ -864,6 +864,12 @@ msgstr "Бонус"
 msgid "Proficient"
 msgstr "Владение"
 
+msgid "Expertise"
+msgstr "Экспертиза"
+
+msgid "Expertise doubles your proficiency bonus for this skill."
+msgstr "Экспертиза удваивает бонус мастерства для этого навыка."
+
 # Character edit - Proficiencies
 msgid "Proficiencies"
 msgstr "Владения"

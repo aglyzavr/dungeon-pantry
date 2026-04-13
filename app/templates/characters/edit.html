@@ -455,6 +455,13 @@
             <label for="{{ skill_key }}_prof">{{ _("Proficient") }}</label>
           </div>
 
+          <div class="checkbox-group">
+            <input type="checkbox" id="{{ skill_key }}_expertise" name="{{ skill_key }}_expertise" 
+                   {% if skill_data.get('expertise') %}checked{% endif %}>
+            <label for="{{ skill_key }}_expertise">{{ _("Expertise") }}</label>
+            <span title="{{ _('Expertise doubles your proficiency bonus for this skill.') }}">ⓘ</span>
+          </div>
+
           <div class="form-group skill-edit-adv">
             <label for="{{ skill_key }}_advantage">Adv/Disadv</label>
             <select id="{{ skill_key }}_advantage" name="{{ skill_key }}_advantage" class="form-select-sm">

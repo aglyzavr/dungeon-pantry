@@ -866,6 +866,12 @@ msgstr "Bonus"
 msgid "Proficient"
 msgstr "Proficient"
 
+msgid "Expertise"
+msgstr "Expertise"
+
+msgid "Expertise doubles your proficiency bonus for this skill."
+msgstr "Expertise doubles your proficiency bonus for this skill."
+
 # Character edit - Proficiencies
 msgid "Proficiencies"
 msgstr "Proficiencies"
