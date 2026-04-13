@@ -589,11 +589,11 @@
             {% endif %}
 
             {% if not has_tab_actions_data and not (class_feature_actions or class_feature_bonus or class_feature_reactions) %}
-            <div class="tab-empty-state">
-                <div class="tab-empty-icon">⚔️</div>
-                <p class="tab-empty-message">{{ _("No actions added yet") }}</p>
+            <div class="spells-empty-state">
+                <div class="spells-empty-icon">⚔️</div>
+                <p class="spells-empty-message">{{ _("No actions added yet") }}</p>
                 {% if can_edit %}
-                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                <a href="{{ char_base }}/edit" class="empty-state-edit-btn">{{ _("Edit") }}</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -657,11 +657,11 @@
             {% endif %}
 
             {% if not has_features_data %}
-            <div class="tab-empty-state">
-                <div class="tab-empty-icon">📜</div>
-                <p class="tab-empty-message">{{ _("No features or traits added yet") }}</p>
+            <div class="spells-empty-state">
+                <div class="spells-empty-icon">📜</div>
+                <p class="spells-empty-message">{{ _("No features or traits added yet") }}</p>
                 {% if can_edit %}
-                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                <a href="{{ char_base }}/edit" class="empty-state-edit-btn">{{ _("Edit") }}</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -905,7 +905,7 @@
                 <div class="spells-empty-icon">✨</div>
                 <p class="spells-empty-message">{{ _("No spells prepared") }}</p>
                 {% if can_edit %}
-                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                <a href="{{ char_base }}/edit" class="empty-state-edit-btn">{{ _("Edit") }}</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -1138,11 +1138,11 @@
             {% endfor %}
 
             {% if not has_inventory_data.value %}
-            <div class="tab-empty-state">
-                <div class="tab-empty-icon">🎒</div>
-                <p class="tab-empty-message">{{ _("No inventory data yet") }}</p>
+            <div class="spells-empty-state">
+                <div class="spells-empty-icon">🎒</div>
+                <p class="spells-empty-message">{{ _("No inventory data yet") }}</p>
                 {% if can_edit %}
-                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                <a href="{{ char_base }}/edit" class="empty-state-edit-btn">{{ _("Edit") }}</a>
                 {% endif %}
             </div>
             {% endif %}
@@ -1199,11 +1199,11 @@
             {% endfor %}
 
             {% if not has_bio_data %}
-            <div class="tab-empty-state">
-                <div class="tab-empty-icon">📖</div>
-                <p class="tab-empty-message">{{ _("No biography details yet") }}</p>
+            <div class="spells-empty-state">
+                <div class="spells-empty-icon">📖</div>
+                <p class="spells-empty-message">{{ _("No biography details yet") }}</p>
                 {% if can_edit %}
-                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                <a href="{{ char_base }}/edit" class="empty-state-edit-btn">{{ _("Edit") }}</a>
                 {% endif %}
             </div>
             {% endif %}
