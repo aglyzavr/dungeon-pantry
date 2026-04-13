@@ -297,7 +297,7 @@ async def campaign_character_edit_form(
     request: Request,
     campaign_id: UUID,
     character_id: UUID,
-    current_user: UserSession = Depends(require_dm),
+    current_user: UserSession = Depends(require_login),
     service: CampaignService = Depends(_service),
     character_service: CharacterService = Depends(_character_service),
 ):
@@ -313,6 +313,14 @@ async def campaign_character_edit_form(
         character = campaign_char.character
     except (CampaignNotFound, CharacterNotFound):
         return RedirectResponse(url="/campaigns", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Allow edit for DMs and for the owner of this character.
+    can_edit = current_user.is_dm or character.owner_id == current_user.user_id
+    if not can_edit:
+        return RedirectResponse(
+            url=f"/campaigns/{campaign_id}/characters/{character_id}",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
 
     # Use campaign-specific sheet_data
     normalized_sheet = character_service._normalize_sheet(campaign_char.sheet_data)

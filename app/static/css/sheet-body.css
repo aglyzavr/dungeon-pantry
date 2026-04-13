@@ -788,6 +788,44 @@
   color: var(--color-accent-light);
 }
 
+/* ── Generic Tab Empty State ────────────────────────────────────── */
+.tab-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-marker-unproficient);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+}
+
+.tab-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.tab-empty-message {
+  color: var(--color-text-muted);
+  margin-bottom: 0.875rem;
+}
+
+.tab-empty-edit-btn {
+  display: inline-block;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  background-color: transparent;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-empty-edit-btn:hover {
+  background-color: var(--color-accent);
+  color: var(--color-form-text);
+}
+
 .spell-notes {
   font-size: 0.75rem;
   color: var(--color-text-muted);

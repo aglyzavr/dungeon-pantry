@@ -425,6 +425,8 @@
             {% endif %}
             {% endfor %}
 
+            {% set has_tab_actions_data = (actions_list | length > 0) or (bonus_actions | length > 0) or (reactions | length > 0) %}
+
             {# ── Actions Section ── #}
             {% if actions_list %}
             <div class="actions-section">
@@ -586,6 +588,16 @@
             </div>
             {% endif %}
 
+            {% if not has_tab_actions_data and not (class_feature_actions or class_feature_bonus or class_feature_reactions) %}
+            <div class="tab-empty-state">
+                <div class="tab-empty-icon">⚔️</div>
+                <p class="tab-empty-message">{{ _("No actions added yet") }}</p>
+                {% if can_edit %}
+                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
             {# Combat Actions #}
             <div class="actions-section">
                 <div class="actions-section-header">
@@ -621,6 +633,8 @@
         {# ── TAB: FEATURES & TRAITS ─────────────────────────────── #}
         <div x-show="tab === 'features'" x-cloak class="features-tab-content">
 
+            {% set has_features_data = sheet.class_features or sheet.species_traits or sheet.feats %}
+
             {% if sheet.class_features %}
             <div class="content-section mb-8">
                 <h3 class="content-section-title">{{ _("Class Features") }}</h3>
@@ -639,6 +653,16 @@
             <div class="content-section mb-8">
                 <h3 class="content-section-title">{{ _("Feats") }}</h3>
                 <div class="content-section-text markdown-prose">{{ sheet.feats | markdown | safe }}</div>
+            </div>
+            {% endif %}
+
+            {% if not has_features_data %}
+            <div class="tab-empty-state">
+                <div class="tab-empty-icon">📜</div>
+                <p class="tab-empty-message">{{ _("No features or traits added yet") }}</p>
+                {% if can_edit %}
+                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                {% endif %}
             </div>
             {% endif %}
 
@@ -880,6 +904,9 @@
             <div class="spells-empty-state">
                 <div class="spells-empty-icon">✨</div>
                 <p class="spells-empty-message">{{ _("No spells prepared") }}</p>
+                {% if can_edit %}
+                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -901,6 +928,33 @@
                 {% for item in tcase.get("items", []) if item.get("name") %}
                     {% set tw.value = tw.value + ((item.get("weight", 0) | float) * (item.get("quantity", 1) | int)) %}
                 {% endfor %}
+            {% endfor %}
+
+            {% set has_inventory_data = namespace(value=false) %}
+            {% if sheet.equipment.equipment_list %}
+                {% set has_inventory_data.value = true %}
+            {% endif %}
+            {% set magic = sheet.equipment.magic_item_attunement | selectattr("name") | list %}
+            {% if magic %}
+                {% set has_inventory_data.value = true %}
+            {% endif %}
+            {% set c = sheet.coins | default({'cp':0,'sp':0,'ep':0,'gp':0,'pp':0}) %}
+            {% if c.cp or c.sp or c.ep or c.gp or c.pp %}
+                {% set has_inventory_data.value = true %}
+            {% endif %}
+            {% set armor_items = sheet.equipment.get("armor", []) | selectattr("name") | list %}
+            {% if armor_items %}
+                {% set has_inventory_data.value = true %}
+            {% endif %}
+            {% set inv_weapons = sheet.equipment.get("weapons", []) | selectattr("name") | list %}
+            {% if inv_weapons %}
+                {% set has_inventory_data.value = true %}
+            {% endif %}
+            {% set cases = sheet.equipment.get("throwable_cases", []) %}
+            {% for tcase in cases %}
+                {% if tcase.name %}
+                    {% set has_inventory_data.value = true %}
+                {% endif %}
             {% endfor %}
 
             {% if sheet.equipment.equipment_list %}
@@ -931,7 +985,6 @@
             </div>
             {% endif %}
 
-            {% set magic = sheet.equipment.magic_item_attunement | selectattr("name") | list %}
             {% if magic %}
             <div class="content-section">
                 <h3 class="content-section-title">{{ _("Magic Items & Attunement") }}</h3>
@@ -951,7 +1004,6 @@
             </div>
             {% endif %}
 
-            {% set c = sheet.coins | default({'cp':0,'sp':0,'ep':0,'gp':0,'pp':0}) %}
             {% if c.cp or c.sp or c.ep or c.gp or c.pp %}
             <div class="content-section">
                 <h3 class="content-section-title">{{ _("Currency") }}</h3>
@@ -973,7 +1025,6 @@
             {% endif %}
 
             {# Armor #}
-            {% set armor_items = sheet.equipment.get("armor", []) | selectattr("name") | list %}
             {% if armor_items %}
             <div class="content-section">
                 <h3 class="content-section-title">{{ _("Armor") }}</h3>
@@ -1001,7 +1052,6 @@
             {% endif %}
 
             {# Weapons (Inventory) #}
-            {% set inv_weapons = sheet.equipment.get("weapons", []) | selectattr("name") | list %}
             {% if inv_weapons %}
             <div class="content-section">
                 <h3 class="content-section-title">{{ _("Weapons") }}</h3>
@@ -1029,7 +1079,6 @@
             {% endif %}
 
             {# Throwable Cases #}
-            {% set cases = sheet.equipment.get("throwable_cases", []) %}
             {% for tcase in cases %}
             {% set case_idx = loop.index0 %}
             {% if tcase.name %}
@@ -1088,12 +1137,31 @@
             {% endif %}
             {% endfor %}
 
+            {% if not has_inventory_data.value %}
+            <div class="tab-empty-state">
+                <div class="tab-empty-icon">🎒</div>
+                <p class="tab-empty-message">{{ _("No inventory data yet") }}</p>
+                {% if can_edit %}
+                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
         </div>
         {% endif %}
 
         {# ── TAB: BIO ────────────────────────────────────────────── #}
         {% if not is_readonly %}
         <div x-show="tab === 'bio'" x-cloak class="bio-tab-content">
+
+            {% set has_bio_data = sheet.character_identity.background
+                or sheet.get("backstory_and_personality", {}).get("alignment")
+                or sheet.appearance
+                or sheet.backstory_and_personality.personality
+                or sheet.get("backstory_and_personality", {}).get("ideals")
+                or sheet.get("backstory_and_personality", {}).get("bonds")
+                or sheet.get("backstory_and_personality", {}).get("flaws")
+                or sheet.backstory_and_personality.backstory %}
 
             {# Short Fields #}
             {% set short_fields = [
@@ -1129,6 +1197,16 @@
             </div>
             {% endif %}
             {% endfor %}
+
+            {% if not has_bio_data %}
+            <div class="tab-empty-state">
+                <div class="tab-empty-icon">📖</div>
+                <p class="tab-empty-message">{{ _("No biography details yet") }}</p>
+                {% if can_edit %}
+                <a href="{{ char_base }}/edit" class="tab-empty-edit-btn">{{ _("Edit") }}</a>
+                {% endif %}
+            </div>
+            {% endif %}
 
         </div>
         {% endif %}
