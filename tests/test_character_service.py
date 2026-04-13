@@ -182,6 +182,7 @@ class TestNormalizeSheet:
         assert athletics["bonus"] == 3
         assert athletics["proficient"] is False
         assert athletics["advantage"] == "none"
+        assert athletics["expertise"] is False
 
     def test_normalises_skill_missing_keys(self):
         data = {
@@ -195,6 +196,7 @@ class TestNormalizeSheet:
         acrobatics = result["dexterity"]["ability_scores"]["acrobatics"]
         assert acrobatics["proficient"] is False
         assert acrobatics["advantage"] == "none"
+        assert acrobatics["expertise"] is False
 
     def test_adds_throwable_cases_if_missing(self):
         data = {"equipment": {}}
@@ -275,7 +277,7 @@ class TestNormalizeSheet:
         scores = result["wisdom"]["ability_scores"]
         for skill in ("animal_handling", "insight", "medicine", "perception", "survival"):
             assert skill in scores
-            assert scores[skill] == {"bonus": 0, "proficient": False, "advantage": "none"}
+            assert scores[skill] == {"bonus": 0, "proficient": False, "advantage": "none", "expertise": False}
 
     def test_seeded_skills_have_correct_defaults(self):
         result = self.service._normalize_sheet({})
@@ -283,6 +285,7 @@ class TestNormalizeSheet:
         assert entry["bonus"] == 0
         assert entry["proficient"] is False
         assert entry["advantage"] == "none"
+        assert entry["expertise"] is False
 
     def test_existing_skills_not_overwritten(self):
         data = {
@@ -379,6 +382,40 @@ class TestBuildSheetFromForm:
         form = {"spell_slots_json": "not-json"}
         result = await self.service.build_sheet_from_form(sheet, form)
         assert result["spell_slots"]["level_1"]["total"] == 5
+
+    @pytest.mark.asyncio
+    async def test_expertise_field_read_from_form(self):
+        """Expertise checkbox value is read from form data."""
+        sheet = _base_sheet()
+        sheet["strength"] = {
+            "ability_scores": {"athletics": {"bonus": 0, "proficient": False, "advantage": "none", "expertise": False}}
+        }
+        form = {
+            "strength_athletics_bonus": "5",
+            "strength_athletics_prof": "on",
+            "strength_athletics_expertise": "on",
+            "strength_athletics_advantage": "none",
+        }
+        result = await self.service.build_sheet_from_form(sheet, form)
+        athletics = result["strength"]["ability_scores"]["athletics"]
+        assert athletics["expertise"] is True
+        assert athletics["proficient"] is True
+        assert athletics["bonus"] == 5
+
+    @pytest.mark.asyncio
+    async def test_expertise_field_absent_defaults_false(self):
+        """When expertise checkbox is absent from form, defaults to False."""
+        sheet = _base_sheet()
+        sheet["strength"] = {
+            "ability_scores": {"athletics": {"bonus": 0, "proficient": False, "advantage": "none", "expertise": False}}
+        }
+        form = {
+            "strength_athletics_bonus": "2",
+            "strength_athletics_advantage": "none",
+        }
+        result = await self.service.build_sheet_from_form(sheet, form)
+        athletics = result["strength"]["ability_scores"]["athletics"]
+        assert athletics["expertise"] is False
 
 
 # ---------------------------------------------------------------------------

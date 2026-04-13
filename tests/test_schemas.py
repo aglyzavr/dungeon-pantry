@@ -12,6 +12,7 @@ from app.schemas.character import (
     ThrowableCaseQtyUpdate,
     get_skill_advantage,
     get_skill_bonus,
+    has_expertise,
     is_proficient,
     validate_mandatory_fields,
 )
@@ -195,6 +196,20 @@ class TestGetSkillAdvantage:
 
     def test_flat_format_returns_none(self):
         assert get_skill_advantage(5) == "none"
+
+
+class TestHasExpertise:
+    def test_expertise_true(self):
+        assert has_expertise({"expertise": True}) is True
+
+    def test_expertise_false(self):
+        assert has_expertise({"expertise": False}) is False
+
+    def test_flat_int_returns_false(self):
+        assert has_expertise(3) is False
+
+    def test_missing_key_returns_false(self):
+        assert has_expertise({}) is False
 
 
 # ---------------------------------------------------------------------------

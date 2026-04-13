@@ -44,7 +44,7 @@ class CharacterService:
 
     @staticmethod
     def _default_skill_entry() -> dict:
-        return {"bonus": 0, "proficient": False, "advantage": "none"}
+        return {"bonus": 0, "proficient": False, "advantage": "none", "expertise": False}
 
     @staticmethod
     def _safe_non_negative_int(value, default=0):
@@ -694,11 +694,13 @@ class CharacterService:
                             "bonus": int(skill_data) if isinstance(skill_data, (int, float)) else 0,
                             "proficient": False,
                             "advantage": "none",
+                            "expertise": False,
                         }
                     else:
                         skill_data.setdefault("bonus", 0)
                         skill_data.setdefault("proficient", False)
                         skill_data.setdefault("advantage", "none")
+                        skill_data.setdefault("expertise", False)
 
         return data
 
@@ -911,6 +913,7 @@ class CharacterService:
                     skill_key = f"{ability}_{skill_name.replace(' ', '_').replace('_of_', '_')}"
                     bonus = get_int(f"{skill_key}_bonus", 0)
                     prof = get_bool(f"{skill_key}_prof")
+                    expertise = get_bool(f"{skill_key}_expertise")
                     advantage = get_form(f"{skill_key}_advantage", "none")
                     if advantage not in ("advantage", "disadvantage"):
                         advantage = "none"
@@ -918,7 +921,8 @@ class CharacterService:
                     sheet[ability]["ability_scores"][skill_name] = {
                         "bonus": bonus,
                         "proficient": prof,
-                        "advantage": advantage
+                        "advantage": advantage,
+                        "expertise": expertise,
                     }
         
         # Equipment & proficiencies

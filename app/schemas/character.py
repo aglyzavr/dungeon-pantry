@@ -21,6 +21,12 @@ def get_skill_advantage(skill_data) -> str:
     return "none"
 
 
+def has_expertise(skill_data) -> bool:
+    if isinstance(skill_data, dict):
+        return bool(skill_data.get("expertise", False))
+    return False
+
+
 
 
 def validate_mandatory_fields(data: dict) -> list[str]:

@@ -417,6 +417,10 @@
   color: var(--color-marker-unproficient);
 }
 
+.ability-card-skill-icon--expertise {
+  color: #d4a017;
+}
+
 .ability-card-skill-name {
   font-size: 0.875rem;
 }
